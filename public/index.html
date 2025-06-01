@@ -39,7 +39,7 @@
             font-weight: 600;
             color: #1e3a8a;
         }
-        #generateRouteBtn, #addPlaceBtn, .delete-place-btn {
+        #generateRouteBtn, #addPlaceBtn, .delete-place-btn, #googleSignInBtn, #signOutBtn {
             transition: background-color 0.3s ease;
         }
         .category-tag {
@@ -78,7 +78,12 @@
         .delete-place-btn:hover {
             background-color: #fecaca; /* red-200 */
         }
-        .filter-container > div {
+        #userDisplay { 
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+         .filter-container > div {
             margin-bottom: 0.5rem;
         }
         @media (min-width: 640px) { /* sm breakpoint */
@@ -99,8 +104,20 @@
         <header class="mb-8 text-center">
             <h1 class="text-3xl md:text-4xl font-bold text-sky-600">Avrupa Gezi Rotam</h1>
             <p class="text-gray-600 mt-2">Gezilecek yerleri işaretle, filtrele, sil ve haritada gör! Rota oluşturmak için yerlere tıklayarak seçin veya yeni yer ekleyin.</p>
+            
+            <div id="authContainer" class="mt-4">
+                <button id="googleSignInBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center justify-center mx-auto">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.63 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M0 0h24v24H0z"/></svg>
+                    Google ile Giriş Yap
+                </button>
+                <div id="userDisplay" class="hidden mt-2 justify-center">
+                    <img id="userPhoto" class="w-8 h-8 rounded-full mr-2" alt="Kullanıcı Fotoğrafı">
+                    <span id="userName" class="text-sm text-gray-700 font-medium"></span>
+                    <button id="signOutBtn" class="ml-4 bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-md text-xs shadow-md">Çıkış Yap</button>
+                </div>
+            </div>
             <p id="authStatus" class="text-xs text-gray-500 mt-1">Kimlik durumu: Kontrol ediliyor...</p>
-             <p id="userIdDisplay" class="text-xs text-gray-400 mt-1"></p>
+            <p id="userIdDisplay" class="text-xs text-gray-400 mt-1"></p>
         </header>
 
         <div class="flex flex-col md:flex-row gap-6">
@@ -122,12 +139,12 @@
                         <h2 class="text-2xl font-semibold text-gray-700">Gezilecek Yerler</h2>
                         <p class="text-sm text-gray-500">Rota oluşturmak için listeden yerlere tıklayın.</p>
                     </div>
-                    <div class="filter-container">
+                     <div class="filter-container">
                         <div>
                             <label for="filterCountry" class="mr-2 text-gray-600">Ülke:</label>
                             <select id="filterCountry" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
                                 <option value="all">Tüm Ülkeler</option>
-                                </select>
+                            </select>
                         </div>
                         <div>
                             <label for="filterVisited" class="mr-2 text-gray-600">Ziyaret:</label>
@@ -146,7 +163,7 @@
                 </div>
                 <div id="routeLinkContainer" class="mb-4 text-sm"></div>
                 <div id="placesList" class="space-y-1 max-h-[40vh] md:max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
-                    <p class="text-gray-500 italic p-4">Yer listesi yükleniyor veya Firebase ile bağlantı bekleniyor...</p>
+                    <p class="text-gray-500 italic p-4">Lütfen Google ile giriş yapın veya yer listesinin yüklenmesini bekleyin...</p>
                 </div>
             </div>
 
@@ -172,20 +189,18 @@
     <script type="module">
         // Firebase SDK imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, addDoc, getDocs, deleteDoc, updateDoc, onSnapshot, query, orderBy, setDoc, getDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // ----- KENDİ FIREBASE PROJE YAPILANDIRMANIZI BURAYA EKLEYİN! -----
         const firebaseConfig = {
-            apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA", // Kullanıcı kendi değerini girmeli
-            authDomain: "rotambenim.firebaseapp.com", // Kullanıcı kendi değerini girmeli
-            projectId: "rotambenim", // Kullanıcı kendi değerini girmeli
-            storageBucket: "rotambenim.firebasestorage.app", // Kullanıcı kendi değerini girmeli
-            messagingSenderId: "374285362920", // Kullanıcı kendi değerini girmeli
-            appId: "1:374285362920:web:b4058cf4a93e7337168b5d", // Kullanıcı kendi değerini girmeli
-            measurementId: "G-0QVZ4LDYPJ" // Kullanıcı kendi değerini girmeli (opsiyonel)
+            apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA", 
+            authDomain: "rotambenim.firebaseapp.com", 
+            projectId: "rotambenim", 
+            storageBucket: "rotambenim.firebasestorage.app", 
+            messagingSenderId: "374285362920", 
+            appId: "1:374285362920:web:b4058cf4a93e7337168b5d", 
+            measurementId: "G-0QVZ4LDYPJ" 
         };
-        // --------------------------------------------------------------------
         
         const appId = firebaseConfig.appId || 'default-app-id';
 
@@ -196,6 +211,8 @@
         let placesCollectionRef; 
         let unsubscribePlaces = null; 
 
+        // Kapsamlı Başlangıç Veri Listesi (Bir önceki yanıttan alınacak veya elle eklenecek)
+        // Bu listeyi kısa tutuyorum, gerçek uygulamanızda daha önceki kapsamlı listeyi kullanın.
         const initialPlacesData = [
             // FRANSA
             { userGivenId: 'fr_001', country: "FRANSA", name: "Paris", city: "Paris", description: "Dünyanın en romantik şehirlerinden biri olan Paris, 'Işık Şehir' olarak da anılır. İkonik Eyfel Kulesi'nden şehrin panoramik manzarasını izleyebilir, Seine Nehri'nde tekne turu yapabilir ve dünyaca ünlü sanat eserlerine ev sahipliği yapan Louvre Müzesi'ni gezebilirsiniz. Şık bulvarları, tarihi kafeleri, bohem mahalleleri ve eşsiz Fransız mutfağıyla unutulmaz bir deneyim sunar.", category: "Başkent / İkonik / Kültürel / Sanat", visited: false, mapQuery: "Paris, Fransa", selectedForRoute: false },
@@ -435,11 +452,12 @@
             // ESTONYA
             { userGivenId: 'ee_001', country: "ESTONYA", name: "Tallinn", city: "Tallinn", description: "UNESCO Orta Çağ eski şehri.", category: "Başkent / Tarihi Şehir", visited: false, mapQuery: "Tallinn, Estonya", selectedForRoute: false },
         ];
+
         let placesData = []; 
 
         const placesListElement = document.getElementById('placesList');
         const filterElement = document.getElementById('filterVisited');
-        const countryFilterElement = document.getElementById('filterCountry'); // Yeni ülke filtresi
+        const countryFilterElement = document.getElementById('filterCountry');
         const mapFrameElement = document.getElementById('mapFrame');
         const mapLocationNameElement = document.getElementById('mapLocationName');
         const generateRouteBtn = document.getElementById('generateRouteBtn');
@@ -449,112 +467,147 @@
         const addPlaceBtnText = document.getElementById('addPlaceBtnText');
         const addPlaceLoader = document.getElementById('addPlaceLoader');
         const addPlaceMessage = document.getElementById('addPlaceMessage');
+        
+        const authContainer = document.getElementById('authContainer');
+        const googleSignInBtn = document.getElementById('googleSignInBtn');
+        const userDisplay = document.getElementById('userDisplay');
+        const userNameElement = document.getElementById('userName');
+        const userPhotoElement = document.getElementById('userPhoto'); 
+        const signOutBtn = document.getElementById('signOutBtn');
         const authStatusElement = document.getElementById('authStatus');
         const userIdDisplayElement = document.getElementById('userIdDisplay');
 
         let selectedRouteOrder = []; 
 
         function populateCountryFilter() {
-            const countries = [...new Set(initialPlacesData.map(place => place.country))].sort();
-            countries.forEach(country => {
-                const option = document.createElement('option');
-                option.value = country;
-                option.textContent = country;
-                countryFilterElement.appendChild(option);
-            });
+            countryFilterElement.innerHTML = '<option value="all">Tüm Ülkeler</option>'; 
+            if (placesData && placesData.length > 0) {
+                const countries = [...new Set(placesData.map(place => place.country).filter(Boolean))].sort();
+                countries.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country;
+                    option.textContent = country;
+                    countryFilterElement.appendChild(option);
+                });
+            }
         }
 
         async function initializeFirebase() {
             if (!firebaseConfig || !firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
-                authStatusElement.textContent = "Firebase yapılandırması eksik veya hatalı. Lütfen JavaScript kodundaki firebaseConfig nesnesini kendi proje bilgilerinizle güncelleyin.";
-                console.error("Firebase config is missing or incomplete. Please update it in your JavaScript code.");
-                addPlaceBtn.disabled = true; 
+                authStatusElement.textContent = "Firebase yapılandırması eksik veya hatalı.";
                 return;
             }
             try {
                 app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
-                authStatusElement.textContent = "Firebase başlatıldı. Kimlik doğrulanıyor...";
-                populateCountryFilter(); // Ülke filtresini doldur
-
+                authStatusElement.textContent = "Firebase başlatıldı. Kimlik durumu bekleniyor...";
+                
                 onAuthStateChanged(auth, async (user) => {
-                    if (user) {
+                    if (user) { 
                         userId = user.uid;
-                        authStatusElement.textContent = `Kimlik doğrulandı (Anonim Kullanıcı).`;
-                        userIdDisplayElement.textContent = `Kullanıcı ID: ${userId.substring(0,12)}...`; 
-                        placesCollectionRef = collection(db, `users/${userId}/europeTravelPlaces`);
-                        addPlaceBtn.disabled = false; 
-                        loadAndListenPlaces();
-                    } else {
-                        authStatusElement.textContent = "Anonim oturum açılıyor...";
-                        try {
-                            await signInAnonymously(auth);
-                        } catch (error) {
-                            console.error("Anonim oturum açma hatası:", error);
-                            authStatusElement.textContent = "Oturum açılamadı: " + error.message;
-                            addPlaceBtn.disabled = true;
+                        userNameElement.textContent = user.displayName || user.email || "Kullanıcı";
+                        if(user.photoURL) {
+                            userPhotoElement.src = user.photoURL;
+                            userPhotoElement.classList.remove('hidden');
+                        } else {
+                            userPhotoElement.classList.add('hidden');
                         }
+                        authStatusElement.textContent = `Hoşgeldiniz, ${userNameElement.textContent}!`;
+                        userIdDisplayElement.textContent = `Kullanıcı ID: ${userId.substring(0,12)}...`; 
+                        
+                        googleSignInBtn.classList.add('hidden');
+                        userDisplay.classList.remove('hidden');
+                        userDisplay.classList.add('flex'); 
+                        addPlaceBtn.disabled = false; 
+
+                        placesCollectionRef = collection(db, `users/${userId}/europeTravelPlaces`);
+                        loadAndListenPlaces();
+                    } else { 
+                        userId = null;
+                        userNameElement.textContent = '';
+                        userPhotoElement.classList.add('hidden');
+                        authStatusElement.textContent = "Lütfen Google ile giriş yapın.";
+                        userIdDisplayElement.textContent = '';
+                        
+                        googleSignInBtn.classList.remove('hidden');
+                        userDisplay.classList.add('hidden');
+                        userDisplay.classList.remove('flex');
+                        addPlaceBtn.disabled = true; 
+                        placesData = []; 
+                        renderPlacesList(); 
+                        if (unsubscribePlaces) unsubscribePlaces(); 
+                        populateCountryFilter(); 
                     }
                 });
             } catch (error) {
                 console.error("Firebase başlatma hatası:", error);
                 authStatusElement.textContent = "Firebase başlatılamadı: " + error.message;
-                addPlaceBtn.disabled = true;
             }
         }
+
+        googleSignInBtn.addEventListener('click', async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Google ile giriş hatası:", error);
+                authStatusElement.textContent = "Google ile giriş yapılamadı: " + error.code + " - " + error.message;
+            }
+        });
+
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error("Çıkış yapma hatası:", error);
+                authStatusElement.textContent = "Çıkış yapılamadı: " + error.message;
+            }
+        });
         
         async function loadAndListenPlaces() {
             if (!placesCollectionRef) return;
-            authStatusElement.textContent = "Yer listesi Firestore'dan yükleniyor...";
-
+            authStatusElement.innerHTML = "Yer listesi Firestore'dan yükleniyor... <div class='loader !ml-0 !inline-block'></div>";
             if (unsubscribePlaces) unsubscribePlaces(); 
 
-            const initialSeedFlagDocRef = doc(db, `users/${userId}/europeTravelFlags`, "initialSeedDone_v6"); 
+            const initialSeedFlagDocRef = doc(db, `users/${userId}/europeTravelFlags`, "initialSeedDone_v8_google"); 
             const seedFlagSnap = await getDoc(initialSeedFlagDocRef);
 
-            if (!seedFlagSnap.exists()) {
-                authStatusElement.textContent = `İlk veriler (${initialPlacesData.length} adet) Firestore'a ekleniyor... Lütfen bekleyin. Bu işlem biraz zaman alabilir.`;
-                let initialDataAddedCount = 0;
-                let currentBatch = writeBatch(db);
-                let operationCountInBatch = 0;
-
-                for (let i = 0; i < initialPlacesData.length; i++) {
-                    const place = initialPlacesData[i];
-                    const placeDocRef = doc(placesCollectionRef, place.userGivenId); 
-                    currentBatch.set(placeDocRef, { ...place, id: placeDocRef.id }); 
-                    initialDataAddedCount++;
-                    operationCountInBatch++;
-
-                    if (operationCountInBatch >= 490 || i === initialPlacesData.length - 1) {
-                        try {
-                            await currentBatch.commit();
-                            console.log(`${operationCountInBatch} yerlik batch Firestore'a yazıldı.`);
-                            if (i < initialPlacesData.length - 1) { 
-                                currentBatch = writeBatch(db);
-                            }
-                            operationCountInBatch = 0; 
-                        } catch (e) {
-                            console.error("Batch yazma hatası:", e);
-                            authStatusElement.textContent = `İlk veri eklemede hata (${initialDataAddedCount}/${initialPlacesData.length} eklendi). Lütfen konsolu kontrol edin.`;
-                            return; 
-                        }
-                    }
+            if (!seedFlagSnap.exists() && initialPlacesData.length > 0) {
+                authStatusElement.innerHTML = `İlk veriler (${initialPlacesData.length} adet) Firestore'a ekleniyor... Lütfen bekleyin. <div class='loader !ml-0 !inline-block'></div>`;
+                const batch = writeBatch(db);
+                let count = 0;
+                initialPlacesData.forEach(place => {
+                    const placeDocRef = doc(placesCollectionRef, place.userGivenId);
+                    batch.set(placeDocRef, { ...place, id: placeDocRef.id });
+                    count++;
+                });
+                try {
+                    await batch.commit();
+                    await setDoc(initialSeedFlagDocRef, { seeded: true, seededAt: new Date().toISOString(), count: count, version: "8.0_google" });
+                    authStatusElement.textContent = `${count} başlangıç yeri eklendi. Liste dinleniyor...`;
+                } catch (e) {
+                     console.error("İlk veri ekleme (batch) hatası:", e);
+                     authStatusElement.textContent = "İlk veri eklemede hata. Lütfen konsolu kontrol edin.";
                 }
-                
-                if (initialDataAddedCount > 0 || initialPlacesData.length === 0) { 
-                    await setDoc(initialSeedFlagDocRef, { seeded: true, seededAt: new Date().toISOString(), count: initialDataAddedCount, version: "6.0" });
-                }
-                authStatusElement.textContent = `${initialDataAddedCount} başlangıç yeri eklendi. Liste dinleniyor...`;
+            } else if (seedFlagSnap.exists()) {
+                 authStatusElement.textContent = `Başlangıç verileri daha önce eklenmiş. Liste dinleniyor...`;
             } else {
-                 authStatusElement.textContent = `Başlangıç verileri daha önce eklenmiş (v6). Liste dinleniyor...`;
+                authStatusElement.textContent = "Başlangıç verisi yok veya zaten eklenmiş. Liste dinleniyor...";
             }
 
             unsubscribePlaces = onSnapshot(query(placesCollectionRef, orderBy("country"), orderBy("name")), (snapshot) => {
                 placesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderPlacesList(); // Veri yüklendiğinde listeyi render et
+                populateCountryFilter(); 
+                renderPlacesList();
                 updateGenerateRouteButtonState();
-            }, (error) => {
+                 if (placesData.length > 0 && userId) { // userId kontrolü eklendi
+                    authStatusElement.textContent = `Yer listesi güncel (${placesData.length} yer).`;
+                } else if(userId) { 
+                     authStatusElement.textContent = "Listenizde henüz yer yok. Yeni yer ekleyebilir veya başlangıç verilerinin yüklenmesini bekleyebilirsiniz.";
+                }
+
+            }, (error) => { 
                 console.error("Firestore'dan yerleri dinleme hatası: ", error);
                 authStatusElement.textContent = "Yer listesi yüklenemedi: " + error.message;
                  if (error.code === 'failed-precondition' && error.message.includes('indexes-not-found')) {
@@ -567,31 +620,28 @@
             const visitedFilterValue = filterElement.value;
             const countryFilterValue = countryFilterElement.value;
             placesListElement.innerHTML = ''; 
-            let currentCountryHeader = ""; // Ülke başlığı için
+            let currentCountryHeader = ""; 
 
-            let filteredPlaces = placesData;
+            let tempFilteredPlaces = placesData;
 
-            // Ziyaret durumuna göre filtrele
             if (visitedFilterValue !== 'all') {
-                filteredPlaces = filteredPlaces.filter(place => {
+                tempFilteredPlaces = tempFilteredPlaces.filter(place => {
                     if (visitedFilterValue === 'visited') return place.visited;
                     if (visitedFilterValue === 'notvisited') return !place.visited;
                     return true;
                 });
             }
 
-            // Ülkeye göre filtrele
             if (countryFilterValue !== 'all') {
-                filteredPlaces = filteredPlaces.filter(place => place.country === countryFilterValue);
+                tempFilteredPlaces = tempFilteredPlaces.filter(place => place.country === countryFilterValue);
             }
             
-            // Filtrelenmiş ve sıralanmış (Firestore'dan sıralı geliyor) listeyi render et
-            if (filteredPlaces.length === 0) {
+            if (tempFilteredPlaces.length === 0) {
                 placesListElement.innerHTML = '<p class="text-gray-500 italic p-4">Bu filtreye uygun yer bulunamadı veya liste boş.</p>';
                 return;
             }
             
-            filteredPlaces.forEach(place => {
+            tempFilteredPlaces.forEach(place => {
                 if (place.country !== currentCountryHeader) {
                     currentCountryHeader = place.country || "Diğer";
                     const countryHeaderElement = document.createElement('h3');
@@ -623,6 +673,7 @@
                 `;
 
                 listItem.addEventListener('click', async (event) => {
+                    if (!userId) return; // Kullanıcı giriş yapmamışsa işlem yapma
                     if (event.target.classList.contains('delete-place-btn') || event.target.id.startsWith('visited-') || (event.target.tagName === 'LABEL' && event.target.htmlFor.startsWith('visited-'))) {
                         return;
                     }
@@ -648,6 +699,7 @@
 
                 const visitedCheckbox = listItem.querySelector(`#visited-${place.id}`);
                 visitedCheckbox.addEventListener('change', async (event) => {
+                    if (!userId) return;
                     const placeId = event.target.dataset.id;
                     const isChecked = event.target.checked;
                     if (placesCollectionRef) {
@@ -660,6 +712,7 @@
 
                 const deleteButton = listItem.querySelector('.delete-place-btn');
                 deleteButton.addEventListener('click', async () => {
+                    if (!userId) return;
                     const placeIdToDelete = deleteButton.dataset.id;
                     const placeNameToDelete = placesData.find(p => p.id === placeIdToDelete)?.name || "bu yer";
                      if (confirm(`'${placeNameToDelete}' adlı yeri silmek istediğinizden emin misiniz?`)) {
@@ -677,7 +730,7 @@
         }
 
         function updateMap(place) {
-            if (place && place.mapQuery) {
+             if (place && place.mapQuery) {
                 const encodedQuery = encodeURIComponent(place.mapQuery);
                 let zoomLevel = 10; 
                 if (place.name.toLowerCase().includes("bölgesi") || place.name.toLowerCase().includes("sahili") || place.name.toLowerCase().includes("gölü") || place.name.toLowerCase().includes("dağları")) {
@@ -693,7 +746,6 @@
                 mapLocationNameElement.textContent = "Avrupa Genel Görünüm";
             }
         }
-        
         function updateGenerateRouteButtonState() {
             const selectedPlacesForRoute = placesData.filter(p => p.selectedForRoute);
             if (selectedPlacesForRoute.length > 1) {
@@ -703,9 +755,8 @@
                 routeLinkContainer.innerHTML = '';
             }
         }
-
         generateRouteBtn.addEventListener('click', () => {
-            const placesForRoute = selectedRouteOrder
+             const placesForRoute = selectedRouteOrder
                 .map(id => placesData.find(p => p.id === id))
                 .filter(p => p && p.selectedForRoute); 
 
@@ -722,9 +773,8 @@
                 <p class="text-xs text-gray-500 mt-1">Bu bağlantı, seçtiğiniz yerleri Google Haritalar'da açar. Rota optimizasyonu (en kısa yol vb.) Google Haritalar tarafından yapılır.</p>
             `;
         });
-
         addPlaceBtn.addEventListener('click', async () => {
-            if (!userId || !placesCollectionRef) {
+             if (!userId || !placesCollectionRef) {
                 addPlaceMessage.textContent = 'Veritabanı bağlantısı bekleniyor. Lütfen biraz bekleyin.';
                 addPlaceMessage.className = 'text-sm mt-2 text-red-500';
                 return;
@@ -843,5 +893,3 @@
     </script>
 </body>
 </html>
-index.html
-index.html görüntüleniyor.
