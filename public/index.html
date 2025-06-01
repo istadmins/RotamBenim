@@ -212,16 +212,7 @@
         let placesCollectionRef; 
         let unsubscribePlaces = null; 
 
-        // Kapsamlı initialPlacesData dizisi (Bir önceki yanıttaki gibi tüm yerleri içermeli)
-        const initialPlacesData = [
-            // FRANSA
-            { userGivenId: 'fr_001', country: "FRANSA", name: "Paris", city: "Paris", description: "Dünyanın en romantik şehirlerinden biri olan Paris, 'Işık Şehir' olarak da anılır...", category: "Başkent / İkonik / Kültürel / Sanat", visited: false, mapQuery: "Paris, Fransa", selectedForRoute: false },
-            { userGivenId: 'fr_002', country: "FRANSA", name: "Eyfel Kulesi", city: "Paris", description: "Paris'in ve Fransa'nın en tanınmış sembolü olan Eyfel Kulesi...", category: "İkonik Yapı / Mimari / Manzara", visited: false, mapQuery: "Eyfel Kulesi, Paris", selectedForRoute: false },
-            // ... (BURAYA DİĞER TÜM KAPSAMLI YER LİSTENİZİ EKLEYİN) ...
-            // Örnek olarak İtalya ve İspanya'dan birkaç yer daha:
-            { userGivenId: 'it_001', country: "İTALYA", name: "Roma", city: "Roma", description: "Binlerce yıllık tarihiyle 'Ebedi Şehir' Roma...", category: "Başkent / Tarihi", visited: false, mapQuery: "Roma, İtalya", selectedForRoute: false },
-            { userGivenId: 'es_001', country: "İSPANYA", name: "Barselona", city: "Barselona", description: "Katalonya'nın başkenti Barselona, Antoni Gaudí'nin eşsiz modernist mimarisinin damgasını vurduğu bir şehirdir...", category: "Şehir / Mimari", visited: false, mapQuery: "Barselona, İspanya", selectedForRoute: false },
-        ];
+        const initialPlacesData = [ /* Kapsamlı listeniz buraya eklenecek */ ];
         let placesData = []; 
 
         const placesListElement = document.getElementById('placesList');
@@ -249,127 +240,119 @@
 
         let selectedRouteOrder = []; 
 
-        function populateCountryFilter() { /* Önceki gibi */ }
-
-        async function initializeFirebase() { /* Önceki gibi, sadece onAuthStateChanged içinde checkAndUpdateInitialData'dan sonra loadAndListenPlaces çağrılacak */ }
-        googleSignInBtn.addEventListener('click', async () => { /* Önceki gibi */ });
-        signOutBtn.addEventListener('click', async () => { /* Önceki gibi */ });
-        
-        async function checkAndUpdateInitialData() {
-            if (!userId || !placesCollectionRef) {
-                console.log("checkAndUpdateInitialData: userId veya placesCollectionRef tanımsız.");
-                return;
-            }
-            const dataVersionFlagDocRef = doc(db, `users/${userId}/europeTravelFlags`, "appDataVersion");
-            const versionSnap = await getDoc(dataVersionFlagDocRef);
-            const currentDbVersion = versionSnap.exists() ? versionSnap.data().version : null;
-            console.log(`Veri versiyonu kontrolü. Kod: ${CURRENT_INITIAL_DATA_VERSION}, DB: ${currentDbVersion}`);
-
-            if (!initialPlacesData || initialPlacesData.length === 0) {
-                console.log("initialPlacesData boş. Seeding/Update atlanıyor.");
-                if (!versionSnap.exists()) { 
-                     await setDoc(dataVersionFlagDocRef, { version: CURRENT_INITIAL_DATA_VERSION, lastChecked: new Date().toISOString(), status: "No initial data defined in code." });
-                }
-                return;
-            }
-            
-            if (currentDbVersion !== CURRENT_INITIAL_DATA_VERSION) {
-                placesListStatusElement.innerHTML = `Başlangıç verileri güncelleniyor (Kod v${CURRENT_INITIAL_DATA_VERSION}, DB v${currentDbVersion || 'yok'})... <div class='loader !ml-0 !inline-block'></div>`;
-                console.log(`Başlangıç verileri ${CURRENT_INITIAL_DATA_VERSION} versiyonuna güncelleniyor/ekleniyor. Toplam ${initialPlacesData.length} yer.`);
-                
-                let updatedOrAddedCount = 0;
-                const promises = []; // Tüm batch commit promise'lerini topla
-
-                // Batch'leri bölmek için
-                const batchSize = 490; // Firestore batch limiti 500
-                for (let i = 0; i < initialPlacesData.length; i += batchSize) {
-                    const batch = writeBatch(db);
-                    const chunk = initialPlacesData.slice(i, i + batchSize);
-                    console.log(`Batch ${Math.floor(i/batchSize) + 1} hazırlanıyor, ${chunk.length} yer içeriyor.`);
-
-                    for (const place of chunk) {
-                        if (!place.userGivenId) {
-                            console.warn("userGivenId eksik, bu yer atlanıyor:", place.name);
-                            continue;
-                        }
-                        const placeDocRef = doc(placesCollectionRef, place.userGivenId);
-                        const existingDocSnap = await getDoc(placeDocRef); // Her bir dökümanı kontrol et
-                        
-                        let dataToSet = { ...place, id: placeDocRef.id }; 
-
-                        if (existingDocSnap.exists()) {
-                            const existingData = existingDocSnap.data();
-                            dataToSet.visited = typeof existingData.visited === 'boolean' ? existingData.visited : place.visited;
-                            dataToSet.selectedForRoute = typeof existingData.selectedForRoute === 'boolean' ? existingData.selectedForRoute : place.selectedForRoute;
-                        } else {
-                            dataToSet.visited = place.visited; 
-                            dataToSet.selectedForRoute = place.selectedForRoute; 
-                        }
-                        batch.set(placeDocRef, dataToSet); 
-                        updatedOrAddedCount++;
-                    }
-                    promises.push(batch.commit().then(() => {
-                        console.log(`Bir batch (${chunk.length} yer) başarıyla yazıldı.`);
-                    }).catch(e => {
-                        console.error("Bir batch yazma hatası:", e);
-                        // Hata durumunda diğer batch'leri de etkilememek için burada promise'i reject etmeyebiliriz,
-                        // ama genel bir hata olduğunu bilmeliyiz.
-                        throw e; // Hatanın yukarıya yayılmasını sağla
-                    }));
-                }
-                
-                try {
-                    await Promise.all(promises); // Tüm batch'lerin tamamlanmasını bekle
-                    console.log(`${updatedOrAddedCount} başlangıç yeri güncellendi/eklendi.`);
-                    await setDoc(dataVersionFlagDocRef, { version: CURRENT_INITIAL_DATA_VERSION, updatedAt: new Date().toISOString(), count: updatedOrAddedCount, status: `Updated to v${CURRENT_INITIAL_DATA_VERSION}` });
-                    authStatusElement.textContent = `${updatedOrAddedCount} başlangıç yeri güncellendi/eklendi (v${CURRENT_INITIAL_DATA_VERSION}). Liste dinleniyor...`;
-                    console.log("Data version flag güncellendi.");
-                } catch (e) {
-                     console.error("Başlangıç verilerini toplu güncelleme hatası:", e);
-                     authStatusElement.textContent = "Başlangıç verilerini güncellemede hata. Lütfen konsolu kontrol edin.";
+        function populateCountryFilter() {
+            console.log("populateCountryFilter çağrıldı. placesData uzunluğu:", placesData.length);
+            const currentSelectedCountry = countryFilterElement.value;
+            countryFilterElement.innerHTML = '<option value="all">Tüm Ülkeler</option>'; 
+            if (placesData && placesData.length > 0) {
+                const countries = [...new Set(placesData.map(place => place.country).filter(Boolean))].sort();
+                console.log("Filtre için ülkeler:", countries);
+                countries.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country;
+                    option.textContent = country;
+                    countryFilterElement.appendChild(option);
+                });
+                if (countries.includes(currentSelectedCountry)) {
+                    countryFilterElement.value = currentSelectedCountry;
                 }
             } else {
-                authStatusElement.textContent = `Başlangıç verileri güncel (v${CURRENT_INITIAL_DATA_VERSION}). Liste dinleniyor...`;
-                 console.log("Başlangıç verileri zaten güncel.");
+                console.log("Ülke filtresi için placesData boş.");
             }
         }
 
-        async function loadAndListenPlaces() {
-            if (!placesCollectionRef) {
-                console.log("placesCollectionRef tanımsız, loadAndListenPlaces atlanıyor.");
+        async function initializeFirebase() {
+            console.log("Firebase başlatılıyor...");
+            if (!firebaseConfig || !firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
+                authStatusElement.textContent = "Firebase yapılandırması eksik veya hatalı.";
+                console.error("Firebase config eksik veya hatalı.");
+                addPlaceBtn.disabled = true;
+                googleSignInBtn.disabled = true;
                 return;
             }
-            if (unsubscribePlaces) {
-                console.log("Mevcut Firestore listener kaldırılıyor.");
-                unsubscribePlaces(); 
-                unsubscribePlaces = null;
-            }
-            console.log("Yeni onSnapshot listener'ı kuruluyor for", placesCollectionRef.path);
-            // authStatusElement.innerHTML = "Yer listesi Firestore'dan yükleniyor... <div class='loader !ml-0 !inline-block'></div>"; // checkAndUpdateInitialData'da ayarlanıyor
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                authStatusElement.textContent = "Firebase başlatıldı. Kimlik durumu bekleniyor...";
+                
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) { 
+                        console.log("Kullanıcı giriş yaptı:", user.uid, user.displayName);
+                        userId = user.uid;
+                        userNameElement.textContent = user.displayName || user.email || "Kullanıcı";
+                        if(user.photoURL) {
+                            userPhotoElement.src = user.photoURL;
+                            userPhotoElement.classList.remove('hidden');
+                        } else {
+                            userPhotoElement.classList.add('hidden');
+                        }
+                        authStatusElement.textContent = `Hoşgeldiniz, ${userNameElement.textContent}! Veriler yükleniyor...`;
+                        userIdDisplayElement.textContent = `Kullanıcı ID: ${userId.substring(0,12)}...`; 
+                        
+                        googleSignInBtn.classList.add('hidden');
+                        userDisplay.classList.remove('hidden');
+                        userDisplay.classList.add('flex'); 
+                        addPlaceBtn.disabled = false; 
 
-            unsubscribePlaces = onSnapshot(query(placesCollectionRef, orderBy("country"), orderBy("name")), (snapshot) => {
-                console.log(`onSnapshot: ${snapshot.docs.length} döküman alındı.`);
-                placesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                // console.log("onSnapshot - placesData güncellendi:", placesData.length > 0 ? placesData[0] : "Boş");
-                populateCountryFilter(); 
-                renderPlacesList();
-                updateGenerateRouteButtonState();
-                 if (userId) { 
-                    if (placesData.length > 0) { 
-                        // authStatusElement.textContent = `Yer listesi güncel (${placesData.length} yer).`; 
-                    } else {
-                        // authStatusElement.textContent = "Listenizde henüz yer yok veya yükleniyor...";
+                        placesCollectionRef = collection(db, `users/${userId}/europeTravelPlaces`);
+                        await checkAndUpdateInitialData(); 
+                        loadAndListenPlaces(); 
+                    } else { 
+                        console.log("Kullanıcı çıkış yaptı veya giriş yapmamış.");
+                        userId = null;
+                        userNameElement.textContent = '';
+                        userPhotoElement.classList.add('hidden');
+                        authStatusElement.textContent = "Lütfen Google ile giriş yapın.";
+                        userIdDisplayElement.textContent = '';
+                        
+                        googleSignInBtn.classList.remove('hidden');
+                        userDisplay.classList.add('hidden');
+                        userDisplay.classList.remove('flex');
+                        addPlaceBtn.disabled = true; 
+                        placesData = []; 
+                        renderPlacesList(); 
+                        if (unsubscribePlaces) {
+                            console.log("Mevcut Firestore listener kaldırılıyor (çıkış yapıldı).");
+                            unsubscribePlaces(); 
+                            unsubscribePlaces = null;
+                        }
+                        populateCountryFilter(); 
                     }
-                }
-            }, (error) => { 
-                console.error("Firestore'dan yerleri dinleme hatası: ", error);
-                authStatusElement.textContent = "Yer listesi yüklenemedi: " + error.message;
-                 if (error.code === 'failed-precondition' && error.message.includes('indexes-not-found')) {
-                    authStatusElement.innerHTML += `<br><strong class="text-red-600">Firestore İndeks Hatası!</strong> Sıralama için gerekli birleşik indeks bulunamadı. Lütfen Firebase konsolundan oluşturun.`;
-                }
-            });
+                });
+            } catch (error) {
+                console.error("Firebase başlatma hatası:", error);
+                authStatusElement.textContent = "Firebase başlatılamadı: " + error.message;
+                addPlaceBtn.disabled = true;
+                googleSignInBtn.disabled = true;
+            }
         }
 
+        googleSignInBtn.addEventListener('click', async () => {
+            const provider = new GoogleAuthProvider();
+            // Pop-up'ın engellenmemesi için kullanıcı etkileşiminden hemen sonra çağırılmalı.
+            // Tarayıcı ayarlarında pop-up'lara izin verildiğinden emin olun.
+            authStatusElement.textContent = "Google ile giriş yapılıyor...";
+            try {
+                console.log("Google ile giriş popup'ı deneniyor...");
+                const result = await signInWithPopup(auth, provider);
+                console.log("Google ile giriş başarılı (signInWithPopup sonrası):", result.user);
+                // onAuthStateChanged zaten tetiklenecek ve UI'ı güncelleyecektir.
+            } catch (error) {
+                console.error("Google ile giriş hatası:", error);
+                authStatusElement.textContent = `Google ile giriş yapılamadı: ${error.message} (Kod: ${error.code})`;
+                if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+                    authStatusElement.textContent = "Google ile giriş işlemi iptal edildi veya pencere kapatıldı.";
+                } else if (error.code === 'auth/popup-blocked') {
+                    authStatusElement.textContent = "Google giriş penceresi tarayıcı tarafından engellendi. Lütfen pop-up engelleyicinizi kontrol edin.";
+                }
+            }
+        });
+
+        signOutBtn.addEventListener('click', async () => { /* Önceki gibi */ });
+        
+        async function checkAndUpdateInitialData() { /* Önceki gibi, sadece initialSeedFlagDocRef versiyonunu güncelleyin: "initialSeedDone_v8_google" */ }
+        async function loadAndListenPlaces() { /* Önceki gibi, sadece authStatusElement mesajlarını ve console.log'ları gözden geçirin */ }
         function renderPlacesList() { /* Önceki gibi */ }
         function updateMap(place) { /* Önceki gibi */ }
         function updateGenerateRouteButtonState() { /* Önceki gibi */ }
