@@ -204,6 +204,7 @@
         
         const appId = firebaseConfig.appId || 'default-app-id';
         const CURRENT_INITIAL_DATA_VERSION = "1.1"; // Başlangıç verilerinizin güncel versiyonu
+                                                // initialPlacesData'yı her değiştirdiğinizde bu versiyonu artırın (örn: "1.2")
 
         let app;
         let auth;
@@ -213,18 +214,19 @@
         let unsubscribePlaces = null; 
 
         // Kapsamlı initialPlacesData dizisi (bir önceki yanıttaki gibi kapsamlı olmalı)
-        // Örnek olarak kısa tutuyorum, kendi kapsamlı listenizi buraya eklemelisiniz.
+        // Bu listeyi kendi kapsamlı listenizle değiştirin.
         const initialPlacesData = [
             // FRANSA
             { userGivenId: 'fr_001', country: "FRANSA", name: "Paris", city: "Paris", description: "Dünyanın en romantik şehirlerinden biri olan Paris, 'Işık Şehir' olarak da anılır. İkonik Eyfel Kulesi'nden şehrin panoramik manzarasını izleyebilir, Seine Nehri'nde tekne turu yapabilir ve dünyaca ünlü sanat eserlerine ev sahipliği yapan Louvre Müzesi'ni gezebilirsiniz. Şık bulvarları, tarihi kafeleri, bohem mahalleleri ve eşsiz Fransız mutfağıyla unutulmaz bir deneyim sunar.", category: "Başkent / İkonik / Kültürel / Sanat", visited: false, mapQuery: "Paris, Fransa", selectedForRoute: false },
             { userGivenId: 'fr_002', country: "FRANSA", name: "Eyfel Kulesi", city: "Paris", description: "Paris'in ve Fransa'nın en tanınmış sembolü olan Eyfel Kulesi, Gustave Eiffel tarafından 1889 Evrensel Sergisi için tasarlanmıştır. Yılda milyonlarca ziyaretçi çeken bu demir kule, farklı katlarından şehrin muhteşem panoramik manzaralarını sunar. Gece ışıklandırmasıyla da büyüleyicidir.", category: "İkonik Yapı / Mimari / Manzara", visited: false, mapQuery: "Eyfel Kulesi, Paris", selectedForRoute: false },
             // İTALYA
             { userGivenId: 'it_001', country: "İTALYA", name: "Roma", city: "Roma", description: "Binlerce yıllık tarihiyle 'Ebedi Şehir' Roma, Kolezyum, Roma Forumu, Pantheon gibi antik dünyanın görkemli kalıntılarına ev sahipliği yapar. Vatikan Şehri (Aziz Petrus Bazilikası, Sistine Şapeli), Trevi Çeşmesi, İspanyol Merdivenleri gibi ikonik yapıları, sayısız müzesi, her köşede karşınıza çıkan sanat eserleri, lezzetli mutfağı (pizza, pasta, dondurma) ve canlı atmosferiyle adeta bir açık hava müzesidir. Trastevere gibi mahallelerinde kaybolmak keyiflidir.", category: "Başkent / Tarihi / Antik Kalıntı / Kültürel / Sanat / Gastronomi", visited: false, mapQuery: "Roma, İtalya", selectedForRoute: false },
-             // İSPANYA (Örnek olarak İspanya'yı ekleyelim)
+             // İSPANYA
             { userGivenId: 'es_001', country: "İSPANYA", name: "Barselona", city: "Barselona", description: "Katalonya'nın başkenti Barselona, Antoni Gaudí'nin eşsiz modernist mimarisinin damgasını vurduğu bir şehirdir. Yapımı hala devam eden La Sagrada Familia bazilikası, renkli mozaikleriyle Park Güell, hareketli La Rambla caddesi ve tarihi Gotik Mahallesi şehrin en önemli noktalarıdır. Akdeniz plajları ve canlı kültürel yaşamıyla da dikkat çeker.", category: "Şehir / Mimari / Kültürel / Sanat", visited: false, mapQuery: "Barselona, İspanya", selectedForRoute: false },
             { userGivenId: 'es_002', country: "İSPANYA", name: "El Hamra Sarayı", city: "Granada", description: "Endülüs Emevileri döneminden kalma bu muhteşem saray ve kale kompleksi, İslam mimarisinin en ince ve zarif örneklerinden birini sunar. Detaylı alçı oymaları, renkli çinileri, huzurlu avluları, serinletici çeşmeleri ve Generalife bahçeleriyle adeta bir masal diyarıdır. UNESCO Dünya Mirası listesindedir ve İspanya'nın en çok ziyaret edilen anıtlarındandır.", category: "Saray / Tarihi Yapı / İslam Mimarisi / UNESCO", visited: false, mapQuery: "El Hamra Sarayı, Granada", selectedForRoute: false },
-
             // ... (BURAYA DİĞER TÜM KAPSAMLI YER LİSTENİZİ EKLEYİN) ...
+            // Örnek:
+            // { userGivenId: 'de_001', country: "ALMANYA", name: "Neuschwanstein Şatosu", city: "Schwangau", description: "Bavyera Alpleri'nin eteklerinde, masalsı bir tepenin üzerine kurulmuş olan bu romantik şato...", category: "Şato / Mimari", visited: false, mapQuery: "Neuschwanstein Şatosu", selectedForRoute: false },
         ];
         let placesData = []; 
 
@@ -320,8 +322,24 @@
             }
         }
 
-        googleSignInBtn.addEventListener('click', async () => { /* Önceki gibi */ });
-        signOutBtn.addEventListener('click', async () => { /* Önceki gibi */ });
+        googleSignInBtn.addEventListener('click', async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Google ile giriş hatası:", error);
+                authStatusElement.textContent = "Google ile giriş yapılamadı: " + error.code + " - " + error.message;
+            }
+        });
+
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error("Çıkış yapma hatası:", error);
+                authStatusElement.textContent = "Çıkış yapılamadı: " + error.message;
+            }
+        });
         
         async function checkAndUpdateInitialData() {
             if (!userId || !placesCollectionRef) return;
@@ -331,12 +349,13 @@
 
             if (!initialPlacesData || initialPlacesData.length === 0) {
                 console.log("Başlangıç verisi (initialPlacesData) boş veya tanımlanmamış. Seeding atlanıyor.");
-                if (!versionSnap.exists()) { // DB'de de versiyon yoksa ve initialData boşsa, bayrağı yine de set et.
+                if (!versionSnap.exists()) { 
                      await setDoc(dataVersionFlagDocRef, { version: CURRENT_INITIAL_DATA_VERSION, seededAt: new Date().toISOString(), count: 0 });
                 }
                 return;
             }
             
+            // Eğer kod versiyonu DB versiyonundan farklıysa VEYA DB'de hiç versiyon yoksa, güncelle/ekle.
             if (currentDbVersion !== CURRENT_INITIAL_DATA_VERSION) {
                 authStatusElement.innerHTML = `Başlangıç verileri güncelleniyor (Kod v${CURRENT_INITIAL_DATA_VERSION}, DB v${currentDbVersion || 'yok'})... Lütfen bekleyin. <div class='loader !ml-0 !inline-block'></div>`;
                 const batch = writeBatch(db);
@@ -348,19 +367,18 @@
                         continue;
                     }
                     const placeDocRef = doc(placesCollectionRef, place.userGivenId);
-                    // Mevcut kullanıcı verilerini (visited, selectedForRoute) korumak için merge: true ile setDoc
-                    // Ancak bu, initialPlacesData'daki bir yerin açıklaması değişirse,
-                    // kullanıcının daha önce girdiği bir yerin üzerine yazacağı anlamına gelir.
-                    // Daha iyi bir strateji, sadece belirli alanları güncellemektir.
-                    // Şimdilik, initialPlacesData'daki tüm alanları yazıyoruz, bu da kullanıcının
-                    // o userGivenId'ye sahip yer için yaptığı değişiklikleri (visited hariç) sıfırlayabilir.
-                    // İdealde, sadece `description`, `category`, `city`, `mapQuery` güncellenmeli,
-                    // `visited` ve `selectedForRoute` kullanıcı tarafından yönetilmeli.
-                    // Bu basit versiyonda, tüm initialData'yı yazıyoruz.
-                    const dataToSet = { ...place, id: placeDocRef.id };
-                    // Eğer bu userGivenId ile Firestore'da bir döküman varsa ve seededVersion eski ise,
-                    // kullanıcının 'visited' ve 'selectedForRoute' bilgilerini korumak isteyebiliriz.
-                    // Bu örnekte basitçe üzerine yazıyoruz.
+                    
+                    // Mevcut dökümanı al (varsa)
+                    const existingDocSnap = await getDoc(placeDocRef);
+                    let dataToSet = { ...place, id: placeDocRef.id }; // Her zaman initialData'daki temel bilgileri al
+
+                    if (existingDocSnap.exists()) {
+                        // Eğer döküman varsa, kullanıcının değiştirebileceği alanları koru
+                        const existingData = existingDocSnap.data();
+                        dataToSet.visited = typeof existingData.visited === 'boolean' ? existingData.visited : place.visited;
+                        dataToSet.selectedForRoute = typeof existingData.selectedForRoute === 'boolean' ? existingData.selectedForRoute : place.selectedForRoute;
+                    }
+                    // Diğer alanlar (description, category, city, mapQuery) her zaman initialPlacesData'dan güncellenir.
                     batch.set(placeDocRef, dataToSet); 
                     count++;
                 }
@@ -380,6 +398,7 @@
             }
         }
 
+
         async function loadAndListenPlaces() {
             if (!placesCollectionRef) return;
             if (unsubscribePlaces) unsubscribePlaces(); 
@@ -394,7 +413,14 @@
                 } else if(userId) { 
                      //authStatusElement.textContent = "Listenizde henüz yer yok. Yeni yer ekleyebilir veya başlangıç verilerinin yüklenmesini bekleyebilirsiniz.";
                 }
-            }, (error) => { /* ... (hata yönetimi önceki gibi) ... */ });
+
+            }, (error) => { 
+                console.error("Firestore'dan yerleri dinleme hatası: ", error);
+                authStatusElement.textContent = "Yer listesi yüklenemedi: " + error.message;
+                 if (error.code === 'failed-precondition' && error.message.includes('indexes-not-found')) {
+                    authStatusElement.innerHTML += `<br><strong class="text-red-600">Firestore İndeks Hatası!</strong> Sıralama için gerekli birleşik indeks bulunamadı. Lütfen Firebase konsolundan oluşturun: <code class="bg-gray-200 p-1 rounded">${error.message.substring(error.message.indexOf('https://'), error.message.lastIndexOf('?'))}</code>`;
+                }
+            });
         }
 
         function renderPlacesList() { /* ... (Bu fonksiyonun içeriği öncekiyle aynı) ... */ }
