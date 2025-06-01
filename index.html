@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avrupa Gezi Listesi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        .place-item:hover {
+            background-color: #f0f9ff;
+        }
+        .place-item.selected-for-route {
+            background-color: #dbeafe;
+            border-left: 4px solid #2563eb;
+        }
+        .country-header {
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e3a8a;
+        }
+        #generateRouteBtn, #addPlaceBtn, .delete-place-btn {
+            transition: background-color 0.3s ease;
+        }
+        .category-tag {
+            display: inline-block;
+            background-color: #e0e7ff;
+            color: #3730a3;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 0.25rem;
+            margin-right: 0.25rem;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .delete-place-btn {
+            background-color: #fee2e2; /* red-100 */
+            color: #b91c1c; /* red-700 */
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .delete-place-btn:hover {
+            background-color: #fecaca; /* red-200 */
+        }
+        .filter-container > div {
+            margin-bottom: 0.5rem;
+        }
+        @media (min-width: 640px) { /* sm breakpoint */
+            .filter-container {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+            .filter-container > div {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 p-4 md:p-8">
+
+    <div class="container mx-auto max-w-7xl bg-white shadow-xl rounded-lg p-6">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-sky-600">Avrupa Gezi Rotam</h1>
+            <p class="text-gray-600 mt-2">Gezilecek yerleri işaretle, filtrele, sil ve haritada gör! Rota oluşturmak için yerlere tıklayarak seçin veya yeni yer ekleyin.</p>
+            <p id="authStatus" class="text-xs text-gray-500 mt-1">Kimlik durumu: Kontrol ediliyor...</p>
+             <p id="userIdDisplay" class="text-xs text-gray-400 mt-1"></p>
+        </header>
+
+        <div class="flex flex-col md:flex-row gap-6">
+            <div class="w-full md:w-3/5 lg:w-2/3 pr-0 md:pr-4">
+                <div class="mb-6 p-4 border border-gray-200 rounded-lg bg-slate-50">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Yeni Yer Ekle</h3>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="newPlaceNameInput" placeholder="Örn: Etretat Kayalıkları" class="flex-grow p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
+                        <button id="addPlaceBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-md shadow-md flex items-center justify-center" disabled>
+                            <span id="addPlaceBtnText">Yer Ekle</span>
+                            <div id="addPlaceLoader" class="loader hidden"></div>
+                        </button>
+                    </div>
+                    <div id="addPlaceMessage" class="text-sm mt-2"></div>
+                </div>
+
+                <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-gray-700">Gezilecek Yerler</h2>
+                        <p class="text-sm text-gray-500">Rota oluşturmak için listeden yerlere tıklayın.</p>
+                    </div>
+                    <div class="filter-container">
+                        <div>
+                            <label for="filterCountry" class="mr-2 text-gray-600">Ülke:</label>
+                            <select id="filterCountry" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
+                                <option value="all">Tüm Ülkeler</option>
+                                </select>
+                        </div>
+                        <div>
+                            <label for="filterVisited" class="mr-2 text-gray-600">Ziyaret:</label>
+                            <select id="filterVisited" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
+                                <option value="all">Tümü</option>
+                                <option value="notvisited" selected>Gezilmedi</option>
+                                <option value="visited">Gezildi</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                 <div class="mb-4">
+                    <button id="generateRouteBtn" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-md shadow-md disabled:opacity-50" disabled>
+                        Seçilenlerle Rota Oluştur
+                    </button>
+                </div>
+                <div id="routeLinkContainer" class="mb-4 text-sm"></div>
+                <div id="placesList" class="space-y-1 max-h-[40vh] md:max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
+                    <p class="text-gray-500 italic p-4">Yer listesi yükleniyor veya Firebase ile bağlantı bekleniyor...</p>
+                </div>
+            </div>
+
+            <div class="w-full md:w-2/5 lg:w-1/3 mt-6 md:mt-0">
+                <h2 id="mapTitle" class="text-2xl font-semibold text-gray-700 mb-2">Harita</h2>
+                <p id="mapLocationName" class="text-sm text-gray-500 mb-4 h-5"></p>
+                <div class="aspect-w-16 aspect-h-9 md:aspect-h-12 lg:aspect-h-10 rounded-lg overflow-hidden shadow-md">
+                     <iframe id="mapFrame"
+                        class="w-full h-full border-0"
+                        loading="lazy"
+                        allowfullscreen
+                        referrerpolicy="no-referrer-when-downgrade"
+                        src="https://maps.google.com/maps?q=Avrupa&t=&z=4&ie=UTF8&iwloc=&output=embed">
+                    </iframe>
+                </div>
+                <p class="mt-4 text-xs text-gray-500">
+                    Haritada bir yerin işaretlenmesi, o yerin genel konumunu gösterir. Rota oluşturma özelliği, seçilen yerleri Google Haritalar'a gönderir. Yeni yer ekleme özelliği, bilgileri otomatik olarak bulmaya çalışır; sonuçlar API'lerin yeteneklerine bağlıdır. Verileriniz Firebase'de saklanır.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase SDK imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, getDocs, deleteDoc, updateDoc, onSnapshot, query, orderBy, setDoc, getDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // ----- KENDİ FIREBASE PROJE YAPILANDIRMANIZI BURAYA EKLEYİN! -----
+        const firebaseConfig = {
+            apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA", // Kullanıcı kendi değerini girmeli
+            authDomain: "rotambenim.firebaseapp.com", // Kullanıcı kendi değerini girmeli
+            projectId: "rotambenim", // Kullanıcı kendi değerini girmeli
+            storageBucket: "rotambenim.firebasestorage.app", // Kullanıcı kendi değerini girmeli
+            messagingSenderId: "374285362920", // Kullanıcı kendi değerini girmeli
+            appId: "1:374285362920:web:b4058cf4a93e7337168b5d", // Kullanıcı kendi değerini girmeli
+            measurementId: "G-0QVZ4LDYPJ" // Kullanıcı kendi değerini girmeli (opsiyonel)
+        };
+        // --------------------------------------------------------------------
+        
+        const appId = firebaseConfig.appId || 'default-app-id';
+
+        let app;
+        let auth;
+        let db;
+        let userId;
+        let placesCollectionRef; 
+        let unsubscribePlaces = null; 
+
+        const initialPlacesData = [
+            // FRANSA
+            { userGivenId: 'fr_001', country: "FRANSA", name: "Paris", city: "Paris", description: "Dünyanın en romantik şehirlerinden biri olan Paris, 'Işık Şehir' olarak da anılır. İkonik Eyfel Kulesi'nden şehrin panoramik manzarasını izleyebilir, Seine Nehri'nde tekne turu yapabilir ve dünyaca ünlü sanat eserlerine ev sahipliği yapan Louvre Müzesi'ni gezebilirsiniz. Şık bulvarları, tarihi kafeleri, bohem mahalleleri ve eşsiz Fransız mutfağıyla unutulmaz bir deneyim sunar.", category: "Başkent / İkonik / Kültürel / Sanat", visited: false, mapQuery: "Paris, Fransa", selectedForRoute: false },
+            { userGivenId: 'fr_002', country: "FRANSA", name: "Eyfel Kulesi", city: "Paris", description: "Paris'in ve Fransa'nın en tanınmış sembolü olan Eyfel Kulesi, Gustave Eiffel tarafından 1889 Evrensel Sergisi için tasarlanmıştır. Yılda milyonlarca ziyaretçi çeken bu demir kule, farklı katlarından şehrin muhteşem panoramik manzaralarını sunar. Gece ışıklandırmasıyla da büyüleyicidir.", category: "İkonik Yapı / Mimari / Manzara", visited: false, mapQuery: "Eyfel Kulesi, Paris", selectedForRoute: false },
+            { userGivenId: 'fr_003', country: "FRANSA", name: "Louvre Müzesi", city: "Paris", description: "Dünyanın en büyük ve en çok ziyaret edilen sanat müzesi olan Louvre, Mona Lisa, Venus de Milo ve Kanatlı Zafer gibi paha biçilemez başyapıtlara ev sahipliği yapar. Eski bir kraliyet sarayı olan yapı, cam piramidiyle ünlü girişinden geçerek binlerce yıllık sanat ve medeniyet tarihine bir yolculuk sunar.", category: "Müze / Sanat / Tarih / Kültürel Miras", visited: false, mapQuery: "Louvre Müzesi, Paris", selectedForRoute: false },
+            { userGivenId: 'fr_004', country: "FRANSA", name: "Mont Saint-Michel", city: "", description: "Normandiya kıyılarında, gelgit sularıyla çevrili kayalık bir ada üzerinde yükselen bu görkemli Orta Çağ manastırı ve köyü, masalsı bir görünüme sahiptir. Dar sokakları, tarihi yapıları ve tepesinden sunduğu muhteşem manzaralarla UNESCO Dünya Mirası listesindedir. Özellikle suların yükseldiği zamanlarda adanın karayla bağlantısının kesilmesi etkileyicidir.", category: "Tarihi Yapı / Manastır / UNESCO / Ada", visited: false, mapQuery: "Mont Saint-Michel, Fransa", selectedForRoute: false },
+            { userGivenId: 'fr_005', country: "FRANSA", name: "Versailles Sarayı", city: "Versailles", description: "Fransız monarşisinin gücünü ve ihtişamını simgeleyen bu devasa saray, Barok mimarinin en görkemli örneklerindendir. Ünlü Aynalar Salonu, kraliyet daireleri, opera binası ve André Le Nôtre tarafından tasarlanan uçsuz bucaksız, geometrik düzenli bahçeleriyle ziyaretçilerini büyüler. Bahçelerindeki çeşmeler, heykeller ve Büyük Kanal başlı başına bir sanat eseridir.", category: "Saray / Tarihi Yapı / Bahçe / UNESCO / Barok", visited: false, mapQuery: "Versailles Sarayı", selectedForRoute: false },
+            { userGivenId: 'fr_006', country: "FRANSA", name: "Nice", city: "Nice", description: "Fransız Rivierası'nın (Cote d'Azur) kalbi olan Nice, Akdeniz'in masmavi suları, palmiyelerle süslü Promenade des Anglais kordonu, renkli eski şehri (Vieux Nice) ve canlı çiçek pazarıyla (Cours Saleya) ünlüdür. Matisse ve Chagall gibi sanatçıların eserlerini barındıran müzeleri, canlı pazarları ve Akdeniz mutfağıyla keyifli bir tatil vaat eder.", category: "Şehir / Tatil / Kıyı / Sanat / Pazar", visited: false, mapQuery: "Nice, Fransa", selectedForRoute: false },
+            { userGivenId: 'fr_007', country: "FRANSA", name: "Cannes", city: "Cannes", description: "Dünyaca ünlü film festivaline ev sahipliği yapan Cannes, lüks otelleri, şık butikleri, yat limanı ve kumlu plajlarıyla Fransız Rivierası'nın gözde destinasyonlarındandır. La Croisette bulvarında yürüyüş yapmak, yıldızların izlerini takip etmek ve Lérins Adaları'na (Île Sainte-Marguerite ve Île Saint-Honorat) günübirlik bir gezi yapmak popüler aktivitelerdendir.", category: "Şehir / Etkinlik / Lüks / Tatil / Kıyı", visited: false, mapQuery: "Cannes, Fransa", selectedForRoute: false },
+            { userGivenId: 'fr_008', country: "FRANSA", name: "Colmar (Alsace)", city: "Colmar", description: "Alsace şarap yolu üzerinde yer alan Colmar, 'Küçük Venedik' (Petite Venise) olarak bilinen kanalları, rengarenk yarı ahşap evleri (colombages) ve çiçeklerle bezeli sokaklarıyla adeta bir masal diyarıdır. Sakin atmosferi, yerel lezzetleri (özellikle Tarte Flambée ve Choucroute) ve Alsace şaraplarıyla huzurlu bir kaçış noktasıdır. Noel pazarları da oldukça ünlüdür.", category: "Şehir / Kültürel / Şirin Kasaba / Gastronomi / Şarap", visited: false, mapQuery: "Colmar, Fransa", selectedForRoute: false },
+            { userGivenId: 'fr_009', country: "FRANSA", name: "Strasbourg Katedrali", city: "Strasbourg", description: "Notre-Dame de Strasbourg olarak da bilinen bu katedral, Gotik mimarinin en etkileyici ve zarif örneklerinden biridir. Pembe kumtaşından yapılmış dış cephesi, devasa astronomik saati (her gün saat 12:30'da figürleri hareket eder), büyüleyici vitrayları ve 142 metrelik kulesiyle ziyaretçilerini hayran bırakır. Kulesinden şehrin ve Ren Nehri'nin panoramik manzarasını seyretmek mümkündür.", category: "Dini Yapı / Mimari / Tarihi / Gotik / UNESCO", visited: false, mapQuery: "Strasbourg Katedrali", selectedForRoute: false },
+            { userGivenId: 'fr_010', country: "FRANSA", name: "Cote d'Azur (Fransız Rivierası)", city: "", description: "Akdeniz kıyı şeridinin bu efsanevi bölümü, Nice, Cannes, Antibes, Monaco ve Saint-Tropez gibi dünyaca ünlü tatil beldelerine ev sahipliği yapar. Göz alıcı plajları, turkuaz suları, lüks yatları, hareketli gece hayatı, parfüm endüstrisinin merkezi Grasse ve Eze gibi tepedeki kartal yuvası köyleriyle bilinir. Sanatçılara ilham veren ışığı ve manzaralarıyla ünlüdür.", category: "Kıyı Şeridi / Tatil / Lüks / Manzara / Kültürel", visited: false, mapQuery: "French Riviera", selectedForRoute: false },
+            { userGivenId: 'fr_011', country: "FRANSA", name: "Dordogne Bölgesi", city: "", description: "Güneybatı Fransa'da yer alan bu bölge, tarih öncesi çağlardan kalma mağara resimleri (Lascaux gibi UNESCO mirası), yüzlerce Orta Çağ şatosu (Castelnaud, Beynac, Les Milandes), pitoresk nehir kenarı köyleri (La Roque-Gageac, Domme) ve zengin yerel mutfağı (trüf mantarı, kaz ciğeri, ceviz, ördek konfi) ile ünlüdür. Dordogne Nehri'nde kano yapmak ve bölgenin yemyeşil doğasında yürüyüşler yapmak popülerdir.", category: "Bölge / Tarihi / Doğa / Gastronomi / Şato / Mağara", visited: false, mapQuery: "Dordogne, Fransa", selectedForRoute: false },
+            { userGivenId: 'fr_012', country: "FRANSA", name: "Chamonix ve Mont Blanc", city: "Chamonix", description: "Avrupa'nın en yüksek zirvesi olan Mont Blanc'ın (4,808 m) eteklerinde yer alan Chamonix, dünyaca ünlü bir dağcılık, tırmanış, kayak, snowboard ve kış sporları merkezidir. Aiguille du Midi teleferiği ile 3,842 metreye çıkarak Mont Blanc'a ve çevresindeki Alp zirvelerine nefes kesen manzaralar eşliğinde bakabilir, Mer de Glace buzuluna trenle ulaşabilirsiniz.", category: "Doğa / Spor / Dağ / Manzara / Kayak", visited: false, mapQuery: "Chamonix Mont Blanc", selectedForRoute: false },
+            { userGivenId: 'fr_013', country: "FRANSA", name: "Étretat Kayalıkları", city: "Étretat", description: "Normandiya'nın Alabaster Sahili'nde yer alan bu beyaz tebeşir kayalıkları, özellikle 'Fil Hortumu' (Porte d'Aval), 'İğne' (Aiguille) ve Manneporte gibi doğal kemer ve kaya oluşumlarıyla ünlüdür. Manzaraları, Claude Monet ve Gustave Courbet gibi birçok empresyonist ressama ilham vermiştir. Kıyı boyunca uzanan yürüyüş parkurları muhteşem fotoğraf fırsatları sunar.", category: "Doğal Güzellik / Kıyı / Manzara / Jeolojik / Yürüyüş", visited: false, mapQuery: "Étretat, Fransa", selectedForRoute: false },
+            { userGivenId: 'fr_014', country: "FRANSA", name: "Provence", city: "", description: "Güney Fransa'nın bu büyüleyici bölgesi, yaz aylarında mora bürünen uçsuz bucaksız lavanta tarlaları (Valensole Platosu gibi), altın sarısı ayçiçeği tarlaları, zeytinlikleri, tarihi Roma kalıntıları (Pont du Gard, Nimes Arenası, Orange Antik Tiyatrosu), Gordes ve Roussillon gibi şirin tepe köyleri ve lezzetli Akdeniz mutfağı ile ünlüdür. Sanatçılara (Van Gogh, Cézanne) ilham veren ışığı ve renkleriyle bilinir.", category: "Bölge / Kültürel / Doğa / Gastronomi / Kırsal / Tarihi", visited: false, mapQuery: "Provence, Fransa", selectedForRoute: false },
+            { userGivenId: 'fr_015', country: "FRANSA", name: "Loire Vadisi", city: "", description: "Fransa'nın 'Bahçesi' olarak da bilinen Loire Vadisi, görkemli şatoları (Chambord, Chenonceau, Amboise, Villandry, Cheverny gibi 300'den fazla), verimli üzüm bağları (Sancerre, Pouilly-Fumé şarapları), tarihi kasabaları (Tours, Blois, Orléans) ve Loire Nehri boyunca uzanan pitoresk manzaralarıyla UNESCO Dünya Mirası listesindedir. Bisiklet turları ve şarap tadımı için popüler bir destinasyondur.", category: "Bölge / Şato / Kültürel / Şarap / UNESCO / Bisiklet", visited: false, mapQuery: "Loire Valley, Fransa", selectedForRoute: false },
+            { userGivenId: 'fr_016', country: "FRANSA", name: "Korsika", city: "Korsika", description: "Akdeniz'in 'Güzellik Adası' (Île de Beauté) olarak anılan Korsika, sarp dağları, sık ormanları, el değmemiş kumsalları (Palombaggia, Santa Giulia), berrak suları ve Bonifacio gibi etkileyici falez kasabalarıyla hem doğa severler hem de macera arayanlar için idealdir. GR20 gibi Avrupa'nın en zorlu ve güzel yürüyüş rotalarından birine ev sahipliği yapar. Kendine özgü kültürü ve mutfağı da dikkat çekicidir.", category: "Ada / Doğa / Macera / Plaj / Yürüyüş / Kültürel", visited: false, mapQuery: "Korsika, Fransa", selectedForRoute: false },
+            { userGivenId: 'fr_017', country: "FRANSA", name: "Verdon Kanyonu", city: "", description: "'Avrupa'nın Büyük Kanyonu' olarak da bilinen bu etkileyici nehir kanyonu, Provence bölgesinde yer alır. Turkuaz renkli Verdon Nehri'nin milyonlarca yılda oyduğu kireçtaşı vadileri, 700 metreye varan derinliğiyle nefes keser. Kano, kayak, rafting, kaya tırmanışı ve kanyon boyunca uzanan manzaralı yollarda (Route des Crêtes) sürüş yapmak popüler aktivitelerdir. Lac de Sainte-Croix gölü de kanyonun girişinde yer alır.", category: "Doğa / Kanyon / Macera Sporları / Manzara / Göl", visited: false, mapQuery: "Verdon Gorge, Fransa", selectedForRoute: false },
+            
+            // İTALYA
+            { userGivenId: 'it_001', country: "İTALYA", name: "Roma", city: "Roma", description: "Binlerce yıllık tarihiyle 'Ebedi Şehir' Roma, Kolezyum, Roma Forumu, Pantheon gibi antik dünyanın görkemli kalıntılarına ev sahipliği yapar. Vatikan Şehri (Aziz Petrus Bazilikası, Sistine Şapeli), Trevi Çeşmesi, İspanyol Merdivenleri gibi ikonik yapıları, sayısız müzesi, her köşede karşınıza çıkan sanat eserleri, lezzetli mutfağı (pizza, pasta, dondurma) ve canlı atmosferiyle adeta bir açık hava müzesidir. Trastevere gibi mahallelerinde kaybolmak keyiflidir.", category: "Başkent / Tarihi / Antik Kalıntı / Kültürel / Sanat / Gastronomi", visited: false, mapQuery: "Roma, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_002', country: "İTALYA", name: "Venedik", city: "Venedik", description: "Su üzerine kurulu bu eşsiz şehir, labirenti andıran kanalları, zarif gondolları, daracık sokakları ve romantik atmosferiyle dünyanın en büyüleyici yerlerinden biridir. San Marco Meydanı, Doge Sarayı, Rialto Köprüsü ve sayısız kilisesiyle Venedik, her köşesinde farklı bir güzellik sunar. Cam işçiliğiyle ünlü Murano ve renkli evleriyle Burano adaları da ziyaret edilebilir. Karnavalı da dünyaca ünlüdür.", category: "Şehir / Romantik / Eşsiz / Kültürel / UNESCO", visited: false, mapQuery: "Venedik, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_003', country: "İTALYA", name: "Floransa ve Toskana", city: "Floransa", description: "Rönesans'ın doğduğu şehir Floransa, Uffizi Galerisi (Botticelli, Leonardo da Vinci), Accademia Galerisi (Michelangelo'nun Davut heykeli), Duomo Katedrali (Brunelleschi'nin kubbesi) ve Ponte Vecchio gibi sanat ve mimari şaheserleriyle doludur. Çevresindeki Toskana bölgesi ise zeytinlikler, üzüm bağları, selvi ağaçlarıyla bezenmiş dalgalı tepeleri, şarapları (Chianti, Brunello) ve Pienza, San Gimignano gibi pitoresk Orta Çağ kasabalarıyla ünlüdür. Val d'Orcia UNESCO Dünya Mirasıdır.", category: "Şehir / Bölge / Sanat / Gastronomi / Rönesans / UNESCO", visited: false, mapQuery: "Floransa, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_004', country: "İTALYA", name: "Amalfi Sahilleri", city: "", description: "UNESCO Dünya Mirası listesinde yer alan bu nefes kesen kıyı şeridi, Tiren Denizi boyunca uzanır. Sarp kayalıklar üzerine kurulmuş Positano, Amalfi ve Ravello gibi rengarenk kasabaları, dar ve virajlı yolları, teraslanmış limon bahçeleri, tarihi villaları ve eşsiz deniz ürünleriyle Akdeniz'in en güzel manzaralarından birini sunar. 'Tanrıların Yolu' (Sentiero degli Dei) gibi ünlü yürüyüş parkurları da bölgenin güzelliğini keşfetmek için idealdir.", category: "Kıyı Şeridi / Manzara / UNESCO / Şirin Kasaba / Yürüyüş", visited: false, mapQuery: "Amalfi Coast, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_005', country: "İTALYA", name: "Cinque Terre", city: "", description: "Ligurya kıyısında, sarp yamaçlara kurulmuş beş pitoresk balıkçı köyünden (Monterosso al Mare, Vernazza, Corniglia, Manarola, Riomaggiore) oluşan Cinque Terre, UNESCO Dünya Mirası listesindedir. Renkli evleri, daracık sokakları, teraslanmış üzüm bağları (yerel şarap Sciacchetrà üretilir) ve masmavi Akdeniz manzaralarıyla ünlüdür. Köyler arası trenle veya manzaralı yürüyüş parkurlarıyla (Sentiero Azzurro gibi) ulaşım sağlanır.", category: "Köy / Kıyı / Manzara / UNESCO / Yürüyüş / Şarap", visited: false, mapQuery: "Cinque Terre, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_006', country: "İTALYA", name: "Dolomitler", city: "", description: "Kuzey İtalya'daki bu büyüleyici dağ silsilesi, UNESCO Dünya Mirası listesindedir. Sarp ve soluk renkli (dolomit kayacından dolayı) zirveleri (Marmolada, Tre Cime di Lavaredo gibi), geniş alpin çayırları, berrak gölleri (Lago di Braies, Lago di Carezza gibi) ve pitoresk dağ köyleriyle ünlüdür. Via Ferrata tırmanış rotaları, yürüyüş, bisiklet ve kış sporları için idealdir. Alta Badia gibi vadileri hem doğal güzellikler hem de gurme lezzetler sunar.", category: "Dağ / Doğa / UNESCO / Spor / Manzara / Yürüyüş", visited: false, mapQuery: "Dolomitler, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_007', country: "İTALYA", name: "Pisa Kulesi", city: "Pisa", description: "Temelindeki zemin sorunları nedeniyle eğik duran ve bu özelliğiyle dünyaca ünlenmiş çan kulesi (Campanile), Pisa Katedrali'nin bir parçasıdır. Mucizeler Meydanı'nda (Piazza dei Miracoli) yer alan kule, İtalya'nın en çok tanınan sembollerinden biridir. Kuleye çıkıp eğikliği deneyimlemek ve fotoğraf çekmek popülerdir.", category: "İkonik Yapı / Mimari / Turistik / UNESCO", visited: false, mapQuery: "Pisa Kulesi", selectedForRoute: false },
+            { userGivenId: 'it_008', country: "İTALYA", name: "Siena", city: "Siena", description: "Toskana bölgesinin kalbinde yer alan Siena, iyi korunmuş Orta Çağ mimarisi, yelpaze şeklindeki ana meydanı Piazza del Campo ve burada yılda iki kez düzenlenen geleneksel Palio at yarışlarıyla ünlüdür. Dar sokakları, tuğla binaları, etkileyici Duomo Katedrali ve Torre del Mangia'dan görünen manzarasıyla tarihi bir atmosfer sunar.", category: "Tarihi Şehir / Kültürel / Etkinlik / Mimari", visited: false, mapQuery: "Siena, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_009', country: "İTALYA", name: "Napoli ve Pompei", city: "Napoli", description: "Pizzanın doğduğu canlı ve kaotik şehir Napoli, zengin bir tarihi mirasa, hareketli bir sokak yaşamına ve muhteşem bir körfeze sahiptir. Yakınındaki Pompei ise M.S. 79'da Vezüv Yanardağı'nın patlamasıyla küller altında kalmış, iyi korunmuş bir antik Roma kentidir ve ziyaretçilere geçmişe dramatik bir yolculuk sunar. Herculaneum da benzer şekilde etkileyicidir.", category: "Antik Kalıntı / Şehir / Gastronomi / Tarihi Alan / UNESCO", visited: false, mapQuery: "Pompei, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_010', country: "İTALYA", name: "Milano", city: "Milano", description: "İtalya'nın moda, tasarım ve finans merkezi olan Milano, modern ve dinamik bir atmosfere sahiptir. Dünyaca ünlü markaların mağazalarına ev sahipliği yapan Galleria Vittorio Emanuele II, görkemli Duomo Katedrali (çatısına çıkılabilir), La Scala Opera Binası ve Leonardo da Vinci'nin 'Son Akşam Yemeği' tablosu şehrin önemli kültürel ve sanatsal noktalarıdır.", category: "Şehir / Moda / Sanat / Kültür / İş Merkezi", visited: false, mapQuery: "Milano, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_012', country: "İTALYA", name: "Sardinya", city: "Sardinya", description: "Akdeniz'in ikinci büyük adası olan Sardinya, 'toz beyazı kumu ve Maldivler'i kıskandıran berraklıkta suları' ile Avrupa'nın en çarpıcı plajlarından bazılarına ev sahipliği yapar (Costa Smeralda, Cala Goloritzè). El değmemiş koyları, Nuraghe adı verilen gizemli antik taş yapıları, zengin iç bölgeleri, dağları (Gennargentu) ve kendine özgü kültürüyle keşfedilmeyi bekler.", category: "Ada / Plaj / Doğa / Tarihi / Kültürel", visited: false, mapQuery: "Sardinya, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_013', country: "İTALYA", name: "Stromboli", city: "Stromboli", description: "Aeolian Adaları'ndan biri olan Stromboli, sürekli aktif olan bir volkana ev sahipliği yapar. Özellikle geceleyin görülebilen düzenli lav püskürmeleri ('Strombolian patlamalar') nedeniyle 'Akdeniz'in Deniz Feneri' olarak da bilinir. Siyah kumlu plajları, dramatik manzaraları ve rehberli turlarla volkanın zirvesine yakın noktalara tırmanış imkanıyla eşsiz bir deneyim sunar.", category: "Ada / Volkan / Doğa Olayı / Macera", visited: false, mapQuery: "Stromboli, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_014', country: "İTALYA", name: "Capri", city: "Capri", description: "Napoli Körfezi'nde yer alan bu şık ve göz alıcı ada, Roma döneminden beri bir tatil beldesi olmuştur. Dünyaca ünlü Mavi Mağara (Grotta Azzurra), etkileyici Faraglioni kayalıkları, lüks butikleri, şık otelleri ve Augustus Bahçeleri'nden görünen muhteşem manzaralarıyla ünlüdür. Adanın tepesindeki Anacapri de ziyaret edilebilir.", category: "Ada / Lüks / Manzara / Turistik / Mağara", visited: false, mapQuery: "Capri, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_015', country: "İTALYA", name: "Ischia", city: "Ischia", description: "Napoli Körfezi'ndeki en büyük ada olan Ischia, volkanik kökenli olup sayısız termal kaplıcası ve spa merkeziyle ünlüdür. Yemyeşil bitki örtüsü, pitoresk balıkçı köyleri (Sant'Angelo gibi), kumlu plajları ve denizin ortasında yükselen görkemli Aragonese Kalesi ile sağlık ve doğa turizmi için popüler bir destinasyondur. Poseidon Termal Bahçeleri gibi tesisler ziyaret edilebilir.", category: "Ada / Sağlık / Doğa / Kale / Kaplıca", visited: false, mapQuery: "Ischia, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_016', country: "İTALYA", name: "Umbria", city: "", description: "'İtalya'nın yeşil kalbi' olarak anılan Umbria, Toskana'ya komşu olup daha az kalabalık ve daha otantik bir İtalyan kırsalı deneyimi sunar. Zeytinlikler, üzüm bağları, Orta Çağ tepe kasabaları (Assisi, Orvieto, Perugia gibi) ve sakin atmosferiyle bilinir. Trasimeno Gölü de bölgenin doğal güzelliklerindendir.", category: "Bölge / Kırsal / Tarihi Kasaba / Gastronomi", visited: false, mapQuery: "Umbria, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_017', country: "İTALYA", name: "Alta Badia (Dolomitler)", city: "Alta Badia", description: "Dolomitler'in kalbinde yer alan bu vadi, muhteşem dağ manzaraları, zengin Ladin kültürü, Michelin yıldızlı restoranları içeren gurme mutfağı ve yazın yürüyüş, bisiklet, kışın ise Sellaronda gibi dünyaca ünlü kayak pistlerine erişim imkanlarıyla ünlüdür.", category: "Vadi / Dağ / Gastronomi / Spor / Kültürel", visited: false, mapQuery: "Alta Badia, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_018', country: "İTALYA", name: "Valle della Luna (Sardinya)", city: "Aggius", description: "Sardinya'nın Gallura bölgesinde, Aggius yakınlarında bulunan bu vadi, rüzgarın milyonlarca yılda aşındırdığı devasa granit kayalarıyla ay yüzeyini andıran eşsiz, çarpıcı ve mistik bir manzaraya sahiptir. 'Ay Vadisi' olarak da bilinir ve yürüyüş için ilginç bir alandır.", category: "Vadi / Jeolojik / Doğa / Manzara", visited: false, mapQuery: "Valle della Luna, Aggius, Sardinya", selectedForRoute: false },
+            { userGivenId: 'it_019', country: "İTALYA", name: "Gennargentu Masifi (Sardinya)", city: "", description: "Sardinya'nın en yüksek dağ silsilesi olan Gennargentu, adanın iç kesimlerinde yer alır ve el değmemiş vahşi doğası, derin vadileri, sık ormanları, endemik bitki ve hayvan türleri (Sardinya geyiği gibi) ve geleneksel dağ köyleriyle otantik bir deneyim sunar. Yürüyüş ve doğa keşfi için idealdir.", category: "Dağ / Doğa / Yaban Hayatı / Yürüyüş", visited: false, mapQuery: "Gennargentu, Sardinya", selectedForRoute: false },
+            { userGivenId: 'it_020', country: "İTALYA", name: "Lanaittu Vadisi (Sardinya)", city: "Dorgali/Oliena", description: "Sardinya'nın Supramonte bölgesinde yer alan bu vadi, etkileyici kireçtaşı dağları, derin kanyonları, geniş mağaraları (Sa Oche ve Su Bentu gibi) ve Nuraghe kalıntıları ile Tiscali Nurajik Köyü gibi önemli arkeolojik alanlarıyla bilinir. Macera ve tarih meraklıları için çekicidir.", category: "Vadi / Mağara / Arkeoloji / Macera", visited: false, mapQuery: "Valle di Lanaittu, Sardinya", selectedForRoute: false },
+            { userGivenId: 'it_021', country: "İTALYA", name: "Procida", city: "Procida", description: "Napoli Körfezi'ndeki en küçük ve en renkli adalardan biri olan Procida, pastel tonlardaki balıkçı köyü Marina Corricella, Terra Murata'nın tarihi merkezi ve daha sakin, otantik Akdeniz atmosferiyle İtalya'nın gizli kalmış cevherlerindendir. 'Il Postino' filminin çekildiği yer olarak da bilinir.", category: "Ada / Şirin Kasaba / Kültürel / Kıyı", visited: false, mapQuery: "Procida, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_022', country: "İTALYA", name: "Campania Kıyıları", city: "", description: "Napoli, Pompei, Sorrento, Amalfi Sahili ve Capri gibi dünyaca ünlü yerleri içeren bu bölge, Tiren Denizi kıyı şeridinin tarihi zenginlikleri, doğal güzellikleri, lezzetli mutfağı ve canlı kültürüyle İtalya'nın en çekici destinasyonlarından biridir.", category: "Bölge / Kıyı / Tarihi / Gastronomi", visited: false, mapQuery: "Campania Kıyıları, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_023', country: "İTALYA", name: "Furore Fiyordu (Amalfi)", city: "Furore", description: "Amalfi Sahili'nin gizli kalmış cevherlerinden biri olan bu dar ve derin fiyort (İtalyanca'da 'vallone'), üzerinde kemerli bir köprünün bulunduğu küçük, şirin bir plaja ev sahipliği yapar. Kayalıkların arasına gizlenmiş bu eşsiz doğal oluşum, fotoğrafçılar için de popülerdir.", category: "Fiyort / Doğa / Kıyı / Gizli Cennet", visited: false, mapQuery: "Fiordo di Furore, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_024', country: "İTALYA", name: "Atrani (Amalfi)", city: "Atrani", description: "Amalfi Sahili'nin en küçük ama en pitoresk köylerinden biri olan Atrani, daracık sokakları, kemerli geçitleri, karakteristik beyaz evleri ve denize açılan küçük plajıyla otantik bir Akdeniz cazibesi sunar. Amalfi'ye yürüme mesafesinde olmasına rağmen daha sakin bir atmosfere sahiptir.", category: "Köy / Kıyı / Şirin Kasaba", visited: false, mapQuery: "Atrani, İtalya", selectedForRoute: false },
+            { userGivenId: 'it_025', country: "İTALYA", name: "Praiano (Amalfi)", city: "Praiano", description: "Positano ve Amalfi arasında yer alan Praiano, daha sakin bir atmosfere sahip olup, muhteşem gün batımı manzaraları, San Gennaro Kilisesi'nin renkli kubbesi ve 'Tanrıların Yolu' (Sentiero degli Dei) gibi ünlü yürüyüş parkurlarına kolay erişimiyle bilinir.", category: "Köy / Kıyı / Manzara / Yürüyüş", visited: false, mapQuery: "Praiano, İtalya", selectedForRoute: false },
+            
+            // İSPANYA
+            { userGivenId: 'es_001', country: "İSPANYA", name: "Barselona", city: "Barselona", description: "Katalonya'nın başkenti Barselona, Antoni Gaudí'nin eşsiz modernist mimarisinin damgasını vurduğu bir şehirdir. Yapımı hala devam eden La Sagrada Familia bazilikası, renkli mozaikleriyle Park Güell, hareketli La Rambla caddesi ve tarihi Gotik Mahallesi şehrin en önemli noktalarıdır. Akdeniz plajları ve canlı kültürel yaşamıyla da dikkat çeker.", category: "Şehir / Mimari / Kültürel / Sanat", visited: false, mapQuery: "Barselona, İspanya", selectedForRoute: false },
+            { userGivenId: 'es_002', country: "İSPANYA", name: "El Hamra Sarayı", city: "Granada", description: "Endülüs Emevileri döneminden kalma bu muhteşem saray ve kale kompleksi, İslam mimarisinin en ince ve zarif örneklerinden birini sunar. Detaylı alçı oymaları, renkli çinileri, huzurlu avluları, serinletici çeşmeleri ve Generalife bahçeleriyle adeta bir masal diyarıdır. UNESCO Dünya Mirası listesindedir ve İspanya'nın en çok ziyaret edilen anıtlarındandır.", category: "Saray / Tarihi Yapı / İslam Mimarisi / UNESCO", visited: false, mapQuery: "El Hamra Sarayı, Granada", selectedForRoute: false },
+            { userGivenId: 'es_003', country: "İSPANYA", name: "Madrid", city: "Madrid", description: "İspanya'nın hareketli başkenti Madrid, geniş bulvarları, zarif meydanları (Plaza Mayor, Puerta del Sol), dünyaca ünlü sanat müzeleri (Prado, Reina Sofia, Thyssen-Bornemisza) ve canlı gece hayatıyla bilinir. Kraliyet Sarayı ve Retiro Parkı da şehrin önemli noktalarıdır. Tapas kültürü de oldukça gelişmiştir.", category: "Başkent / Kültürel / Sanat / Müze / Gastronomi", visited: false, mapQuery: "Madrid, İspanya", selectedForRoute: false },
+            { userGivenId: 'es_004', country: "İSPANYA", name: "Sevilla", city: "Sevilla", description: "Endülüs bölgesinin başkenti ve en büyük şehri olan Sevilla, flamenko dansının, tapasların ve boğa güreşlerinin merkezidir. Mağribi mimarisinin etkileyici örneklerini sunan Alcázar Sarayı, dünyanın en büyük Gotik katedrali olan Sevilla Katedrali ve Giralda Kulesi ile görkemli Plaza de España şehrin simgelerindendir. Santa Cruz mahallesi de keşfedilmeye değerdir.", category: "Şehir / Kültürel / Tarihi / Flamenko / Mimari", visited: false, mapQuery: "Sevilla, İspanya", selectedForRoute: false },
+            { userGivenId: 'es_005', country: "İSPANYA", name: "La Concha", city: "San Sebastián", description: "San Sebastián şehrinde bulunan La Concha Plajı, Avrupa'nın en güzel şehir plajlarından biri olarak kabul edilir. Hilal şeklindeki kumsalı, sakin suları ve çevresindeki zarif binalarıyla hem yerel halkın hem de turistlerin gözdesidir. Aileler için ideal olup, çeşitli su sporlarına da imkan tanır.", category: "Plaj / Şehir Plajı / Tatil", visited: false, mapQuery: "La Concha, San Sebastián", selectedForRoute: false },
+            { userGivenId: 'es_006', country: "İSPANYA", name: "Valensiya Bilim ve Sanat Şehri", city: "Valensiya", description: "Santiago Calatrava ve Félix Candela tarafından tasarlanan bu fütüristik mimari kompleks, Valensiya'nın en modern ve dikkat çekici yapılarından biridir. Opera binası, bilim müzesi, planetaryum, IMAX sineması ve Avrupa'nın en büyük akvaryumu olan Oceanogràfic'i içerir. Turia Nehri yatağında yer alır.", category: "Mimari / Bilim / Kültürel Kompleks / Modern", visited: false, mapQuery: "Valensiya Bilim ve Sanat Şehri", selectedForRoute: false },
+            { userGivenId: 'es_007', country: "İSPANYA", name: "Mallorca", city: "Mallorca", description: "Balear Adaları'nın en büyüğü olan Mallorca, turkuaz suları, beyaz kumlu plajları (Playa de Muro, Es Trenc gibi), sarp kayalıkları, pitoresk köyleri ve Serra de Tramuntana dağ silsilesi ile çeşitlilik sunar. Hem dinlenmek hem de aktif tatil yapmak isteyenler için ideal bir destinasyondur.", category: "Ada / Plaj / Doğa / Dağ", visited: false, mapQuery: "Mallorca, İspanya", selectedForRoute: false },
+            { userGivenId: 'es_008', country: "İSPANYA", name: "Cordoba", city: "Cordoba", description: "Endülüs'ün tarihi şehirlerinden biri olan Cordoba, özellikle Roma, İslam ve Hristiyan kültürlerinin izlerini taşıyan Mezquita-Catedral (Kurtuba Camii-Katedrali) ile ünlüdür. Dar çiçekli sokakları, tarihi Yahudi mahallesi (Judería) ve Roma köprüsü ile ziyaretçilerine zamanda bir yolculuk sunar.", category: "Tarihi Şehir / Dini Yapı / Kültürel Miras", visited: false, mapQuery: "Cordoba, İspanya", selectedForRoute: false },
+            { userGivenId: 'es_009', country: "İSPANYA", name: "Ibiza", city: "Ibiza", description: "Balear Adaları'ndan biri olan Ibiza, özellikle hareketli gece hayatı, dünyaca ünlü DJ performansları ve plaj partileriyle tanınır. Ancak adanın sakin koyları, çam ormanları, hippi pazarları ve UNESCO Dünya Mirası listesindeki Dalt Vila (eski şehir) gibi daha sakin ve kültürel yönleri de bulunmaktadır.", category: "Ada / Eğlence / Gece Hayatı / Plaj", visited: false, mapQuery: "Ibiza, İspanya", selectedForRoute: false },
+            { userGivenId: 'es_010', country: "İSPANYA", name: "Picos de Europa Ulusal Parkı", city: "", description: "Kuzey İspanya'da yer alan bu ulusal park, Cantabrian Dağları'nın en yüksek ve en dramatik kesimlerini kapsar. Kireçtaşı zirveleri, derin kanyonları (ünlü Cares Boğazı gibi), yemyeşil vadileri ve Covadonga Gölleri gibi pastoral alpin gölleriyle yürüyüşçüler, dağcılar ve doğa severler için bir cennettir.", category: "Milli Park / Doğa / Dağ / Yürüyüş", visited: false, mapQuery: "Picos de Europa Ulusal Parkı, İspanya", selectedForRoute: false },
+            { userGivenId: 'es_011', country: "İSPANYA", name: "Minorka", city: "Minorka", description: "Balear Adaları'nın daha sakin ve el değmemiş olanı Minorka, UNESCO Biyosfer Rezervi olarak korunmaktadır. Cala Mitjana, Cala Macarella gibi sayısız güzel 'cala' (koy) ve plajı, megalitik anıtları ve yürüyüş parkurlarıyla doğa ve huzur arayanlar için idealdir.", category: "Ada / Plaj / Doğa / UNESCO", visited: false, mapQuery: "Minorka, İspanya", selectedForRoute: false },
+            { userGivenId: 'es_012', country: "İSPANYA", name: "Teide Milli Parkı", city: "Tenerife", description: "Kanarya Adaları'ndan Tenerife'de bulunan Teide Milli Parkı, İspanya'nın en yüksek zirvesi olan Teide Yanardağı'na (3.718 m) ev sahipliği yapar. Ay yüzeyini andıran volkanik manzaraları, endemik bitki örtüsü ve teleferikle zirveye yakın noktalara ulaşım imkanıyla UNESCO Dünya Mirası listesindedir.", category: "Milli Park / Volkan / Doğa / UNESCO", visited: false, mapQuery: "Teide Milli Parkı, Tenerife", selectedForRoute: false },
+
+
+            // ALMANYA
+            { userGivenId: 'de_001', country: "ALMANYA", name: "Neuschwanstein Şatosu", city: "Schwangau", description: "Peri masalı sarayı, Disney'e ilham kaynağı.", category: "Şato / Mimari", visited: false, mapQuery: "Neuschwanstein Şatosu", selectedForRoute: false },
+            { userGivenId: 'de_002', country: "ALMANYA", name: "Berlin (Brandenburg Kapısı)", city: "Berlin", description: "Başkent, tarihi ve modernliğin iç içe geçtiği şehir.", category: "Başkent / Tarihi", visited: false, mapQuery: "Brandenburg Kapısı, Berlin", selectedForRoute: false },
+            { userGivenId: 'de_003', country: "ALMANYA", name: "Köln Katedrali", city: "Köln", description: "Gotik mimari şaheseri.", category: "Dini Yapı / Mimari", visited: false, mapQuery: "Köln Katedrali", selectedForRoute: false },
+            { userGivenId: 'de_004', country: "ALMANYA", name: "Heidelberg Şatosu", city: "Heidelberg", description: "Romantik Ren vadisi manzarası.", category: "Şato / Tarihi", visited: false, mapQuery: "Heidelberg Şatosu", selectedForRoute: false },
+            { userGivenId: 'de_005', country: "ALMANYA", name: "Sanssouci Sarayı", city: "Potsdam", description: "Barok bahçeler.", category: "Saray / Bahçe", visited: false, mapQuery: "Sanssouci Sarayı, Potsdam", selectedForRoute: false },
+            { userGivenId: 'de_006', country: "ALMANYA", name: "Nürnberg", city: "Nürnberg", description: "Tarihi kalesi ve Orta Çağ mimarisiyle Bavyera'nın kültürel merkezi.", category: "Tarihi Şehir", visited: false, mapQuery: "Nürnberg, Almanya", selectedForRoute: false },
+            { userGivenId: 'de_007', country: "ALMANYA", name: "Lübeck", city: "Lübeck", description: "Baltık kıyısındaki eski Hansa şehri, tuğla Gotik mimarisi.", category: "Tarihi Şehir", visited: false, mapQuery: "Lübeck, Almanya", selectedForRoute: false },
+            { userGivenId: 'de_008', country: "ALMANYA", name: "Berchtesgaden Milli Parkı", city: "", description: "Yüksek zirveler, Schellenberger Buz Mağarası.", category: "Milli Park / Doğa", visited: false, mapQuery: "Berchtesgaden Milli Parkı", selectedForRoute: false },
+            { userGivenId: 'de_009', country: "ALMANYA", name: "Saxon İsviçre Milli Parkı", city: "", description: "Bastei Köprüsü gibi ikonik kaya oluşumları.", category: "Milli Park / Doğa", visited: false, mapQuery: "Saxon Switzerland National Park", selectedForRoute: false },
+            { userGivenId: 'de_010', country: "ALMANYA", name: "Kara Orman (Black Forest)", city: "", description: "Sık ormanları, buzul vadileri ve geleneksel çiftlik evleri.", category: "Bölge / Doğa", visited: false, mapQuery: "Black Forest, Almanya", selectedForRoute: false },
+
+
+            // HOLLANDA
+            { userGivenId: 'nl_001', country: "HOLLANDA", name: "Amsterdam Kanalları", city: "Amsterdam", description: "Tarihi kanal sistemi, Van Gogh Müzesi, Rijksmuseum.", category: "Şehir Simgesi / Kültürel", visited: false, mapQuery: "Amsterdam Kanalları", selectedForRoute: false },
+            { userGivenId: 'nl_002', country: "HOLLANDA", name: "Keukenhof Bahçeleri", city: "Lisse", description: "Dünyaca ünlü lale bahçeleri (mevsimlik).", category: "Bahçe / Doğa", visited: false, mapQuery: "Keukenhof, Lisse", selectedForRoute: false },
+            { userGivenId: 'nl_003', country: "HOLLANDA", name: "Zaanse Schans", city: "Zaandam", description: "Yel değirmenleri köyü.", category: "Köy / Kültürel", visited: false, mapQuery: "Zaanse Schans", selectedForRoute: false },
+            { userGivenId: 'nl_004', country: "HOLLANDA", name: "Rotterdam", city: "Rotterdam", description: "Modern mimari ve liman.", category: "Şehir / Mimari", visited: false, mapQuery: "Rotterdam", selectedForRoute: false },
+            { userGivenId: 'nl_005', country: "HOLLANDA", name: "Lahey", city: "Lahey", description: "Barış Sarayı ve müzeler.", category: "Şehir / Kültürel", visited: false, mapQuery: "Lahey, Hollanda", selectedForRoute: false },
+            { userGivenId: 'nl_006', country: "HOLLANDA", name: "Texel", city: "Texel", description: "Wadden Denizi'ndeki ada, geniş kumulları ve plajları.", category: "Ada / Doğa", visited: false, mapQuery: "Texel, Hollanda", selectedForRoute: false },
+            { userGivenId: 'nl_007', country: "HOLLANDA", name: "Hillegom (Lale Tarlaları)", city: "Hillegom", description: "İlkbaharda rengarenk lale tarlaları.", category: "Kırsal / Doğa", visited: false, mapQuery: "Hillegom, Hollanda", selectedForRoute: false },
+
+            // Diğer ülkeler ve yerler bu şekilde eklenecek...
+            // Listenin tamamını buraya eklemek çok uzun olacağı için bir kısmını ekledim.
+            // Kalan yerleri metin dosyasındaki formata uygun şekilde bu diziye ekleyebilirsiniz.
+            // Örnek olarak birkaç tane daha ekleyelim:
+
+            // BELÇİKA
+            { userGivenId: 'be_001', country: "BELÇİKA", name: "Brüksel Grand Place", city: "Brüksel", description: "UNESCO korumalı meydan.", category: "Meydan / Tarihi", visited: false, mapQuery: "Grand Place, Brüksel", selectedForRoute: false },
+            { userGivenId: 'be_002', country: "BELÇİKA", name: "Brugge", city: "Brugge", description: "Ortaçağ mimarisi, kanallar ve çikolata.", category: "Tarihi Şehir / Kültürel", visited: false, mapQuery: "Brugge, Belçika", selectedForRoute: false },
+            { userGivenId: 'be_003', country: "BELÇİKA", name: "Gent", city: "Gent", description: "Tarihi kale ve kanallar.", category: "Tarihi Şehir", visited: false, mapQuery: "Gent, Belçika", selectedForRoute: false },
+            { userGivenId: 'be_004', country: "BELÇİKA", name: "Anvers", city: "Anvers", description: "Liman ve sanat müzeleri.", category: "Şehir / Kültürel", visited: false, mapQuery: "Anvers, Belçika", selectedForRoute: false },
+
+
+            // ÇEKYA
+            { userGivenId: 'cz_001', country: "ÇEKYA", name: "Prag", city: "Prag", description: "Altın Şehir; Charles Köprüsü, Eski Şehir Meydanı, Prag Kalesi.", category: "Başkent / Tarihi", visited: false, mapQuery: "Prag, Çekya", selectedForRoute: false },
+            { userGivenId: 'cz_002', country: "ÇEKYA", name: "Karlovy Vary", city: "Karlovy Vary", description: "Termal kaplıcalar.", category: "Şehir / Sağlık", visited: false, mapQuery: "Karlovy Vary, Çekya", selectedForRoute: false },
+            { userGivenId: 'cz_003', country: "ÇEKYA", name: "Cesky Krumlov", city: "Cesky Krumlov", description: "Ortaçağ kasabası.", category: "Tarihi Kasaba", visited: false, mapQuery: "Cesky Krumlov", selectedForRoute: false },
+            { userGivenId: 'cz_004', country: "ÇEKYA", name: "Olomouc", city: "Olomouc", description: "Tarihi meydanları, Barok çeşmeleri, UNESCO.", category: "Tarihi Şehir", visited: false, mapQuery: "Olomouc, Çekya", selectedForRoute: false },
+
+            // AVUSTURYA
+            { userGivenId: 'au_001', country: "AVUSTURYA", name: "Viyana", city: "Viyana", description: "İmparatorluk sarayları, kafeler, klasik müzik.", category: "Başkent / Kültürel", visited: false, mapQuery: "Viyana, Avusturya", selectedForRoute: false },
+            { userGivenId: 'au_002', country: "AVUSTURYA", name: "Schönbrunn Sarayı", city: "Viyana", description: "Barok saray ve teraslar.", category: "Saray / Bahçe", visited: false, mapQuery: "Schönbrunn Sarayı, Viyana", selectedForRoute: false },
+            { userGivenId: 'au_003', country: "AVUSTURYA", name: "Salzburg", city: "Salzburg", description: "Mozart'ın doğum yeri, Hohensalzburg Kalesi.", category: "Şehir / Kültürel", visited: false, mapQuery: "Salzburg, Avusturya", selectedForRoute: false },
+            { userGivenId: 'au_004', country: "AVUSTURYA", name: "Hallstatt", city: "Hallstatt", description: "Göl kenarı köyü, UNESCO.", category: "Köy / Manzara", visited: false, mapQuery: "Hallstatt, Avusturya", selectedForRoute: false },
+            { userGivenId: 'au_005', country: "AVUSTURYA", name: "Hohe Tauern Milli Parkı", city: "", description: "Grossglockner zirvesi, Krimmler Şelaleleri.", category: "Milli Park / Doğa", visited: false, mapQuery: "Hohe Tauern National Park", selectedForRoute: false },
+            { userGivenId: 'au_006', country: "AVUSTURYA", name: "Innsbruck", city: "Innsbruck", description: "Alplerin kalbinde, Altın Çatı.", category: "Şehir / Dağ", visited: false, mapQuery: "Innsbruck, Avusturya", selectedForRoute: false },
+
+
+            // İSVİÇRE
+            { userGivenId: 'ch_001', country: "İSVİÇRE", name: "Cenevre Gölü", city: "Cenevre", description: "Jet d'Eau çeşmesi ve Chillon Şatosu.", category: "Göl / Doğa", visited: false, mapQuery: "Cenevre Gölü", selectedForRoute: false },
+            { userGivenId: 'ch_002', country: "İSVİÇRE", name: "Matterhorn", city: "Zermatt", description: "Alpler'in simgesi, Zermatt köyü.", category: "Dağ / Doğa", visited: false, mapQuery: "Matterhorn, Zermatt", selectedForRoute: false },
+            { userGivenId: 'ch_003', country: "İSVİÇRE", name: "Zürih Eski Şehir", city: "Zürih", description: "Tarihi merkez.", category: "Şehir Merkezi / Tarihi", visited: false, mapQuery: "Zürih Eski Şehir", selectedForRoute: false },
+            { userGivenId: 'ch_004', country: "İSVİÇRE", name: "Bern", city: "Bern", description: "Aare Nehri kıyısındaki Orta Çağ eski şehri, UNESCO.", category: "Başkent / Tarihi Şehir", visited: false, mapQuery: "Bern, İsviçre", selectedForRoute: false },
+            { userGivenId: 'ch_005', country: "İSVİÇRE", name: "Lauterbrunnen Vadisi", city: "Lauterbrunnen", description: "72 şelalesi ve şirin dağ köyleri.", category: "Vadi / Şelale", visited: false, mapQuery: "Lauterbrunnen Vadisi, İsviçre", selectedForRoute: false },
+            { userGivenId: 'ch_006', country: "İSVİÇRE", name: "İsviçre Milli Parkı", city: "", description: "El değmemiş doğasıyla Alplerin turizm öncesi hali.", category: "Milli Park / Doğa", visited: false, mapQuery: "Swiss National Park", selectedForRoute: false },
+
+
+            // PORTEKİZ
+            { userGivenId: 'pt_001', country: "PORTEKİZ", name: "Lizbon", city: "Lizbon", description: "Belem Kulesi, Alfama, tarihi ve kültürel merkez.", category: "Başkent / Kültürel", visited: false, mapQuery: "Lizbon, Portekiz", selectedForRoute: false },
+            { userGivenId: 'pt_002', country: "PORTEKİZ", name: "Porto", city: "Porto", description: "Ribeira Bölgesi, Douro Nehri kıyısı.", category: "Şehir / Manzara", visited: false, mapQuery: "Porto, Portekiz", selectedForRoute: false },
+            { userGivenId: 'pt_003', country: "PORTEKİZ", name: "Sintra", city: "Sintra", description: "Pena Sarayı gibi renkli saraylar, UNESCO.", category: "Kasaba / Şato", visited: false, mapQuery: "Sintra, Portekiz", selectedForRoute: false },
+            { userGivenId: 'pt_004', country: "PORTEKİZ", name: "Algarve", city: "Algarve", description: "Altın kumlu plajlar.", category: "Kıyı Şeridi / Tatil", visited: false, mapQuery: "Algarve, Portekiz", selectedForRoute: false },
+            { userGivenId: 'pt_005', country: "PORTEKİZ", name: "Azor Adaları", city: "", description: "Volkanik adalar, lav zirveleri, mavi kaldera gölleri.", category: "Ada / Doğa", visited: false, mapQuery: "Azor Adaları, Portekiz", selectedForRoute: false },
+            { userGivenId: 'pt_006', country: "PORTEKİZ", name: "Parque Natural de Sintra-Cascais", city: "", description: "Sintra şatolarını çevreleyen park, yemyeşil tepeler, Atlantik kıyısı.", category: "Doğa Parkı / Kıyı", visited: false, mapQuery: "Sintra-Cascais Natural Park", selectedForRoute: false },
+
+
+            // BİRLEŞİK KRALLIK (İNGİLTERE, İSKOÇYA, KUZEY İRLANDA, GALLER)
+            { userGivenId: 'uk_001', country: "BİRLEŞİK KRALLIK", name: "Londra", city: "Londra", description: "Big Ben, Westminster, Buckingham Sarayı.", category: "Başkent / Kültürel", visited: false, mapQuery: "Londra, Birleşik Krallık", selectedForRoute: false },
+            { userGivenId: 'uk_002', country: "BİRLEŞİK KRALLIK", name: "Stonehenge", city: "Wiltshire", description: "Tarihi taş yapılar.", category: "Antik Kalıntı", visited: false, mapQuery: "Stonehenge", selectedForRoute: false },
+            { userGivenId: 'uk_003', country: "BİRLEŞİK KRALLIK", name: "Bath", city: "Bath", description: "Roma hamamları.", category: "Tarihi Şehir / Sağlık", visited: false, mapQuery: "Bath, Birleşik Krallık", selectedForRoute: false },
+            { userGivenId: 'uk_004', country: "BİRLEŞİK KRALLIK", name: "Edinburgh Kalesi", city: "Edinburgh", description: "İskoçya'nın tarihi kalesi.", category: "Kale / Tarihi", visited: false, mapQuery: "Edinburgh Kalesi", selectedForRoute: false },
+            { userGivenId: 'uk_005', country: "BİRLEŞİK KRALLIK", name: "Loch Ness", city: "Highlands", description: "Efsanevi canavar ve doğal güzellik.", category: "Göl / Doğa", visited: false, mapQuery: "Loch Ness", selectedForRoute: false },
+            { userGivenId: 'uk_006', country: "BİRLEŞİK KRALLIK", name: "İskoçya Dağlık Bölgesi (Scottish Highlands)", city: "", description: "Sisle kaplı dağlar, Isle of Skye.", category: "Bölge / Doğa", visited: false, mapQuery: "Scottish Highlands", selectedForRoute: false },
+            { userGivenId: 'uk_007', country: "BİRLEŞİK KRALLIK", name: "Göller Bölgesi (Lake District)", city: "", description: "Windermere gibi büyüleyici göller.", category: "Milli Park / Doğa", visited: false, mapQuery: "Lake District National Park", selectedForRoute: false },
+            { userGivenId: 'uk_008', country: "BİRLEŞİK KRALLIK", name: "York", city: "York", description: "York Minster Katedrali, Shambles sokağı.", category: "Tarihi Şehir", visited: false, mapQuery: "York, İngiltere", selectedForRoute: false },
+            { userGivenId: 'uk_009', country: "BİRLEŞİK KRALLIK", name: "Devler Kaldırımı (Giant's Causeway)", city: "Kuzey İrlanda", description: "Binlerce altıgen bazalt sütun, UNESCO.", category: "Jeolojik Oluşum", visited: false, mapQuery: "Giant's Causeway", selectedForRoute: false },
+            { userGivenId: 'uk_010', country: "BİRLEŞİK KRALLIK", name: "New Forest Ulusal Parkı", city: "İngiltere", description: "Serbest dolaşan midilliler, antik ormanlar.", category: "Milli Park / Doğa", visited: false, mapQuery: "New Forest National Park", selectedForRoute: false },
+            { userGivenId: 'uk_011', country: "BİRLEŞİK KRALLIK", name: "Cardigan Körfezi", city: "Galler", description: "Yunusları ve fokları gözlemleme imkanı.", category: "Kıyı / Doğa", visited: false, mapQuery: "Cardigan Bay, Galler", selectedForRoute: false },
+
+
+            // İRLANDA
+            { userGivenId: 'ie_001', country: "İRLANDA", name: "Dublin", city: "Dublin", description: "Trinity College, Kütüphane, tarihi ve kültürel merkez.", category: "Başkent / Kültürel", visited: false, mapQuery: "Dublin, İrlanda", selectedForRoute: false },
+            { userGivenId: 'ie_002', country: "İRLANDA", name: "Cliffs of Moher", city: "County Clare", description: "Dramatik Atlantik falezleri.", category: "Doğal Güzellik / Kıyı", visited: false, mapQuery: "Cliffs of Moher", selectedForRoute: false },
+            { userGivenId: 'ie_003', country: "İRLANDA", name: "Ring of Kerry", city: "", description: "Doğal sürüş rotası, zümrüt tepeler, Skellig Michael.", category: "Manzara Rotası", visited: false, mapQuery: "Ring of Kerry, İrlanda", selectedForRoute: false },
+            { userGivenId: 'ie_004', country: "İRLANDA", name: "Skellig Michael", city: "", description: "Ring of Kerry açıklarında sarp ada, 6. yy manastırı, UNESCO.", category: "Ada / Tarihi", visited: false, mapQuery: "Skellig Michael", selectedForRoute: false },
+
+
+            // YUNANİSTAN
+            { userGivenId: 'gr_001', country: "YUNANİSTAN", name: "Atina (Akropolis)", city: "Atina", description: "Antik Yunan'ın kalbi, Parthenon.", category: "Başkent / Antik Kalıntı", visited: false, mapQuery: "Akropolis, Atina", selectedForRoute: false },
+            { userGivenId: 'gr_002', country: "YUNANİSTAN", name: "Santorini", city: "Santorini", description: "Beyaz badanalı evler, mavi kubbeler, Oia gün batımı.", category: "Ada / Romantik", visited: false, mapQuery: "Santorini, Yunanistan", selectedForRoute: false },
+            { userGivenId: 'gr_003', country: "YUNANİSTAN", name: "Mikonos", city: "Mikonos", description: "Canlı gece hayatı ve plajlar.", category: "Ada / Eğlence", visited: false, mapQuery: "Mikonos, Yunanistan", selectedForRoute: false },
+            { userGivenId: 'gr_004', country: "YUNANİSTAN", name: "Meteora Manastırları", city: "Kalabaka", description: "Kayalık tepelerde Ortodoks manastırları, UNESCO.", category: "Dini Yapı / Manzara", visited: false, mapQuery: "Meteora, Yunanistan", selectedForRoute: false },
+            { userGivenId: 'gr_005', country: "YUNANİSTAN", name: "İyon Adaları (Korfu)", city: "Korfu", description: "Selvi ağaçları, pastel renkli Venedik tarzı kasabalar.", category: "Ada / Kültürel", visited: false, mapQuery: "Korfu, Yunanistan", selectedForRoute: false },
+            { userGivenId: 'gr_006', country: "YUNANİSTAN", name: "Milos", city: "Milos", description: "Sarakiniko gibi ay manzaralı beyaz kaya oluşumları.", category: "Ada / Jeolojik", visited: false, mapQuery: "Milos, Yunanistan", selectedForRoute: false },
+            { userGivenId: 'gr_007', country: "YUNANİSTAN", name: "Naxos", city: "Naxos", description: "Kikladların en büyüğü, uzun kumsallar, Portara.", category: "Ada / Plaj / Tarihi", visited: false, mapQuery: "Naxos, Yunanistan", selectedForRoute: false },
+            { userGivenId: 'gr_008', country: "YUNANİSTAN", name: "Paros", city: "Paros", description: "Geleneksel Kiklad köyleri ve altın sarısı kumsallar.", category: "Ada / Köy / Plaj", visited: false, mapQuery: "Paros, Yunanistan", selectedForRoute: false },
+            { userGivenId: 'gr_009', country: "YUNANİSTAN", name: "Sifnos", city: "Sifnos", description: "Yunanistan'ın gurme adası, beyaz badanalı köyler.", category: "Ada / Gastronomi", visited: false, mapQuery: "Sifnos, Yunanistan", selectedForRoute: false },
+
+
+            // POLONYA
+            { userGivenId: 'pl_001', country: "POLONYA", name: "Krakow", city: "Krakow", description: "Tarihi şehir merkezi, Wawel Kalesi.", category: "Tarihi Şehir", visited: false, mapQuery: "Krakow, Polonya", selectedForRoute: false },
+            { userGivenId: 'pl_002', country: "POLONYA", name: "Varşova", city: "Varşova", description: "Başkent ve kültür.", category: "Başkent / Kültürel", visited: false, mapQuery: "Varşova, Polonya", selectedForRoute: false },
+            { userGivenId: 'pl_003', country: "POLONYA", name: "Auschwitz-Birkenau", city: "Oświęcim", description: "Tarihi toplama kampı.", category: "Tarihi Alan / Anıt", visited: false, mapQuery: "Auschwitz-Birkenau", selectedForRoute: false },
+            { userGivenId: 'pl_004', country: "POLONYA", name: "Wrocław", city: "Wrocław", description: "Oder Nehri üzerinde 12 adasıyla 'Polonya'nın Venedik'i'.", category: "Şehir / Kültürel", visited: false, mapQuery: "Wrocław, Polonya", selectedForRoute: false },
+            { userGivenId: 'pl_005', country: "POLONYA", name: "Tatra Dağları Milli Parkı", city: "", description: "Sarp zirveler, Morskie Oko gölü.", category: "Milli Park / Dağ", visited: false, mapQuery: "Tatra National Park, Polonya", selectedForRoute: false },
+
+
+            // ROMANYA
+            { userGivenId: 'ro_001', country: "ROMANYA", name: "Bran Şatosu (Drakula Kalesi)", city: "Bran", description: "Efsanevi kale.", category: "Şato / Tarihi", visited: false, mapQuery: "Bran Şatosu, Romanya", selectedForRoute: false },
+            { userGivenId: 'ro_002', country: "ROMANYA", name: "Bükreş Parlamento Binası", city: "Bükreş", description: "Dünyanın en büyük idari binası.", category: "Mimari / Tarihi Yapı", visited: false, mapQuery: "Bükreş Parlamento Binası", selectedForRoute: false },
+            { userGivenId: 'ro_003', country: "ROMANYA", name: "Transfagarasan Yolu", city: "", description: "Dünyanın en güzel sürüş rotalarından.", category: "Yol / Manzara", visited: false, mapQuery: "Transfagarasan Yolu, Romanya", selectedForRoute: false },
+            { userGivenId: 'ro_004', country: "ROMANYA", name: "Bucegi Doğa Parkı", city: "", description: "Babele ve Sfenks gibi kaya oluşumları.", category: "Doğa Parkı / Jeolojik", visited: false, mapQuery: "Bucegi Natural Park, Romanya", selectedForRoute: false },
+
+
+            // BULGARİSTAN
+            { userGivenId: 'bg_001', country: "BULGARİSTAN", name: "Sofya (Aleksandr Nevski Katedrali)", city: "Sofya", description: "Başkent ve tarihi merkez.", category: "Başkent / Dini Yapı", visited: false, mapQuery: "Sofya, Bulgaristan", selectedForRoute: false },
+            { userGivenId: 'bg_002', country: "BULGARİSTAN", name: "Plovdiv", city: "Plovdiv", description: "Avrupa'nın en eski şehirlerinden.", category: "Tarihi Şehir", visited: false, mapQuery: "Plovdiv, Bulgaristan", selectedForRoute: false },
+            { userGivenId: 'bg_003', country: "BULGARİSTAN", name: "Rila Manastırı", city: "Rila", description: "UNESCO listesinde.", category: "Dini Yapı / Tarihi", visited: false, mapQuery: "Rila Manastırı", selectedForRoute: false },
+            { userGivenId: 'bg_004', country: "BULGARİSTAN", name: "Pirin Ulusal Parkı", city: "", description: "Sarp granit zirveleri, buzul gölleri, UNESCO.", category: "Milli Park / Doğa", visited: false, mapQuery: "Pirin National Park", selectedForRoute: false },
+            { userGivenId: 'bg_005', country: "BULGARİSTAN", name: "Bolata Plajı", city: "", description: "Kaliakra Burnu yakınında yarım daire koy.", category: "Plaj / Kıyı", visited: false, mapQuery: "Bolata Beach, Bulgaristan", selectedForRoute: false },
+
+
+            // LİTVANYA
+            { userGivenId: 'lt_001', country: "LİTVANYA", name: "Vilnius Eski Şehir", city: "Vilnius", description: "UNESCO listesinde, barok ve gotik mimari.", category: "Başkent / Tarihi Şehir", visited: false, mapQuery: "Vilnius, Litvanya", selectedForRoute: false },
+            { userGivenId: 'lt_002', country: "LİTVANYA", name: "Trakai Kalesi", city: "Trakai", description: "Göl ortasında ada kalesi.", category: "Kale / Tarihi", visited: false, mapQuery: "Trakai Kalesi", selectedForRoute: false },
+            { userGivenId: 'lt_003', country: "LİTVANYA", name: "Hill of Crosses", city: "Šiauliai", description: "Binlerce haçın olduğu kutsal tepe.", category: "Dini Alan / Kültürel", visited: false, mapQuery: "Hill of Crosses, Litvanya", selectedForRoute: false },
+
+            // TÜRKİYE (Ekstra)
+            { userGivenId: 'tr_001', country: "TÜRKİYE", name: "İstanbul", city: "İstanbul", description: "Ayasofya, Sultanahmet Camii, Topkapı Sarayı, Boğaz.", category: "Şehir / Tarihi", visited: false, mapQuery: "İstanbul, Türkiye", selectedForRoute: false },
+            { userGivenId: 'tr_002', country: "TÜRKİYE", name: "Pamukkale", city: "Denizli", description: "Beyaz travertenler, Hierapolis antik kenti.", category: "Doğal Güzellik / Antik Kent", visited: false, mapQuery: "Pamukkale, Denizli", selectedForRoute: false },
+
+            // SLOVENYA
+            { userGivenId: 'si_001', country: "SLOVENYA", name: "Bled Gölü", city: "Bled", description: "Adacıkta kilise, Bled Kalesi, Julian Alpleri.", category: "Göl / Manzara", visited: false, mapQuery: "Bled Gölü, Slovenya", selectedForRoute: false },
+            { userGivenId: 'si_002', country: "SLOVENYA", name: "Ljubljana", city: "Ljubljana", description: "Ejderha Köprüsü, Ljubljanica Nehri, yeşil başkent.", category: "Başkent / Kültürel", visited: false, mapQuery: "Ljubljana, Slovenya", selectedForRoute: false },
+            { userGivenId: 'si_003', country: "SLOVENYA", name: "Triglav Milli Parkı", city: "", description: "Julian Alpleri'nin büyük bölümü, Bohinj Gölü.", category: "Milli Park / Doğa", visited: false, mapQuery: "Triglav National Park", selectedForRoute: false },
+            { userGivenId: 'si_004', country: "SLOVENYA", name: "Logar Vadisi (Logarska Dolina)", city: "", description: "Kamnik-Savinja Alpleri'nde buzul vadisi, Rinka Şelalesi.", category: "Vadi / Doğa", visited: false, mapQuery: "Logar Vadisi, Slovenya", selectedForRoute: false },
+
+            // KARADAĞ
+            { userGivenId: 'me_001', country: "KARADAĞ", name: "Kotor Körfezi ve Kotor", city: "Kotor", description: "Adriyatik fiyordu, UNESCO eski şehri.", category: "Kıyı / Tarihi Şehir", visited: false, mapQuery: "Kotor, Karadağ", selectedForRoute: false },
+            { userGivenId: 'me_002', country: "KARADAĞ", name: "Durmitor Milli Parkı", city: "", description: "Tara Nehri Kanyonu, Buzul Gölleri, UNESCO.", category: "Milli Park / Doğa", visited: false, mapQuery: "Durmitor Milli Parkı, Karadağ", selectedForRoute: false },
+            { userGivenId: 'me_003', country: "KARADAĞ", name: "Tara Nehri Kanyonu", city: "", description: "Avrupa'nın en derin kanyonu, rafting.", category: "Kanyon / Doğa Sporları", visited: false, mapQuery: "Tara River Canyon, Karadağ", selectedForRoute: false },
+
+            // DANİMARKA
+            { userGivenId: 'dk_001', country: "DANİMARKA", name: "Kopenhag", city: "Kopenhag", description: "Nyhavn limanı, bisiklet kültürü, Tivoli Bahçeleri.", category: "Başkent / Kültürel", visited: false, mapQuery: "Kopenhag, Danimarka", selectedForRoute: false },
+            { userGivenId: 'dk_002', country: "DANİMARKA", name: "Faroe Adaları", city: "", description: "Kuzey Atlantik'te volkanik adalar, dramatik falezler.", category: "Ada / Doğa", visited: false, mapQuery: "Faroe Adaları", selectedForRoute: false }, // Teknik olarak Danimarka'ya bağlı özerk bölge
+
+            // MALTA
+            { userGivenId: 'mt_001', country: "MALTA", name: "Valletta", city: "Valletta", description: "Altın rengi taş liman şehri, Barok mimari, UNESCO.", category: "Başkent / Tarihi", visited: false, mapQuery: "Valletta, Malta", selectedForRoute: false },
+            { userGivenId: 'mt_002', country: "MALTA", name: "Comino Adası ve Mavi Lagün", city: "Comino", description: "Kristal berraklığında turkuaz sular.", category: "Ada / Doğa", visited: false, mapQuery: "Blue Lagoon, Comino, Malta", selectedForRoute: false },
+
+            // MACARİSTAN
+            { userGivenId: 'hu_001', country: "MACARİSTAN", name: "Budapeşte", city: "Budapeşte", description: "Tuna Nehri, termal banyolar, Parlamento Binası.", category: "Başkent / Kültürel", visited: false, mapQuery: "Budapeşte, Macaristan", selectedForRoute: false },
+
+            // İZLANDA
+            { userGivenId: 'is_001', country: "İZLANDA", name: "Reykjavík", city: "Reykjavík", description: "Dünyanın en kuzeydeki başkenti, Kuzey Işıkları.", category: "Başkent / Kültürel", visited: false, mapQuery: "Reykjavík, İzlanda", selectedForRoute: false },
+            { userGivenId: 'is_002', country: "İZLANDA", name: "Vatnajökull Milli Parkı", city: "", description: "Avrupa'nın en büyük buzulu, buzul lagünleri.", category: "Milli Park / Doğa", visited: false, mapQuery: "Vatnajökull Milli Parkı, İzlanda", selectedForRoute: false },
+            { userGivenId: 'is_003', country: "İZLANDA", name: "Reynisfjara Plajı", city: "", description: "Siyah kumları, bazalt sütunları.", category: "Plaj / Jeolojik", visited: false, mapQuery: "Reynisfjara Plajı, İzlanda", selectedForRoute: false },
+            { userGivenId: 'is_004', country: "İZLANDA", name: "Batı Fiyortları (Westfjords)", city: "", description: "Dramatik fiyortlar, Dynjandi şelalesi.", category: "Bölge / Doğa", visited: false, mapQuery: "Westfjords, İzlanda", selectedForRoute: false },
+            { userGivenId: 'is_005', country: "İZLANDA", name: "Kuzey Işıkları (Abisko/İsveç örneği ama İzlanda genelinde)", city: "", description: "Kuzey Işıkları gözlem noktaları.", category: "Doğa Olayı", visited: false, mapQuery: "Northern Lights, İzlanda", selectedForRoute: false },
+
+
+            // RUSYA
+            { userGivenId: 'ru_001', country: "RUSYA", name: "St. Petersburg", city: "St. Petersburg", description: "Ermitaj Müzesi, kanallar, 'Kuzeyin Venedik'i'.", category: "Şehir / Kültürel", visited: false, mapQuery: "St. Petersburg, Rusya", selectedForRoute: false },
+
+            // ARNAVUTLUK
+            { userGivenId: 'al_001', country: "ARNAVUTLUK", name: "Arnavutluk Rivierası (Ksamil)", city: "Ksamil", description: "El değmemiş kumsallar, kristal sular.", category: "Kıyı / Plaj", visited: false, mapQuery: "Ksamil, Arnavutluk", selectedForRoute: false },
+            { userGivenId: 'al_002', country: "ARNAVUTLUK", name: "Palasa Plajı", city: "Palasa", description: "Riviera'nın en uzun plajlarından, Llogara Geçidi manzaralı.", category: "Plaj / Doğa", visited: false, mapQuery: "Palasa Plajı, Arnavutluk", selectedForRoute: false },
+            { userGivenId: 'al_003', country: "ARNAVUTLUK", name: "Borsh Plajı", city: "Borsh", description: "Riviera'nın en uzun kesintisiz kumsallarından.", category: "Plaj", visited: false, mapQuery: "Borsh Beach, Arnavutluk", selectedForRoute: false },
+
+
+            // LETONYA
+            { userGivenId: 'lv_001', country: "LETONYA", name: "Gauja Milli Parkı", city: "", description: "Kumtaşı kayalıkları, Gutmanis Mağarası.", category: "Milli Park / Doğa", visited: false, mapQuery: "Gauja Milli Parkı, Letonya", selectedForRoute: false },
+            { userGivenId: 'lv_002', country: "LETONYA", name: "Slītere Milli Parkı", city: "", description: "Baltık Denizi kıyısında kumullar, Kolka Burnu.", category: "Milli Park / Kıyı", visited: false, mapQuery: "Slītere National Park, Letonya", selectedForRoute: false },
+
+            // ESTONYA
+            { userGivenId: 'ee_001', country: "ESTONYA", name: "Tallinn", city: "Tallinn", description: "UNESCO Orta Çağ eski şehri.", category: "Başkent / Tarihi Şehir", visited: false, mapQuery: "Tallinn, Estonya", selectedForRoute: false },
+        ];
+        let placesData = []; 
+
+        const placesListElement = document.getElementById('placesList');
+        const filterElement = document.getElementById('filterVisited');
+        const countryFilterElement = document.getElementById('filterCountry'); // Yeni ülke filtresi
+        const mapFrameElement = document.getElementById('mapFrame');
+        const mapLocationNameElement = document.getElementById('mapLocationName');
+        const generateRouteBtn = document.getElementById('generateRouteBtn');
+        const routeLinkContainer = document.getElementById('routeLinkContainer');
+        const newPlaceNameInput = document.getElementById('newPlaceNameInput');
+        const addPlaceBtn = document.getElementById('addPlaceBtn');
+        const addPlaceBtnText = document.getElementById('addPlaceBtnText');
+        const addPlaceLoader = document.getElementById('addPlaceLoader');
+        const addPlaceMessage = document.getElementById('addPlaceMessage');
+        const authStatusElement = document.getElementById('authStatus');
+        const userIdDisplayElement = document.getElementById('userIdDisplay');
+
+        let selectedRouteOrder = []; 
+
+        function populateCountryFilter() {
+            const countries = [...new Set(initialPlacesData.map(place => place.country))].sort();
+            countries.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                countryFilterElement.appendChild(option);
+            });
+        }
+
+        async function initializeFirebase() {
+            if (!firebaseConfig || !firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
+                authStatusElement.textContent = "Firebase yapılandırması eksik veya hatalı. Lütfen JavaScript kodundaki firebaseConfig nesnesini kendi proje bilgilerinizle güncelleyin.";
+                console.error("Firebase config is missing or incomplete. Please update it in your JavaScript code.");
+                addPlaceBtn.disabled = true; 
+                return;
+            }
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                authStatusElement.textContent = "Firebase başlatıldı. Kimlik doğrulanıyor...";
+                populateCountryFilter(); // Ülke filtresini doldur
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        authStatusElement.textContent = `Kimlik doğrulandı (Anonim Kullanıcı).`;
+                        userIdDisplayElement.textContent = `Kullanıcı ID: ${userId.substring(0,12)}...`; 
+                        placesCollectionRef = collection(db, `users/${userId}/europeTravelPlaces`);
+                        addPlaceBtn.disabled = false; 
+                        loadAndListenPlaces();
+                    } else {
+                        authStatusElement.textContent = "Anonim oturum açılıyor...";
+                        try {
+                            await signInAnonymously(auth);
+                        } catch (error) {
+                            console.error("Anonim oturum açma hatası:", error);
+                            authStatusElement.textContent = "Oturum açılamadı: " + error.message;
+                            addPlaceBtn.disabled = true;
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Firebase başlatma hatası:", error);
+                authStatusElement.textContent = "Firebase başlatılamadı: " + error.message;
+                addPlaceBtn.disabled = true;
+            }
+        }
+        
+        async function loadAndListenPlaces() {
+            if (!placesCollectionRef) return;
+            authStatusElement.textContent = "Yer listesi Firestore'dan yükleniyor...";
+
+            if (unsubscribePlaces) unsubscribePlaces(); 
+
+            const initialSeedFlagDocRef = doc(db, `users/${userId}/europeTravelFlags`, "initialSeedDone_v6"); 
+            const seedFlagSnap = await getDoc(initialSeedFlagDocRef);
+
+            if (!seedFlagSnap.exists()) {
+                authStatusElement.textContent = `İlk veriler (${initialPlacesData.length} adet) Firestore'a ekleniyor... Lütfen bekleyin. Bu işlem biraz zaman alabilir.`;
+                let initialDataAddedCount = 0;
+                let currentBatch = writeBatch(db);
+                let operationCountInBatch = 0;
+
+                for (let i = 0; i < initialPlacesData.length; i++) {
+                    const place = initialPlacesData[i];
+                    const placeDocRef = doc(placesCollectionRef, place.userGivenId); 
+                    currentBatch.set(placeDocRef, { ...place, id: placeDocRef.id }); 
+                    initialDataAddedCount++;
+                    operationCountInBatch++;
+
+                    if (operationCountInBatch >= 490 || i === initialPlacesData.length - 1) {
+                        try {
+                            await currentBatch.commit();
+                            console.log(`${operationCountInBatch} yerlik batch Firestore'a yazıldı.`);
+                            if (i < initialPlacesData.length - 1) { 
+                                currentBatch = writeBatch(db);
+                            }
+                            operationCountInBatch = 0; 
+                        } catch (e) {
+                            console.error("Batch yazma hatası:", e);
+                            authStatusElement.textContent = `İlk veri eklemede hata (${initialDataAddedCount}/${initialPlacesData.length} eklendi). Lütfen konsolu kontrol edin.`;
+                            return; 
+                        }
+                    }
+                }
+                
+                if (initialDataAddedCount > 0 || initialPlacesData.length === 0) { 
+                    await setDoc(initialSeedFlagDocRef, { seeded: true, seededAt: new Date().toISOString(), count: initialDataAddedCount, version: "6.0" });
+                }
+                authStatusElement.textContent = `${initialDataAddedCount} başlangıç yeri eklendi. Liste dinleniyor...`;
+            } else {
+                 authStatusElement.textContent = `Başlangıç verileri daha önce eklenmiş (v6). Liste dinleniyor...`;
+            }
+
+            unsubscribePlaces = onSnapshot(query(placesCollectionRef, orderBy("country"), orderBy("name")), (snapshot) => {
+                placesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderPlacesList(); // Veri yüklendiğinde listeyi render et
+                updateGenerateRouteButtonState();
+            }, (error) => {
+                console.error("Firestore'dan yerleri dinleme hatası: ", error);
+                authStatusElement.textContent = "Yer listesi yüklenemedi: " + error.message;
+                 if (error.code === 'failed-precondition' && error.message.includes('indexes-not-found')) {
+                    authStatusElement.innerHTML += `<br><strong class="text-red-600">Firestore İndeks Hatası!</strong> Sıralama için gerekli birleşik indeks bulunamadı. Lütfen Firebase konsolundan oluşturun: <code class="bg-gray-200 p-1 rounded">${error.message.substring(error.message.indexOf('https://'), error.message.lastIndexOf('?'))}</code>`;
+                }
+            });
+        }
+
+        function renderPlacesList() {
+            const visitedFilterValue = filterElement.value;
+            const countryFilterValue = countryFilterElement.value;
+            placesListElement.innerHTML = ''; 
+            let currentCountryHeader = ""; // Ülke başlığı için
+
+            let filteredPlaces = placesData;
+
+            // Ziyaret durumuna göre filtrele
+            if (visitedFilterValue !== 'all') {
+                filteredPlaces = filteredPlaces.filter(place => {
+                    if (visitedFilterValue === 'visited') return place.visited;
+                    if (visitedFilterValue === 'notvisited') return !place.visited;
+                    return true;
+                });
+            }
+
+            // Ülkeye göre filtrele
+            if (countryFilterValue !== 'all') {
+                filteredPlaces = filteredPlaces.filter(place => place.country === countryFilterValue);
+            }
+            
+            // Filtrelenmiş ve sıralanmış (Firestore'dan sıralı geliyor) listeyi render et
+            if (filteredPlaces.length === 0) {
+                placesListElement.innerHTML = '<p class="text-gray-500 italic p-4">Bu filtreye uygun yer bulunamadı veya liste boş.</p>';
+                return;
+            }
+            
+            filteredPlaces.forEach(place => {
+                if (place.country !== currentCountryHeader) {
+                    currentCountryHeader = place.country || "Diğer";
+                    const countryHeaderElement = document.createElement('h3');
+                    countryHeaderElement.className = 'country-header';
+                    countryHeaderElement.textContent = currentCountryHeader;
+                    placesListElement.appendChild(countryHeaderElement);
+                }
+
+                const listItem = document.createElement('div');
+                listItem.className = `place-item p-4 border border-gray-200 rounded-lg shadow-sm cursor-pointer transition-all duration-150 ease-in-out mt-2 ${place.selectedForRoute ? 'selected-for-route' : ''}`;
+                listItem.setAttribute('data-id', place.id); 
+                
+                listItem.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div class="flex-grow">
+                            <h4 class="text-lg font-semibold text-sky-700">${place.name}</h4>
+                            <p class="text-sm text-gray-500">${place.city ? place.city + ', ' : ''}${place.country ? place.country.replace(' (BK)', '') : 'Bilinmeyen Ülke'}</p>
+                            ${place.category ? `<span class="category-tag">${place.category}</span>` : '<span class="category-tag">Bilinmiyor</span>'}
+                            <p class="text-sm text-gray-600 mt-1">${place.description || 'Açıklama bulunamadı.'}</p>
+                        </div>
+                        <div class="ml-4 flex-shrink-0 flex flex-col items-center space-y-2">
+                            <div>
+                                <input type="checkbox" id="visited-${place.id}" data-id="${place.id}" class="h-5 w-5 text-sky-600 border-gray-300 rounded focus:ring-sky-500" ${place.visited ? 'checked' : ''}>
+                                <label for="visited-${place.id}" class="text-xs text-gray-500 ml-1">${place.visited ? 'Gezildi' : 'Gezilmedi'}</label>
+                            </div>
+                            <button class="delete-place-btn" data-id="${place.id}">Sil</button>
+                        </div>
+                    </div>
+                `;
+
+                listItem.addEventListener('click', async (event) => {
+                    if (event.target.classList.contains('delete-place-btn') || event.target.id.startsWith('visited-') || (event.target.tagName === 'LABEL' && event.target.htmlFor.startsWith('visited-'))) {
+                        return;
+                    }
+                    const placeId = place.id;
+                    const targetPlaceInLocalData = placesData.find(p => p.id === placeId); 
+                    if (targetPlaceInLocalData) {
+                        const newSelectedState = !targetPlaceInLocalData.selectedForRoute;
+                         if (placesCollectionRef) { 
+                            const placeDocRef = doc(db, `users/${userId}/europeTravelPlaces`, placeId);
+                            try {
+                                await updateDoc(placeDocRef, { selectedForRoute: newSelectedState });
+                                if (newSelectedState) {
+                                    if (!selectedRouteOrder.includes(targetPlaceInLocalData.id)) selectedRouteOrder.push(targetPlaceInLocalData.id);
+                                } else {
+                                    selectedRouteOrder = selectedRouteOrder.filter(id => id !== targetPlaceInLocalData.id);
+                                }
+                                updateMap(targetPlaceInLocalData); 
+                                updateGenerateRouteButtonState();
+                            } catch (e) { console.error("Rota seçimi güncelleme hatası:", e); }
+                        }
+                    }
+                });
+
+                const visitedCheckbox = listItem.querySelector(`#visited-${place.id}`);
+                visitedCheckbox.addEventListener('change', async (event) => {
+                    const placeId = event.target.dataset.id;
+                    const isChecked = event.target.checked;
+                    if (placesCollectionRef) {
+                        const placeDocRef = doc(db, `users/${userId}/europeTravelPlaces`, placeId);
+                        try {
+                            await updateDoc(placeDocRef, { visited: isChecked });
+                        } catch (e) { console.error("Ziyaret durumu güncelleme hatası:", e); }
+                    }
+                });
+
+                const deleteButton = listItem.querySelector('.delete-place-btn');
+                deleteButton.addEventListener('click', async () => {
+                    const placeIdToDelete = deleteButton.dataset.id;
+                    const placeNameToDelete = placesData.find(p => p.id === placeIdToDelete)?.name || "bu yer";
+                     if (confirm(`'${placeNameToDelete}' adlı yeri silmek istediğinizden emin misiniz?`)) {
+                        if (placesCollectionRef) {
+                            const placeDocRef = doc(db, `users/${userId}/europeTravelPlaces`, placeIdToDelete);
+                            try {
+                                await deleteDoc(placeDocRef);
+                                selectedRouteOrder = selectedRouteOrder.filter(id => id !== placeIdToDelete);
+                            } catch (e) { console.error("Yer silme hatası:", e); }
+                        }
+                    }
+                });
+                placesListElement.appendChild(listItem);
+            });
+        }
+
+        function updateMap(place) {
+            if (place && place.mapQuery) {
+                const encodedQuery = encodeURIComponent(place.mapQuery);
+                let zoomLevel = 10; 
+                if (place.name.toLowerCase().includes("bölgesi") || place.name.toLowerCase().includes("sahili") || place.name.toLowerCase().includes("gölü") || place.name.toLowerCase().includes("dağları")) {
+                    zoomLevel = 8;
+                }
+                if (place.country && place.mapQuery === place.country) { 
+                    zoomLevel = 5;
+                }
+                mapFrameElement.src = `https://maps.google.com/maps?q=${encodedQuery}&t=&z=${zoomLevel}&ie=UTF8&iwloc=&output=embed`;
+                mapLocationNameElement.textContent = `${place.name}, ${place.country ? place.country.replace(' (BK)', '') : ''}`;
+            } else {
+                mapFrameElement.src = `https://maps.google.com/maps?q=Avrupa&t=&z=4&ie=UTF8&iwloc=&output=embed`;
+                mapLocationNameElement.textContent = "Avrupa Genel Görünüm";
+            }
+        }
+        
+        function updateGenerateRouteButtonState() {
+            const selectedPlacesForRoute = placesData.filter(p => p.selectedForRoute);
+            if (selectedPlacesForRoute.length > 1) {
+                generateRouteBtn.disabled = false;
+            } else {
+                generateRouteBtn.disabled = true;
+                routeLinkContainer.innerHTML = '';
+            }
+        }
+
+        generateRouteBtn.addEventListener('click', () => {
+            const placesForRoute = selectedRouteOrder
+                .map(id => placesData.find(p => p.id === id))
+                .filter(p => p && p.selectedForRoute); 
+
+            if (placesForRoute.length < 2) {
+                routeLinkContainer.innerHTML = '<p class="text-red-500">Rota oluşturmak için en az 2 yer seçmelisiniz.</p>';
+                return;
+            }
+            const waypoints = placesForRoute.map(p => encodeURIComponent(p.mapQuery)).join('/');
+            const mapsUrl = `https://www.google.com/maps/dir/${waypoints}`;
+
+            routeLinkContainer.innerHTML = `
+                <p class="font-semibold">Oluşturulan Rota Bağlantısı:</p>
+                <a href="${mapsUrl}" target="_blank" class="text-sky-600 hover:text-sky-800 underline break-all">${mapsUrl}</a>
+                <p class="text-xs text-gray-500 mt-1">Bu bağlantı, seçtiğiniz yerleri Google Haritalar'da açar. Rota optimizasyonu (en kısa yol vb.) Google Haritalar tarafından yapılır.</p>
+            `;
+        });
+
+        addPlaceBtn.addEventListener('click', async () => {
+            if (!userId || !placesCollectionRef) {
+                addPlaceMessage.textContent = 'Veritabanı bağlantısı bekleniyor. Lütfen biraz bekleyin.';
+                addPlaceMessage.className = 'text-sm mt-2 text-red-500';
+                return;
+            }
+            const placeName = newPlaceNameInput.value.trim();
+            if (!placeName) {
+                addPlaceMessage.textContent = 'Lütfen bir yer adı girin.';
+                addPlaceMessage.className = 'text-sm mt-2 text-red-500';
+                return;
+            }
+
+            const existingPlace = placesData.find(p => p.name.toLowerCase() === placeName.toLowerCase());
+            if (existingPlace) {
+                addPlaceMessage.textContent = `'${placeName}' zaten listenizde mevcut.`;
+                addPlaceMessage.className = 'text-sm mt-2 text-orange-500';
+                return;
+            }
+
+            addPlaceBtnText.classList.add('hidden');
+            addPlaceLoader.classList.remove('hidden');
+            addPlaceMessage.textContent = 'Yer bilgileri (Gemini API) alınıyor...';
+            addPlaceMessage.className = 'text-sm mt-2 text-blue-500';
+            
+            let newPlaceData = {
+                name: placeName,
+                country: "Bilinmiyor", city: "",
+                description: "Açıklama otomatik olarak alınamadı.", category: "Bilinmiyor",
+                visited: false, mapQuery: placeName, selectedForRoute: false,
+                addedBy: "user", 
+                createdAt: new Date().toISOString() 
+            };
+
+            try { 
+                const prompt = `'${placeName}' adlı turistik yer hakkında aşağıdaki bilgileri JSON formatında ver: "country" (STRING, Türkçe ülke adı), "city" (STRING, Türkçe şehir adı, eğer varsa), "description" (STRING, Türkçe kısa ve çekici turistik açıklama, 3-4 cümle), "category" (STRING, Türkçe turistik kategori, örneğin 'Tarihi Yapı', 'Doğa Harikası', 'Müze'), "mapQuery" (STRING, Google Haritalar için etkili arama sorgusu). Eğer yer bulunamazsa veya bilgiler eksikse, "error" alanında bir mesaj içeren bir JSON döndür. Sadece JSON çıktısı ver.`;
+                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory, generationConfig: { responseMimeType: "application/json" } };
+                const geminiApiKey = firebaseConfig.apiKey; 
+
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`;
+                
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+
+                if (!response.ok) throw new Error(`Gemini API hatası: ${response.status}`);
+                const result = await response.json();
+
+                if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts[0]) {
+                    const placeDetails = JSON.parse(result.candidates[0].content.parts[0].text);
+                    if (placeDetails.error) throw new Error(placeDetails.error);
+                    if (!placeDetails.country || !placeDetails.description || !placeDetails.category || !placeDetails.mapQuery) {
+                         throw new Error('Gemini API eksik bilgi döndürdü.');
+                    }
+                    newPlaceData = { ...newPlaceData, ...placeDetails }; 
+                    addPlaceMessage.textContent = `'${placeName}' (Gemini ile) bilgileri alındı.`;
+                    addPlaceMessage.className = 'text-sm mt-2 text-green-600';
+                } else {
+                    throw new Error('Gemini API yanıtı anlaşılamadı.');
+                }
+            } catch (geminiError) {
+                console.warn("Gemini API hatası:", geminiError.message);
+                addPlaceMessage.textContent = `Gemini API ile bilgi alınamadı (${geminiError.message}). Nominatim (alternatif servis) deneniyor...`;
+                addPlaceMessage.className = 'text-sm mt-2 text-orange-500';
+
+                try { 
+                    const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(placeName)}&format=json&addressdetails=1&accept-language=tr,en&limit=1`;
+                    const nominatimResponse = await fetch(nominatimUrl, { headers: { 'User-Agent': 'AvrupaGeziListesiApp/1.0' } }); 
+                    if (!nominatimResponse.ok) throw new Error(`Nominatim API hatası: ${nominatimResponse.status}`);
+                    const nominatimData = await nominatimResponse.json();
+
+                    if (nominatimData && nominatimData.length > 0) {
+                        const Nplace = nominatimData[0];
+                        newPlaceData.country = Nplace.address?.country || newPlaceData.country;
+                        newPlaceData.city = Nplace.address?.city || Nplace.address?.town || Nplace.address?.village || Nplace.address?.county || newPlaceData.city;
+                        newPlaceData.mapQuery = Nplace.display_name || `${placeName}, ${newPlaceData.country}`;
+                        newPlaceData.description = `Nominatim ile bulundu: ${Nplace.display_name}. Detaylı açıklama ve kategori manuel eklenebilir. Bu yer hakkında daha fazla bilgi edinmek için internette arama yapabilirsiniz.`;
+                        newPlaceData.category = "Coğrafi Bilgi"; 
+                        addPlaceMessage.textContent = `'${placeName}' (Nominatim ile kısmi bilgiyle) eklendi.`;
+                        addPlaceMessage.className = 'text-sm mt-2 text-blue-500';
+                    } else {
+                        newPlaceData.description = `Otomatik olarak detaylı açıklama bulunamadı. Bu yer hakkında daha fazla bilgi edinmek için internette arama yapabilirsiniz.`;
+                        addPlaceMessage.textContent = `Otomatik bilgi alma başarısız oldu. '${placeName}' temel bilgilerle eklenecek.`;
+                        addPlaceMessage.className = 'text-sm mt-2 text-orange-600';
+                    }
+                } catch (fallbackError) {
+                    console.warn("Fallback API (Nominatim) hatası:", fallbackError.message);
+                     newPlaceData.description = `Otomatik olarak detaylı açıklama bulunamadı. Bu yer hakkında daha fazla bilgi edinmek için internette arama yapabilirsiniz.`;
+                    addPlaceMessage.textContent = `Otomatik bilgi alma tamamen başarısız oldu. '${placeName}' temel bilgilerle eklenecek.`;
+                    addPlaceMessage.className = 'text-sm mt-2 text-red-600';
+                }
+            } finally {
+                try {
+                    const newDocRef = doc(collection(db, `users/${userId}/europeTravelPlaces`));
+                    newPlaceData.id = newDocRef.id; 
+                    await setDoc(newDocRef, newPlaceData);
+                    newPlaceNameInput.value = '';
+                } catch (dbError) {
+                    console.error("Firestore'a ekleme hatası:", dbError);
+                    addPlaceMessage.textContent = `Veritabanına kaydetme hatası: ${dbError.message}`;
+                    addPlaceMessage.className = 'text-sm mt-2 text-red-700';
+                }
+                addPlaceBtnText.classList.remove('hidden');
+                addPlaceLoader.classList.add('hidden');
+            }
+        });
+
+        filterElement.addEventListener('change', renderPlacesList); 
+        countryFilterElement.addEventListener('change', renderPlacesList);
+        
+        initializeFirebase();
+
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribePlaces) {
+                unsubscribePlaces();
+            }
+        });
+
+    </script>
+</body>
+</html>
