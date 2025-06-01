@@ -330,14 +330,11 @@
 
         googleSignInBtn.addEventListener('click', async () => {
             const provider = new GoogleAuthProvider();
-            // Pop-up'ın engellenmemesi için kullanıcı etkileşiminden hemen sonra çağırılmalı.
-            // Tarayıcı ayarlarında pop-up'lara izin verildiğinden emin olun.
             authStatusElement.textContent = "Google ile giriş yapılıyor...";
             try {
                 console.log("Google ile giriş popup'ı deneniyor...");
                 const result = await signInWithPopup(auth, provider);
                 console.log("Google ile giriş başarılı (signInWithPopup sonrası):", result.user);
-                // onAuthStateChanged zaten tetiklenecek ve UI'ı güncelleyecektir.
             } catch (error) {
                 console.error("Google ile giriş hatası:", error);
                 authStatusElement.textContent = `Google ile giriş yapılamadı: ${error.message} (Kod: ${error.code})`;
@@ -351,8 +348,111 @@
 
         signOutBtn.addEventListener('click', async () => { /* Önceki gibi */ });
         
-        async function checkAndUpdateInitialData() { /* Önceki gibi, sadece initialSeedFlagDocRef versiyonunu güncelleyin: "initialSeedDone_v8_google" */ }
-        async function loadAndListenPlaces() { /* Önceki gibi, sadece authStatusElement mesajlarını ve console.log'ları gözden geçirin */ }
+        async function checkAndUpdateInitialData() {
+             if (!userId || !placesCollectionRef) {
+                console.log("checkAndUpdateInitialData: userId veya placesCollectionRef tanımsız.");
+                return;
+            }
+            const dataVersionFlagDocRef = doc(db, `users/${userId}/europeTravelFlags`, "appDataVersion");
+            const versionSnap = await getDoc(dataVersionFlagDocRef);
+            const currentDbVersion = versionSnap.exists() ? versionSnap.data().version : null;
+            console.log(`Veri versiyonu kontrolü. Kod: ${CURRENT_INITIAL_DATA_VERSION}, DB: ${currentDbVersion}`);
+
+            if (!initialPlacesData || initialPlacesData.length === 0) {
+                console.log("initialPlacesData boş. Seeding/Update atlanıyor.");
+                if (!versionSnap.exists()) { 
+                     await setDoc(dataVersionFlagDocRef, { version: CURRENT_INITIAL_DATA_VERSION, lastChecked: new Date().toISOString(), status: "No initial data defined in code." });
+                }
+                return;
+            }
+            
+            if (currentDbVersion !== CURRENT_INITIAL_DATA_VERSION) {
+                placesListStatusElement.innerHTML = `Başlangıç verileri güncelleniyor (Kod v${CURRENT_INITIAL_DATA_VERSION}, DB v${currentDbVersion || 'yok'})... <div class='loader !ml-0 !inline-block'></div>`;
+                console.log(`Başlangıç verileri ${CURRENT_INITIAL_DATA_VERSION} versiyonuna güncelleniyor/ekleniyor. Toplam ${initialPlacesData.length} yer.`);
+                
+                let updatedOrAddedCount = 0;
+                const batchPromises = [];
+
+                const batchSize = 400; // Firestore batch limiti 500, biraz pay bırakalım
+                for (let i = 0; i < initialPlacesData.length; i += batchSize) {
+                    const batch = writeBatch(db);
+                    const chunk = initialPlacesData.slice(i, i + batchSize);
+                    console.log(`Batch ${Math.floor(i/batchSize) + 1} hazırlanıyor, ${chunk.length} yer içeriyor.`);
+
+                    for (const place of chunk) {
+                        if (!place.userGivenId) {
+                            console.warn("userGivenId eksik, bu yer atlanıyor:", place.name);
+                            continue;
+                        }
+                        const placeDocRef = doc(placesCollectionRef, place.userGivenId);
+                        // Bu basit seeding'de, initialData'daki her şeyi olduğu gibi yazıyoruz.
+                        // Mevcut 'visited' ve 'selectedForRoute' korunmayacak, sıfırlanacak.
+                        // Eğer bu alanların korunması isteniyorsa, daha karmaşık bir birleştirme mantığı gerekir.
+                        batch.set(placeDocRef, { ...place, id: placeDocRef.id }); 
+                        updatedOrAddedCount++;
+                    }
+                    batchPromises.push(batch.commit().then(() => {
+                        console.log(`Bir batch (${chunk.length} yer) başarıyla yazıldı.`);
+                    }));
+                }
+                
+                try {
+                    await Promise.all(batchPromises); 
+                    console.log(`${updatedOrAddedCount} başlangıç yeri güncellendi/eklendi.`);
+                    await setDoc(dataVersionFlagDocRef, { version: CURRENT_INITIAL_DATA_VERSION, updatedAt: new Date().toISOString(), count: updatedOrAddedCount, status: `Updated to v${CURRENT_INITIAL_DATA_VERSION}` });
+                    authStatusElement.textContent = `${updatedOrAddedCount} başlangıç yeri güncellendi/eklendi (v${CURRENT_INITIAL_DATA_VERSION}).`;
+                    console.log("Data version flag güncellendi.");
+                } catch (e) {
+                     console.error("Başlangıç verilerini toplu güncelleme hatası:", e);
+                     authStatusElement.textContent = "Başlangıç verilerini güncellemede hata. Lütfen konsolu kontrol edin.";
+                }
+            } else {
+                authStatusElement.textContent = `Başlangıç verileri güncel (v${CURRENT_INITIAL_DATA_VERSION}).`;
+                 console.log("Başlangıç verileri zaten güncel.");
+            }
+        }
+
+
+        async function loadAndListenPlaces() {
+            if (!placesCollectionRef) {
+                console.log("placesCollectionRef tanımsız, loadAndListenPlaces atlanıyor.");
+                placesListStatusElement.textContent = "Veritabanı bağlantısı kurulamadı.";
+                return;
+            }
+            if (unsubscribePlaces) {
+                console.log("Mevcut Firestore listener kaldırılıyor.");
+                unsubscribePlaces(); 
+                unsubscribePlaces = null;
+            }
+            console.log("Yeni onSnapshot listener'ı kuruluyor for", placesCollectionRef.path);
+            placesListStatusElement.innerHTML = "Yer listesi Firestore'dan yükleniyor... <div class='loader !ml-0 !inline-block'></div>";
+
+            unsubscribePlaces = onSnapshot(query(placesCollectionRef, orderBy("country"), orderBy("name")), (snapshot) => {
+                console.log(`onSnapshot: ${snapshot.docs.length} döküman alındı.`);
+                placesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                console.log("onSnapshot - placesData güncellendi. İlk eleman (varsa):", placesData.length > 0 ? placesData[0] : "Boş");
+                populateCountryFilter(); 
+                renderPlacesList();
+                updateGenerateRouteButtonState();
+                 if (userId) { 
+                    if (placesData.length > 0) { 
+                        authStatusElement.textContent = `Yer listesi güncel (${placesData.length} yer).`; 
+                        placesListStatusElement.textContent = ''; // Yükleme mesajını temizle
+                    } else {
+                        authStatusElement.textContent = "Liste dinleniyor..."; // Seeding bitmiş ama veri yoksa
+                        placesListStatusElement.textContent = "Listenizde henüz yer yok. Yeni yer ekleyebilir veya başlangıç verilerinin yüklenmesini bekleyebilirsiniz.";
+                    }
+                }
+            }, (error) => { 
+                console.error("Firestore'dan yerleri dinleme hatası: ", error);
+                authStatusElement.textContent = "Yer listesi yüklenemedi: " + error.message;
+                placesListStatusElement.textContent = "Yer listesi yüklenirken bir hata oluştu.";
+                 if (error.code === 'failed-precondition' && error.message.includes('indexes-not-found')) {
+                    authStatusElement.innerHTML += `<br><strong class="text-red-600">Firestore İndeks Hatası!</strong> Sıralama için gerekli birleşik indeks bulunamadı. Lütfen Firebase konsolundan oluşturun.`;
+                }
+            });
+        }
+
         function renderPlacesList() { /* Önceki gibi */ }
         function updateMap(place) { /* Önceki gibi */ }
         function updateGenerateRouteButtonState() { /* Önceki gibi */ }
