@@ -286,7 +286,7 @@
                 console.log("[onSnapshot] placesData güncellendi. Örnek ilk yer adı (varsa):", placesData.length > 0 ? placesData[0].name : "Boş");
                 
                 populateCountryFilter(); 
-                renderPlacesList();
+                renderPlacesList(); // Veri alındıktan ve işlendikten sonra listeyi render et
                 updateGenerateRouteButtonState();
 
                  if (userId) { 
@@ -294,8 +294,9 @@
                         authStatusElement.textContent = `Yer listesi güncel (${placesData.length} yer).`; 
                         // placesListStatusElement.innerHTML = ''; // renderPlacesList içinde yönetiliyor
                     } else {
-                        authStatusElement.textContent = "Liste dinleniyor..."; 
-                        placesListStatusElement.textContent = "Listenizde henüz yer yok veya yükleniyor...";
+                        // Bu mesaj, checkAndUpdateInitialData tamamlanana kadar kalabilir.
+                        // authStatusElement.textContent = "Liste dinleniyor..."; 
+                        // placesListStatusElement.textContent = "Listenizde henüz yer yok veya yükleniyor...";
                     }
                 }
             }, (error) => { 
@@ -313,7 +314,7 @@
             placesListElement.scrollTop = 0; 
             const visitedFilterValue = filterElement.value;
             const countryFilterValue = countryFilterElement.value;
-            placesListElement.innerHTML = ''; // Önce listeyi temizle
+            placesListElement.innerHTML = ''; 
             let currentCountryHeader = ""; 
 
             let tempFilteredPlaces = [...placesData]; 
@@ -333,18 +334,16 @@
             
             if (tempFilteredPlaces.length === 0) {
                 placesListStatusElement.textContent = 'Bu filtreye uygun yer bulunamadı veya liste boş.';
-                // `placesListElement.innerHTML` zaten temizlendiği için tekrar bir şey eklemeye gerek yok,
-                // ya da `placesListStatusElement`'i `placesListElement`'in içine koyabilirsiniz.
-                // Şimdilik `placesListStatusElement`'i kullanıyoruz.
-                placesListElement.innerHTML = `<p class="text-gray-500 italic p-4">${placesListStatusElement.textContent}</p>`;
+                placesListElement.innerHTML = `<p class="text-gray-500 italic p-4">${placesListStatusElement.textContent}</p>`; // placesListStatusElement.textContent'i buraya da yazdır
                 return;
             } else {
-                 placesListStatusElement.innerHTML = ''; // Eğer yer varsa mesajı temizle
+                 placesListStatusElement.innerHTML = ''; 
             }
             
-            tempFilteredPlaces.forEach(place => {
-                if (!place || !place.id) { // Ekstra kontrol
-                    console.warn("[renderPlacesList] Eksik 'id' veya tanımsız 'place' nesnesi:", place);
+            tempFilteredPlaces.forEach((place, index) => { // index eklendi
+                console.log(`[renderPlacesList] Yer ${index + 1} işleniyor:`, place ? place.name : "Tanımsız yer");
+                if (!place || !place.id) { 
+                    console.warn("[renderPlacesList] Eksik 'id' veya tanımsız 'place' nesnesi atlanıyor:", place);
                     return; 
                 }
                 if (place.country !== currentCountryHeader) {
@@ -353,6 +352,7 @@
                     countryHeaderElement.className = 'country-header';
                     countryHeaderElement.textContent = currentCountryHeader;
                     placesListElement.appendChild(countryHeaderElement);
+                    console.log(`[renderPlacesList] Ülke başlığı eklendi: ${currentCountryHeader}`);
                 }
 
                 const listItem = document.createElement('div');
@@ -384,6 +384,7 @@
                  const deleteButton = listItem.querySelector('.delete-place-btn');
                  deleteButton.addEventListener('click', async () => { /* ... */ });
             });
+            console.log("[renderPlacesList] Liste render etme tamamlandı.");
         }
         function updateMap(place) { /* Önceki gibi */ }
         function updateGenerateRouteButtonState() { /* Önceki gibi */ }
