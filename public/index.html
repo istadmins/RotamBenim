@@ -197,14 +197,14 @@
         // Bu değerleri Firebase konsolundan (Proje Ayarları > Genel) alın.
         const firebaseConfigFromUser = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
 
-        const firebaseConfig = firebaseConfigFromUser || {
-            apiKey: "YOUR_API_KEY", // Örneğin: AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA (GERÇEK DEĞERİNİZLE DEĞİŞTİRİN)
-            authDomain: "YOUR_AUTH_DOMAIN", // Örneğin: rotambenim.firebaseapp.com (GERÇEK DEĞERİNİZLE DEĞİŞTİRİN)
-            projectId: "YOUR_PROJECT_ID", // Örneğin: rotambenim (GERÇEK DEĞERİNİZLE DEĞİŞTİRİN)
-            storageBucket: "YOUR_STORAGE_BUCKET", // Örneğin: rotambenim.appspot.com (GERÇEK DEĞERİNİZLE DEĞİŞTİRİN)
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // Örneğin: 374285362920 (GERÇEK DEĞERİNİZLE DEĞİŞTİRİN)
-            appId: "YOUR_APP_ID", // Örneğin: 1:374285362920:web:b4058cf4a93e7337168b5d (GERÇEK DEĞERİNİZLE DEĞİŞTİRİN)
-            measurementId: "YOUR_MEASUREMENT_ID" // İsteğe bağlı, varsa ekleyin
+         const firebaseConfig = {
+            apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA", 
+            authDomain: "rotambenim.firebaseapp.com", 
+            projectId: "rotambenim", 
+            storageBucket: "rotambenim.firebasestorage.app", 
+            messagingSenderId: "374285362920", 
+            appId: "1:374285362920:web:b4058cf4a93e7337168b5d", 
+            measurementId: "G-0QVZ4LDYPJ" 
         };
         // --- END: Firebase Configuration ---
 
