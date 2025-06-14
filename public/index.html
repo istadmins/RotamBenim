@@ -3,799 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avrupa Gezi Listesi</title>
+    <title>Avrupa Gezi Listesi - RotamBenim</title>
+    <meta name="description" content="Avrupa'daki gezilecek yerleri keşfedin, rotanızı planlayın ve seyahat deneyiminizi kişiselleştirin.">
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-        .place-item:hover {
-            background-color: #f0f9ff; /* sky-50 */
-        }
-        .place-item.selected-for-route {
-            background-color: #dbeafe; /* blue-100 */
-            border-left: 4px solid #2563eb; /* blue-600 */
-        }
-        .country-header {
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e5e7eb; /* gray-200 */
-            font-size: 1.25rem; /* text-xl */
-            font-weight: 600; /* font-semibold */
-            color: #1e3a8a; /* blue-800 */
-        }
-        #generateRouteBtn, #addPlaceBtn, .delete-place-btn, #googleSignInBtn, #signOutBtn {
-            transition: background-color 0.3s ease;
-        }
-        .category-tag {
-            display: inline-block;
-            background-color: #e0e7ff; /* indigo-100 */
-            color: #3730a3; /* indigo-800 */
-            padding: 0.125rem 0.5rem; /* py-0.5 px-2 */
-            border-radius: 0.375rem; /* rounded-md */
-            font-size: 0.75rem; /* text-xs */
-            font-weight: 500; /* font-medium */
-            margin-top: 0.25rem; /* mt-1 */
-            margin-right: 0.25rem; /* mr-1 */
-        }
-        .loader {
-            border: 4px solid #f3f3f3; /* gray-200 */
-            border-top: 4px solid #3498db; /* blue-500 */
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-left: 10px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .delete-place-btn {
-            background-color: #fee2e2; /* red-100 */
-            color: #b91c1c; /* red-700 */
-            padding: 0.25rem 0.5rem; /* py-1 px-2 */
-            border-radius: 0.375rem; /* rounded-md */
-            font-size: 0.75rem; /* text-xs */
-            font-weight: 500; /* font-medium */
-        }
-        .delete-place-btn:hover {
-            background-color: #fecaca; /* red-200 */
-        }
-        #userDisplay {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem; /* gap-2 */
-        }
-         .filter-container > div {
-            margin-bottom: 0.5rem; /* mb-2 */
-        }
-        @media (min-width: 640px) { /* sm breakpoint */
-            .filter-container {
-                display: flex;
-                align-items: center;
-                gap: 1rem; /* gap-4 */
-            }
-            .filter-container > div {
-                margin-bottom: 0;
-            }
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-gray-100 text-gray-800 p-4 md:p-8">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-xl flex items-center space-x-4">
+            <div class="loader"></div>
+            <span class="text-gray-700">Yükleniyor...</span>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-40 space-y-2"></div>
 
     <div class="container mx-auto max-w-7xl bg-white shadow-xl rounded-lg p-6">
         <header class="mb-8 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-sky-600">Avrupa Gezi Rotam</h1>
-            <p class="text-gray-600 mt-2">Gezilecek yerleri işaretle, filtrele, sil ve haritada gör! Rota oluşturmak için yerlere tıklayarak seçin veya yeni yer ekleyin.</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-sky-600 mb-2">Avrupa Gezi Rotam</h1>
+            <p class="text-gray-600 mb-4">Gezilecek yerleri işaretle, filtrele, sil ve haritada gör! Rota oluşturmak için yerlere tıklayarak seçin veya yeni yer ekleyin.</p>
 
-            <div id="authContainer" class="mt-4">
-                <button id="googleSignInBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center justify-center mx-auto">
-                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.63 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M0 0h24v24H0z"/></svg>
+            <!-- Auth Section -->
+            <div id="authContainer" class="mb-4">
+                <button id="googleSignInBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center justify-center mx-auto transition-colors duration-200" aria-label="Google ile giriş yap">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path d="M12 5.38c1.63 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
                     Google ile Giriş Yap
                 </button>
-                <div id="userDisplay" class="hidden mt-2 justify-center">
-                    <img id="userPhoto" class="w-8 h-8 rounded-full mr-2" alt="Kullanıcı Fotoğrafı">
+                
+                <div id="userDisplay" class="hidden mt-2 justify-center items-center">
+                    <img id="userPhoto" class="w-8 h-8 rounded-full mr-2" alt="Kullanıcı Fotoğrafı" loading="lazy">
                     <span id="userName" class="text-sm text-gray-700 font-medium"></span>
-                    <button id="signOutBtn" class="ml-4 bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-md text-xs shadow-md">Çıkış Yap</button>
-                </div>
-            </div>
-            <p id="authStatus" class="text-xs text-gray-500 mt-1">Kimlik durumu: Kontrol ediliyor...</p>
-            <p id="userIdDisplay" class="text-xs text-gray-400 mt-1"></p>
-        </header>
-
-        <div class="flex flex-col md:flex-row gap-6">
-            <div class="w-full md:w-3/5 lg:w-2/3 pr-0 md:pr-4">
-                <div class="mb-6 p-4 border border-gray-200 rounded-lg bg-slate-50">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Yeni Yer Ekle</h3>
-                    <div class="flex flex-col sm:flex-row gap-2">
-                        <input type="text" id="newPlaceNameInput" placeholder="Örn: Etretat Kayalıkları" class="flex-grow p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
-                        <button id="addPlaceBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-md shadow-md flex items-center justify-center" disabled>
-                            <span id="addPlaceBtnText">Yer Ekle</span>
-                            <div id="addPlaceLoader" class="loader hidden"></div>
-                        </button>
-                    </div>
-                    <div id="addPlaceMessage" class="text-sm mt-2"></div>
-                </div>
-
-                <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h2 class="text-2xl font-semibold text-gray-700">Gezilecek Yerler</h2>
-                        <p class="text-sm text-gray-500">Rota oluşturmak için listeden yerlere tıklayın.</p>
-                    </div>
-                     <div class="filter-container">
-                        <div>
-                            <label for="filterCountry" class="mr-2 text-gray-600">Ülke:</label>
-                            <select id="filterCountry" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
-                                <option value="all">Tüm Ülkeler</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="filterVisited" class="mr-2 text-gray-600">Ziyaret:</label>
-                            <select id="filterVisited" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
-                                <option value="all">Tümü</option>
-                                <option value="notvisited" selected>Gezilmedi</option>
-                                <option value="visited">Gezildi</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                 <div class="mb-4">
-                    <button id="generateRouteBtn" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-md shadow-md disabled:opacity-50" disabled>
-                        Seçilenlerle Rota Oluştur
+                    <button id="signOutBtn" class="ml-4 bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-md text-xs shadow-md transition-colors duration-200" aria-label="Çıkış yap">
+                        Çıkış Yap
                     </button>
                 </div>
-                <div id="routeLinkContainer" class="mb-4 text-sm"></div>
-                <div id="placesList" class="space-y-1 max-h-[40vh] md:max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
-                    <p id="placesListStatus" class="text-gray-500 italic p-4">Lütfen Google ile giriş yapın veya yer listesinin yüklenmesini bekleyin...</p>
-                </div>
             </div>
+            
+            <div class="text-center">
+                <p id="authStatus" class="text-xs text-gray-500 mb-1" role="status" aria-live="polite">Kimlik durumu: Kontrol ediliyor...</p>
+                <p id="userIdDisplay" class="text-xs text-gray-400"></p>
+            </div>
+        </header>
 
-            <div class="w-full md:w-2/5 lg:w-1/3 mt-6 md:mt-0">
-                <h2 id="mapTitle" class="text-2xl font-semibold text-gray-700 mb-2">Harita</h2>
-                <p id="mapLocationName" class="text-sm text-gray-500 mb-4 h-5"></p>
+        <div class="flex flex-col lg:flex-row gap-6">
+            <!-- Main Content -->
+            <main class="w-full lg:w-3/5 xl:w-2/3 pr-0 lg:pr-4">
+                <!-- Add New Place Section -->
+                <section class="mb-6 p-4 border border-gray-200 rounded-lg bg-slate-50" aria-labelledby="add-place-heading">
+                    <h2 id="add-place-heading" class="text-lg font-semibold text-gray-700 mb-2">Yeni Yer Ekle</h2>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <label for="newPlaceNameInput" class="sr-only">Yer adı</label>
+                        <input 
+                            type="text" 
+                            id="newPlaceNameInput" 
+                            placeholder="Örn: Etretat Kayalıkları" 
+                            class="flex-grow p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none"
+                            maxlength="100"
+                            aria-describedby="add-place-message"
+                        >
+                        <button 
+                            id="addPlaceBtn" 
+                            class="bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-md shadow-md flex items-center justify-center transition-colors duration-200" 
+                            disabled
+                            aria-label="Yeni yer ekle"
+                        >
+                            <span id="addPlaceBtnText">Yer Ekle</span>
+                            <div id="addPlaceLoader" class="loader hidden ml-2"></div>
+                        </button>
+                    </div>
+                    <div id="addPlaceMessage" class="text-sm mt-2" role="alert" aria-live="polite"></div>
+                </section>
+
+                <!-- Places List Section -->
+                <section aria-labelledby="places-heading">
+                    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h2 id="places-heading" class="text-2xl font-semibold text-gray-700">Gezilecek Yerler</h2>
+                            <p class="text-sm text-gray-500">Rota oluşturmak için listeden yerlere tıklayın.</p>
+                        </div>
+                        
+                        <!-- Filters -->
+                        <div class="filter-container" role="group" aria-label="Filtreler">
+                            <div>
+                                <label for="filterCountry" class="mr-2 text-gray-600 text-sm font-medium">Ülke:</label>
+                                <select id="filterCountry" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none" aria-label="Ülke filtresi">
+                                    <option value="all">Tüm Ülkeler</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="filterVisited" class="mr-2 text-gray-600 text-sm font-medium">Ziyaret:</label>
+                                <select id="filterVisited" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none" aria-label="Ziyaret durumu filtresi">
+                                    <option value="all">Tümü</option>
+                                    <option value="notvisited" selected>Gezilmedi</option>
+                                    <option value="visited">Gezildi</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Route Generation -->
+                    <div class="mb-4 flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+                        <button 
+                            id="generateRouteBtn" 
+                            class="bg-sky-600 hover:bg-sky-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-md shadow-md transition-colors duration-200" 
+                            disabled
+                            aria-label="Seçilen yerlerle rota oluştur"
+                        >
+                            Seçilenlerle Rota Oluştur (<span id="selectedCount">0</span>)
+                        </button>
+                        <button 
+                            id="clearSelectionBtn" 
+                            class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md shadow-md transition-colors duration-200 hidden"
+                            aria-label="Seçimi temizle"
+                        >
+                            Seçimi Temizle
+                        </button>
+                    </div>
+                    
+                    <div id="routeLinkContainer" class="mb-4 text-sm" role="region" aria-label="Oluşturulan rota"></div>
+                    
+                    <!-- Places List -->
+                    <div 
+                        id="placesList" 
+                        class="space-y-1 max-h-[40vh] md:max-h-[50vh] overflow-y-auto custom-scrollbar pr-2" 
+                        role="list" 
+                        aria-label="Gezilecek yerler listesi"
+                        tabindex="0"
+                    >
+                        <p id="placesListStatus" class="text-gray-500 italic p-4" role="status" aria-live="polite">
+                            Lütfen Google ile giriş yapın veya yer listesinin yüklenmesini bekleyin...
+                        </p>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Map Section -->
+            <aside class="w-full lg:w-2/5 xl:w-1/3 mt-6 lg:mt-0" aria-labelledby="map-heading">
+                <h2 id="map-heading" class="text-2xl font-semibold text-gray-700 mb-2">Harita</h2>
+                <p id="mapLocationName" class="text-sm text-gray-500 mb-4 h-5" aria-live="polite"></p>
+                
                 <div class="aspect-w-16 aspect-h-9 md:aspect-h-12 lg:aspect-h-10 rounded-lg overflow-hidden shadow-md">
-                     <iframe id="mapFrame"
+                    <iframe 
+                        id="mapFrame"
                         class="w-full h-full border-0"
                         loading="lazy"
                         allowfullscreen
                         referrerpolicy="no-referrer-when-downgrade"
-                        src="https://maps.google.com/maps?output=embed&q=Avrupa">
-                    </iframe>
+                        src="https://maps.google.com/maps?output=embed&q=Avrupa"
+                        title="Harita görünümü"
+                        aria-label="Seçilen yerin harita görünümü"
+                    ></iframe>
                 </div>
-                <p class="mt-4 text-xs text-gray-500">
-                    Haritada bir yerin işaretlenmesi, o yerin genel konumunu gösterir. Rota oluşturma özelliği, seçilen yerleri Google Haritalar'a gönderir. Yeni yer ekleme özelliği, bilgileri otomatik olarak bulmaya çalışır; sonuçlar API'lerin yeteneklerine bağlıdır. Verileriniz Firebase'de saklanır.
+                
+                <p class="mt-4 text-xs text-gray-500 leading-relaxed">
+                    Haritada bir yerin işaretlenmesi, o yerin genel konumunu gösterir. Rota oluşturma özelliği, seçilen yerleri Google Haritalar'a gönderir. Yeni yer ekleme özelliği, bilgileri otomatik olarak bulmaya çalışır; sonuçlar API'lerin yeteneklerine bağlıdır. Verileriniz Firebase'de güvenli şekilde saklanır.
                 </p>
-            </div>
+            </aside>
         </div>
     </div>
 
-    <script type="module">
-        // Firebase SDK imports
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, addDoc, getDocs, deleteDoc, updateDoc, onSnapshot, query, orderBy, setDoc, getDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // --- START: Firebase Configuration ---
-        // TODO: KENDİ FIREBASE PROJE AYARLARINIZI BURAYA GİRİN!
-        // Bu değerleri Firebase konsolundan (Proje Ayarları > Genel) alın.
-        const firebaseConfigFromUser = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-
-         const firebaseConfig = {
-            apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA", 
-            authDomain: "rotambenim.firebaseapp.com", 
-            projectId: "rotambenim", 
-            storageBucket: "rotambenim.firebasestorage.app", 
-            messagingSenderId: "374285362920", 
-            appId: "1:374285362920:web:b4058cf4a93e7337168b5d", 
-            measurementId: "G-0QVZ4LDYPJ" 
-        };
-        // --- END: Firebase Configuration ---
-
-        const appId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.appId || 'default-app-id';
-        const CURRENT_INITIAL_DATA_VERSION = "1.5"; // Veri versiyonunu güncelleyelim
-
-        // Firebase App instances
-        let app;
-        let auth;
-        let db;
-        let currentUserId = null; // userId yerine currentUserId kullanalım, daha açıklayıcı
-        let placesCollectionRef;
-        let unsubscribePlaces = null;
-
-        // Initial data (örnek olarak boş bırakıldı, kendi verilerinizi ekleyebilirsiniz)
-       const initialPlacesData = [
-           
-
-            // HOLLANDA (Açıklamalar Detaylandırıldı)
-            { userGivenId: 'nl_001', country: "HOLLANDA", name: "Amsterdam Kanalları", city: "Amsterdam", description: "UNESCO Dünya Mirası listesindeki Amsterdam'ın tarihi kanal kuşağı (Grachtengordel), şehrin Altın Çağı'ndan kalma zarif kanal evleri, sayısız köprüsü ve pitoresk su yollarıyla ünlüdür. Tekne turu yapmak, kanallar boyunca bisiklete binmek veya sadece kıyısında oturup atmosferin tadını çıkarmak eşsiz bir deneyimdir. Anne Frank Evi, Rijksmuseum ve Van Gogh Müzesi gibi önemli yerler de bu kanallara yakındır.", category: "Şehir Simgesi / Kültürel / UNESCO / Tarihi", visited: false, mapQuery: "Amsterdam Kanalları", selectedForRoute: false },
-            { userGivenId: 'nl_002', country: "HOLLANDA", name: "Keukenhof Bahçeleri", city: "Lisse", description: "Dünyanın en büyük çiçek bahçelerinden biri olan Keukenhof, özellikle ilkbahar aylarında (Mart-Mayıs arası) milyonlarca lale, nergis, sümbül ve diğer soğanlı çiçeklerin rengarenk bir şölen sunduğu bir cennettir. Her yıl farklı bir temayla düzenlenen bahçe, fotoğrafçılar ve doğa severler için kaçırılmaması gereken bir yerdir. 'Avrupa'nın Bahçesi' olarak da bilinir.", category: "Bahçe / Doğa / Çiçek / Turistik", visited: false, mapQuery: "Keukenhof, Lisse", selectedForRoute: false },
-            { userGivenId: 'nl_003', country: "HOLLANDA", name: "Zaanse Schans", city: "Zaandam", description: "Amsterdam yakınlarında yer alan Zaanse Schans, Hollanda'nın geleneksel kırsal yaşamını ve endüstriyel mirasını yansıtan bir açık hava müzesi gibidir. Tarihi yel değirmenleri, ahşap evleri, peynir ve takunya (klompen) yapım atölyeleriyle ziyaretçilere zamanda bir yolculuk sunar. Zaan Nehri kıyısındaki konumuyla da oldukça fotojeniktir.", category: "Köy / Kültürel / Tarihi / Turistik / Yel Değirmeni", visited: false, mapQuery: "Zaanse Schans", selectedForRoute: false },
-            { userGivenId: 'nl_004', country: "HOLLANDA", name: "Rotterdam", city: "Rotterdam", description: "II. Dünya Savaşı'nda büyük ölçüde yıkıldıktan sonra modern mimariyle yeniden inşa edilen Rotterdam, Hollanda'nın en dinamik ve yenilikçi şehirlerinden biridir. Erasmus Köprüsü, Küp Evler (Kijk-Kubus), Markthal (Pazar Yeri) gibi cesur ve fütüristik yapılarıyla tanınır. Avrupa'nın en büyük limanlarından birine de ev sahipliği yapar.", category: "Şehir / Mimari / Modern / Liman", visited: false, mapQuery: "Rotterdam", selectedForRoute: false },
-            { userGivenId: 'nl_005', country: "HOLLANDA", name: "Lahey (Den Haag)", city: "Lahey", description: "Hollanda'nın idari başkenti ve kraliyet ailesinin yaşadığı şehir olan Lahey (Den Haag), Uluslararası Adalet Divanı gibi önemli uluslararası kuruluşlara ev sahipliği yapar. Binnenhof (parlamento binası), Mauritshuis (Vermeer'in 'İnci Küpeli Kız' tablosu burada) ve Barış Sarayı şehrin önemli noktalarıdır. Scheveningen sahil beldesi de yakındadır.", category: "Şehir / Kültürel / Politik / Sanat", visited: false, mapQuery: "Lahey, Hollanda", selectedForRoute: false },
-            { userGivenId: 'nl_006', country: "HOLLANDA", name: "Texel", city: "Texel", description: "Wadden Denizi'ndeki en büyük ve en batıdaki Frizya adası olan Texel, geniş kumulları, uzun kumsalları, çam ormanları, pitoresk köyleri ve zengin kuş yaşamıyla Hollanda'nın önemli bir doğa ve tatil alanıdır. Ecomare fok ve kuş rehabilitasyon merkezi ile deniz feneri adanın popüler ziyaret noktalarındandır. Bisiklet sürmek ve yürüyüş yapmak için idealdir.", category: "Ada / Doğa / Plaj / Yaban Hayatı / Bisiklet", visited: false, mapQuery: "Texel, Hollanda", selectedForRoute: false },
-            { userGivenId: 'nl_007', country: "HOLLANDA", name: "Hillegom (Lale Tarlaları)", city: "Hillegom", description: "Özellikle ilkbahar aylarında, Keukenhof'a yakın konumda bulunan Hillegom ve çevresindeki 'Bollenstreek' (Soğanlı Bitkiler Bölgesi), uçsuz bucaksız lale, nergis ve sümbül tarlalarının rengarenk bir halı gibi uzandığı manzaralar sunar. Bu bölgede bisikletle veya arabayla dolaşarak çiçeklerin tadını çıkarabilirsiniz.", category: "Kırsal / Doğa / Çiçek / Manzara", visited: false, mapQuery: "Hillegom, Hollanda", selectedForRoute: false },
-            { userGivenId: 'nl_008', country: "HOLLANDA", name: "Utrecht", city: "Utrecht", description: "Hollanda'nın kalbinde yer alan Utrecht, tarihi merkezi, iki katlı kanalları (Oudegracht), Dom Kulesi (Hollanda'nın en yüksek kilise kulesi) ve canlı öğrenci atmosferiyle bilinir. Amsterdam'a göre daha az kalabalık ama bir o kadar çekici bir şehirdir. Rietveld Schröder Evi UNESCO Dünya Mirası'dır.", category: "Şehir / Tarihi / Kültürel / Üniversite", visited: false, mapQuery: "Utrecht, Hollanda", selectedForRoute: false },
-            { userGivenId: 'nl_009', country: "HOLLANDA", name: "Giethoorn", city: "Giethoorn", description: "'Kuzeyin Venedik'i' veya 'Hollanda'nın Venedik'i' olarak da anılan Giethoorn, arabaların giremediği, ulaşımın çoğunlukla teknelerle sağlandığı kanalları, ahşap köprüleri ve kamış çatılı şirin evleriyle masalsı bir köydür. Weerribben-Wieden Milli Parkı içinde yer alır.", category: "Köy / Kanal / Eşsiz / Pitoresk", visited: false, mapQuery: "Giethoorn, Hollanda", selectedForRoute: false },
-            { userGivenId: 'nl_010', country: "HOLLANDA", name: "Haarlem", city: "Haarlem", description: "Amsterdam'a yakın konumda bulunan Haarlem, tarihi merkezi, Grote Markt meydanı, St. Bavo Kilisesi, Frans Hals Müzesi ve Teylers Müzesi (Hollanda'nın en eski müzesi) ile zengin bir kültürel mirasa sahiptir. Daha sakin bir atmosfere sahip olup, 'Bloemenstad' (Çiçek Şehri) olarak da bilinir.", category: "Şehir / Kültürel / Tarihi / Müze", visited: false, mapQuery: "Haarlem, Hollanda", selectedForRoute: false },
-            { userGivenId: 'nl_011', country: "HOLLANDA", name: "Leiden", city: "Leiden", description: "Hollanda'nın en eski üniversitesine (Universitas Leiden) ev sahipliği yapan Leiden, tarihi kanalları, yel değirmenleri, müzeleri (Rijksmuseum van Oudheden - Antik Çağlar Müzesi gibi) ve Rembrandt'ın doğum yeri olmasıyla bilinir. Pitoresk ve entelektüel bir atmosfere sahiptir.", category: "Şehir / Üniversite / Tarihi / Kültürel", visited: false, mapQuery: "Leiden, Hollanda", selectedForRoute: false },
-            { userGivenId: 'nl_012', country: "HOLLANDA", name: "Delft", city: "Delft", description: "Ünlü mavi-beyaz Delftware seramikleriyle (Delfts Blauw) tanınan Delft, tarihi kanalları, pitoresk evleri, Nieuwe Kerk (Yeni Kilise - Hollanda kraliyet ailesinin mezarlarının bulunduğu yer) ve Oude Kerk (Eski Kilise) ile şirin ve tarihi bir şehirdir. Ressam Johannes Vermeer'in doğum yeridir.", category: "Şehir / Sanat / Seramik / Tarihi", visited: false, mapQuery: "Delft, Hollanda", selectedForRoute: false },
-
-            // ... (Diğer tüm ülkeler ve yerler için benzer şekilde detaylı açıklamalar eklenecek)
-        ];
-
-        let placesData = [];
-
-        // DOM Elements
-        const placesListElement = document.getElementById('placesList');
-        const filterElement = document.getElementById('filterVisited');
-        const countryFilterElement = document.getElementById('filterCountry');
-        const mapFrameElement = document.getElementById('mapFrame');
-        const mapLocationNameElement = document.getElementById('mapLocationName');
-        const generateRouteBtn = document.getElementById('generateRouteBtn');
-        const routeLinkContainer = document.getElementById('routeLinkContainer');
-        const newPlaceNameInput = document.getElementById('newPlaceNameInput');
-        const addPlaceBtn = document.getElementById('addPlaceBtn');
-        const addPlaceBtnText = document.getElementById('addPlaceBtnText');
-        const addPlaceLoader = document.getElementById('addPlaceLoader');
-        const addPlaceMessage = document.getElementById('addPlaceMessage');
-        const placesListStatusElement = document.getElementById('placesListStatus');
-
-        const authContainer = document.getElementById('authContainer');
-        const googleSignInBtn = document.getElementById('googleSignInBtn');
-        const userDisplay = document.getElementById('userDisplay');
-        const userNameElement = document.getElementById('userName');
-        const userPhotoElement = document.getElementById('userPhoto');
-        const signOutBtn = document.getElementById('signOutBtn');
-        const authStatusElement = document.getElementById('authStatus');
-        const userIdDisplayElement = document.getElementById('userIdDisplay');
-
-        let selectedRouteOrder = []; // Rota için seçilen yerlerin ID'lerini ve sıralarını tutar
-
-        // --- Firebase Initialization and Auth ---
-        async function initializeFirebase() {
-            console.log("[initializeFirebase] Firebase başlatılıyor...");
-            try {
-                if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "YOUR_API_KEY") {
-                    console.error("Firebase API Key eksik veya güncellenmemiş. Lütfen firebaseConfig objesini kontrol edin.");
-                    authStatusElement.textContent = "Hata: Firebase yapılandırması eksik. Lütfen API anahtarınızı kontrol edin.";
-                    googleSignInBtn.disabled = true;
-                    return;
-                }
-                app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                console.log("[initializeFirebase] Firebase başarıyla başlatıldı.");
-                authStatusElement.textContent = "Kimlik durumu kontrol ediliyor...";
-
-                // Handle auth state changes
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        // User is signed in
-                        currentUserId = user.uid;
-                        console.log("[onAuthStateChanged] Kullanıcı giriş yaptı:", currentUserId, user.displayName);
-                        authStatusElement.textContent = `Hoşgeldin, ${user.displayName || 'Kullanıcı'}! Yerler yükleniyor...`;
-                        userIdDisplayElement.textContent = `Kullanıcı ID: ${currentUserId}`;
-
-                        userNameElement.textContent = user.displayName || 'Kullanıcı Adı Yok';
-                        if (user.photoURL) {
-                            userPhotoElement.src = user.photoURL;
-                            userPhotoElement.classList.remove('hidden');
-                        } else {
-                            userPhotoElement.classList.add('hidden');
-                        }
-                        userDisplay.classList.remove('hidden');
-                        googleSignInBtn.classList.add('hidden');
-                        addPlaceBtn.disabled = false; // Kullanıcı giriş yapınca yer ekleme aktif olsun
-
-                        // Firestore collection reference for the logged-in user
-                        // Private data path:
-                        placesCollectionRef = collection(db, `artifacts/${appId}/users/${currentUserId}/places`);
-                        // Public data path (eğer herkesin aynı listeyi görmesini istiyorsanız):
-                        // placesCollectionRef = collection(db, `artifacts/${appId}/public/data/sharedPlaces`);
-
-                        await checkAndUpdateInitialData(); // Kullanıcıya özel veriyi kontrol et/oluştur
-                        await loadAndListenPlaces(); // Kullanıcının yerlerini yükle ve dinle
-
-                    } else {
-                        // User is signed out
-                        console.log("[onAuthStateChanged] Kullanıcı çıkış yaptı veya giriş yapmamış.");
-                        currentUserId = null;
-                        authStatusElement.textContent = "Lütfen Google ile giriş yapın.";
-                        userIdDisplayElement.textContent = "";
-                        userDisplay.classList.add('hidden');
-                        googleSignInBtn.classList.remove('hidden');
-                        googleSignInBtn.disabled = false;
-                        addPlaceBtn.disabled = true; // Kullanıcı çıkış yapınca yer ekleme pasif olsun
-                        placesListElement.innerHTML = '<p class="text-gray-500 italic p-4">Yerleri görmek için lütfen giriş yapın.</p>';
-                        placesData = [];
-                        populateCountryFilter();
-                        if (unsubscribePlaces) {
-                            console.log("[onAuthStateChanged] Mevcut Firestore listener kaldırılıyor (çıkış yapıldı).");
-                            unsubscribePlaces();
-                            unsubscribePlaces = null;
-                        }
-                    }
-                });
-
-                // Attempt to sign in with custom token if available, otherwise try anonymous sign-in as a fallback if needed.
-                // For this app, direct Google Sign-In is the primary method, so we don't need anonymous or custom token here initially.
-                // If __initial_auth_token is provided by the environment, use it.
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    console.log("[initializeFirebase] __initial_auth_token bulundu, özel token ile giriş deneniyor...");
-                    try {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                        console.log("[initializeFirebase] Özel token ile giriş başarılı.");
-                    } catch (error) {
-                        console.error("[initializeFirebase] Özel token ile giriş hatası:", error);
-                        // Fallback to allowing Google Sign-In if custom token fails
-                        authStatusElement.textContent = "Özel oturum açılamadı. Google ile giriş yapmayı deneyin.";
-                    }
-                } else {
-                     console.log("[initializeFirebase] __initial_auth_token bulunamadı. Manuel Google girişi bekleniyor.");
-                     // Optionally, you could sign in anonymously here if the app requires some functionality before Google sign-in
-                     // await signInAnonymously(auth);
-                     // console.log("[initializeFirebase] Anonim olarak giriş yapıldı (eğer etkinse).");
-                }
-
-
-            } catch (error) {
-                console.error("[initializeFirebase] Firebase başlatma hatası:", error);
-                authStatusElement.textContent = "Hata: Firebase başlatılamadı. " + error.message;
-                googleSignInBtn.disabled = true;
-            }
-        }
-
-        // Google Sign-In
-        googleSignInBtn.addEventListener('click', async () => {
-            if (!auth) {
-                console.error("Auth servisi başlatılmamış.");
-                authStatusElement.textContent = "Hata: Giriş servisi hazır değil.";
-                return;
-            }
-            const provider = new GoogleAuthProvider();
-            try {
-                authStatusElement.textContent = "Google ile giriş yapılıyor...";
-                googleSignInBtn.disabled = true;
-                const result = await signInWithPopup(auth, provider);
-                const user = result.user;
-                console.log("Google ile giriş başarılı:", user.displayName);
-                // onAuthStateChanged will handle the rest
-            } catch (error) {
-                console.error("Google ile giriş hatası:", error);
-                authStatusElement.textContent = `Giriş hatası: ${error.message}`;
-                if (error.code === 'auth/popup-closed-by-user') {
-                    authStatusElement.textContent = "Giriş iptal edildi. Lütfen tekrar deneyin.";
-                } else if (error.code === 'auth/network-request-failed') {
-                     authStatusElement.textContent = "Ağ hatası. Lütfen internet bağlantınızı kontrol edin.";
-                }
-                googleSignInBtn.disabled = false;
-            }
-        });
-
-        // Sign Out
-        signOutBtn.addEventListener('click', async () => {
-            if (!auth) {
-                console.error("Auth servisi başlatılmamış.");
-                return;
-            }
-            try {
-                await signOut(auth);
-                console.log("Çıkış başarılı.");
-                // onAuthStateChanged will handle UI updates
-                selectedRouteOrder = []; // Çıkış yapınca seçili rotayı temizle
-                updateGenerateRouteButtonState();
-                routeLinkContainer.innerHTML = '';
-                mapFrameElement.src = "https://maps.google.com/maps?output=embed&q=Avrupa"; // Haritayı sıfırla
-                mapLocationNameElement.textContent = '';
-            } catch (error) {
-                console.error("Çıkış hatası:", error);
-            }
-        });
-
-        // --- Data Management ---
-        async function checkAndUpdateInitialData() {
-            if (!currentUserId || !db) {
-                console.warn("[checkAndUpdateInitialData] Kullanıcı ID veya DB tanımsız. Atlama.");
-                return;
-            }
-            // Kullanıcıya özel bir "başlangıç verisi eklendi" bayrağını kontrol et
-            const initialSeedFlagDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/appState`, `initialDataStatus_v${CURRENT_INITIAL_DATA_VERSION}`);
-            try {
-                const docSnap = await getDoc(initialSeedFlagDocRef);
-                if (!docSnap.exists()) {
-                    console.log(`[checkAndUpdateInitialData] Kullanıcı (${currentUserId}) için başlangıç verisi (v${CURRENT_INITIAL_DATA_VERSION}) eklenmemiş. Ekleniyor...`);
-                    placesListStatusElement.textContent = "Hesabınız için başlangıç verileri hazırlanıyor...";
-
-                    if (initialPlacesData.length > 0) {
-                        const batch = writeBatch(db);
-                        initialPlacesData.forEach(place => {
-                            const newPlaceRef = doc(collection(db, `artifacts/${appId}/users/${currentUserId}/places`)); // Yeni doküman referansı
-                            batch.set(newPlaceRef, {
-                                ...place,
-                                createdAt: new Date().toISOString(), // Eklenme tarihi
-                                userId: currentUserId // Hangi kullanıcıya ait olduğu
-                            });
-                        });
-                        await batch.commit();
-                        console.log(`[checkAndUpdateInitialData] ${initialPlacesData.length} adet başlangıç yeri başarıyla eklendi.`);
-                    } else {
-                        console.log("[checkAndUpdateInitialData] Eklenecek başlangıç verisi bulunmuyor (initialPlacesData boş).");
-                    }
-                    await setDoc(initialSeedFlagDocRef, { seeded: true, timestamp: new Date().toISOString() });
-                    console.log(`[checkAndUpdateInitialData] Başlangıç verisi bayrağı (v${CURRENT_INITIAL_DATA_VERSION}) ayarlandı.`);
-                    placesListStatusElement.textContent = "Başlangıç verileri eklendi. Liste yükleniyor...";
-                } else {
-                    console.log(`[checkAndUpdateInitialData] Kullanıcı (${currentUserId}) için başlangıç verisi (v${CURRENT_INITIAL_DATA_VERSION}) zaten mevcut.`);
-                }
-            } catch (error) {
-                console.error("[checkAndUpdateInitialData] Başlangıç verisi kontrol/ekleme hatası:", error);
-                placesListStatusElement.textContent = "Başlangıç verileri hazırlanırken bir hata oluştu.";
-            }
-        }
-
-
-        async function loadAndListenPlaces() {
-            if (!placesCollectionRef) {
-                console.error("[loadAndListenPlaces] placesCollectionRef tanımsız. Muhtemelen kullanıcı giriş yapmamış veya Firebase düzgün başlatılmamış.");
-                placesListStatusElement.textContent = "Veritabanı bağlantısı kurulamadı (koleksiyon referansı yok). Lütfen giriş yapın.";
-                return;
-            }
-            if (unsubscribePlaces) {
-                console.log("[loadAndListenPlaces] Mevcut Firestore listener kaldırılıyor.");
-                unsubscribePlaces();
-                unsubscribePlaces = null;
-            }
-            console.log("[loadAndListenPlaces] Yeni onSnapshot listener'ı kuruluyor for", placesCollectionRef.path);
-            placesListStatusElement.innerHTML = "Yer listesi Firestore'dan yükleniyor... <div class='loader !ml-0 !inline-block'></div>";
-
-            // Firestore'da ülke ve isim alanlarına göre sıralama yapmak için birleşik indeks gerekebilir.
-            // Eğer hata alırsanız (failed-precondition: The query requires an index...), Firebase konsolundan bu indeksi oluşturmanız gerekir.
-            // İndeks: 'places' koleksiyonu, 'country' ASC, 'name' ASC
-            const q = query(placesCollectionRef, orderBy("country"), orderBy("name"));
-
-            unsubscribePlaces = onSnapshot(q, (snapshot) => {
-                console.log(`[onSnapshot] ${snapshot.docs.length} döküman alındı.`);
-                placesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-                populateCountryFilter();
-                renderPlacesList();
-                updateGenerateRouteButtonState();
-
-                if (currentUserId) {
-                    if (placesData.length > 0) {
-                        authStatusElement.textContent = `Yer listesi güncel (${placesData.length} yer).`;
-                    } else {
-                         // Eğer checkAndUpdateInitialData henüz bitmediyse bu mesaj görünebilir.
-                        authStatusElement.textContent = "Liste dinleniyor...";
-                        placesListStatusElement.textContent = "Listenizde henüz yer yok veya yükleniyor...";
-                        if (initialPlacesData.length === 0 && !docSnap.exists()){ // Eğer başlangıç verisi yoksa ve ilk kez yükleniyorsa
-                             placesListStatusElement.textContent = "Listenize yer eklemeye başlayabilirsiniz!";
-                        }
-                    }
-                }
-            }, (error) => {
-                console.error("[onSnapshot] Firestore'dan yerleri dinleme hatası: ", error);
-                authStatusElement.textContent = "Yer listesi yüklenemedi: " + error.message;
-                placesListStatusElement.textContent = "Yer listesi yüklenirken bir hata oluştu.";
-                 if (error.code === 'failed-precondition' && error.message.toLowerCase().includes('index')) {
-                    authStatusElement.innerHTML += `<br><strong class="text-red-600">Firestore İndeks Hatası!</strong> Sıralama için gerekli birleşik indeks (country ASC, name ASC) bulunamadı. Lütfen Firebase konsolundan 'places' koleksiyonu için bu indeksi oluşturun.`;
-                    placesListStatusElement.innerHTML = `<b>Önemli:</b> Verilerin doğru sıralanması için Firebase konsolunda bir indeks oluşturmanız gerekiyor. Hata mesajını kontrol edin.`;
-                }
-            });
-        }
-
-        function populateCountryFilter() {
-            const currentSelectedCountry = countryFilterElement.value;
-            countryFilterElement.innerHTML = '<option value="all">Tüm Ülkeler</option>';
-            if (placesData && placesData.length > 0) {
-                const countries = [...new Set(placesData.map(place => place.country).filter(Boolean))].sort();
-                countries.forEach(country => {
-                    const option = document.createElement('option');
-                    option.value = country;
-                    option.textContent = country;
-                    countryFilterElement.appendChild(option);
-                });
-                if (countries.includes(currentSelectedCountry)) {
-                    countryFilterElement.value = currentSelectedCountry;
-                }
-            }
-        }
-
-        function renderPlacesList() {
-            placesListElement.scrollTop = 0;
-            const visitedFilterValue = filterElement.value;
-            const countryFilterValue = countryFilterElement.value;
-            placesListElement.innerHTML = '';
-            let currentCountryHeader = "";
-
-            let tempFilteredPlaces = [...placesData];
-
-            if (visitedFilterValue !== 'all') {
-                tempFilteredPlaces = tempFilteredPlaces.filter(place => {
-                    if (visitedFilterValue === 'visited') return place.visited;
-                    if (visitedFilterValue === 'notvisited') return !place.visited;
-                    return true; // 'all' ise filtreleme yapma
-                });
-            }
-
-            if (countryFilterValue !== 'all') {
-                tempFilteredPlaces = tempFilteredPlaces.filter(place => place.country === countryFilterValue);
-            }
-
-            if (tempFilteredPlaces.length === 0) {
-                if (!currentUserId) {
-                     placesListStatusElement.textContent = 'Yerleri görmek için lütfen giriş yapın.';
-                } else if (placesData.length === 0 && initialPlacesData.length > 0) { // Henüz veri yüklenmemiş olabilir
-                     placesListStatusElement.innerHTML = "Yer listesi Firestore'dan yükleniyor... <div class='loader !ml-0 !inline-block'></div>";
-                }
-                else {
-                    placesListStatusElement.textContent = 'Bu filtreye uygun yer bulunamadı veya listeniz boş.';
-                }
-                placesListElement.innerHTML = `<p class="text-gray-500 italic p-4">${placesListStatusElement.textContent}</p>`;
-                return;
-            } else {
-                 placesListStatusElement.innerHTML = '';
-            }
-
-            tempFilteredPlaces.forEach((place) => {
-                if (!place || !place.id) {
-                    console.warn("[renderPlacesList] Eksik 'id' veya tanımsız 'place' nesnesi atlanıyor:", place);
-                    return;
-                }
-                if (place.country !== currentCountryHeader) {
-                    currentCountryHeader = place.country || "Diğer";
-                    const countryHeaderElement = document.createElement('h3');
-                    countryHeaderElement.className = 'country-header';
-                    countryHeaderElement.textContent = currentCountryHeader;
-                    placesListElement.appendChild(countryHeaderElement);
-                }
-
-                const listItem = document.createElement('div');
-                const isSelectedForRoute = selectedRouteOrder.find(p => p.id === place.id);
-                listItem.className = `place-item p-4 border border-gray-200 rounded-lg shadow-sm cursor-pointer transition-all duration-150 ease-in-out mt-2 ${isSelectedForRoute ? 'selected-for-route' : ''}`;
-                listItem.setAttribute('data-id', place.id);
-
-                listItem.innerHTML = `
-                    <div class="flex items-start justify-between">
-                        <div class="flex-grow">
-                            <h4 class="text-lg font-semibold text-sky-700">${place.name || 'İsimsiz Yer'}</h4>
-                            <p class="text-sm text-gray-500">${place.city ? place.city + ', ' : ''}${place.country ? place.country.replace(' (BK)', '') : 'Bilinmeyen Ülke'}</p>
-                            ${place.category ? `<span class="category-tag">${place.category}</span>` : '<span class="category-tag">Bilinmiyor</span>'}
-                            <p class="text-sm text-gray-600 mt-1">${place.description || 'Açıklama bulunamadı.'}</p>
-                            ${isSelectedForRoute ? `<p class="text-xs text-blue-600 font-semibold mt-1">Rota Sırası: ${isSelectedForRoute.order}</p>` : ''}
-                        </div>
-                        <div class="ml-4 flex-shrink-0 flex flex-col items-center space-y-2">
-                            <div>
-                                <input type="checkbox" id="visited-${place.id}" data-id="${place.id}" class="h-5 w-5 text-sky-600 border-gray-300 rounded focus:ring-sky-500" ${place.visited ? 'checked' : ''}>
-                                <label for="visited-${place.id}" class="text-xs text-gray-500 ml-1">${place.visited ? 'Gezildi' : 'Gezilmedi'}</label>
-                            </div>
-                            <button class="delete-place-btn text-xs" data-id="${place.id}">Sil</button>
-                        </div>
-                    </div>
-                `;
-                placesListElement.appendChild(listItem);
-
-                // Event listener for selecting/deselecting place for route
-                listItem.addEventListener('click', async (event) => {
-                    if (event.target.type === 'checkbox' || event.target.classList.contains('delete-place-btn')) {
-                        return; // Checkbox veya silme butonu tıklamalarını yoksay
-                    }
-                    if (!currentUserId) {
-                        alert("Rota oluşturmak için lütfen giriş yapın.");
-                        return;
-                    }
-
-                    const placeId = place.id;
-                    const existingPlaceIndex = selectedRouteOrder.findIndex(p => p.id === placeId);
-
-                    if (existingPlaceIndex > -1) { // Eğer zaten seçiliyse, seçimden kaldır
-                        selectedRouteOrder.splice(existingPlaceIndex, 1);
-                        listItem.classList.remove('selected-for-route');
-                        // Kalanların sıralamasını güncelle
-                        selectedRouteOrder.forEach((p, index) => p.order = index + 1);
-                    } else { // Yeni seçiliyorsa, sona ekle
-                        selectedRouteOrder.push({ id: placeId, name: place.name, coordinates: place.coordinates, order: selectedRouteOrder.length + 1 });
-                        listItem.classList.add('selected-for-route');
-                    }
-                    // Seçili yerlerin sırasını güncellemek için listeyi yeniden render et
-                    renderPlacesList(); // Bu, sıralama numaralarını güncelleyecektir
-                    updateGenerateRouteButtonState();
-                    updateMap(place); // Haritada göster
-                });
-
-                // Event listener for visited checkbox
-                const visitedCheckbox = listItem.querySelector(`#visited-${place.id}`);
-                visitedCheckbox.addEventListener('change', async (event) => {
-                    if (!currentUserId) {
-                        alert("Değişiklik yapmak için lütfen giriş yapın.");
-                        event.target.checked = !event.target.checked; // Değişikliği geri al
-                        return;
-                    }
-                    const placeId = event.target.dataset.id;
-                    const isVisited = event.target.checked;
-                    try {
-                        const placeDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/places`, placeId);
-                        await updateDoc(placeDocRef, { visited: isVisited });
-                        console.log(`Yer ${placeId} ziyaret durumu güncellendi: ${isVisited}`);
-                        // Update local data to reflect change immediately, onSnapshot will also update it
-                        const localPlace = placesData.find(p => p.id === placeId);
-                        if (localPlace) localPlace.visited = isVisited;
-                        // renderPlacesList(); // onSnapshot zaten tetikleyecek, ama anlık UI tepkisi için eklenebilir.
-                    } catch (error) {
-                        console.error("Ziyaret durumu güncellenirken hata:", error);
-                        event.target.checked = !isVisited; // Hata durumunda değişikliği geri al
-                    }
-                });
-
-                // Event listener for delete button
-                const deleteButton = listItem.querySelector('.delete-place-btn');
-                deleteButton.addEventListener('click', async () => {
-                    if (!currentUserId) {
-                        alert("Silme işlemi için lütfen giriş yapın.");
-                        return;
-                    }
-                    const placeId = place.id; // closure'dan place.id'yi al
-                    // Basit bir onaylama (custom modal daha iyi olurdu)
-                    if (!confirm(`"${place.name}" adlı yeri silmek istediğinizden emin misiniz?`)) {
-                        return;
-                    }
-                    try {
-                        const placeDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/places`, placeId);
-                        await deleteDoc(placeDocRef);
-                        console.log(`Yer ${placeId} başarıyla silindi.`);
-                        // Rota listesinden de kaldır (eğer varsa)
-                        selectedRouteOrder = selectedRouteOrder.filter(p => p.id !== placeId);
-                        selectedRouteOrder.forEach((p, index) => p.order = index + 1); // Sıralamayı güncelle
-                        // renderPlacesList(); // onSnapshot zaten tetikleyecek
-                        updateGenerateRouteButtonState();
-                        routeLinkContainer.innerHTML = ''; // Silme sonrası rota linkini temizle
-                    } catch (error) {
-                        console.error("Yer silinirken hata:", error);
-                        alert("Yer silinirken bir hata oluştu.");
-                    }
-                });
-            });
-        }
-
-        function updateMap(place) {
-            if (place && place.coordinates && place.coordinates.lat && place.coordinates.lng) {
-                const lat = place.coordinates.lat;
-                const lng = place.coordinates.lng;
-                mapFrameElement.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=tr&z=14&output=embed`;
-                mapLocationNameElement.textContent = `${place.name} (${place.city || ''}, ${place.country || ''})`;
-            } else if (place && place.name) { // Sadece isim varsa genel arama
-                 mapFrameElement.src = `https://maps.google.com/maps?q=${encodeURIComponent(place.name + (place.city ? ', ' + place.city : '') + (place.country ? ', ' + place.country : ''))}&hl=tr&z=10&output=embed`;
-                 mapLocationNameElement.textContent = `${place.name}`;
-            }
-             else {
-                mapFrameElement.src = "https://maps.google.com/maps?output=embed&q=Avrupa"; // Varsayılan harita
-                mapLocationNameElement.textContent = "";
-            }
-        }
-
-        function updateGenerateRouteButtonState() {
-            if (selectedRouteOrder.length > 1) { // En az 2 yer seçilmeli
-                generateRouteBtn.disabled = false;
-            } else {
-                generateRouteBtn.disabled = true;
-            }
-        }
-
-        generateRouteBtn.addEventListener('click', () => {
-            if (selectedRouteOrder.length < 2) {
-                alert("Rota oluşturmak için en az 2 yer seçmelisiniz.");
-                return;
-            }
-
-            // Seçilen yerleri sıralarına göre ayarla
-            const sortedPlacesForRoute = [...selectedRouteOrder].sort((a, b) => a.order - b.order);
-
-            let googleMapsUrl = "https://www.google.com/maps/dir/";
-            sortedPlacesForRoute.forEach(place => {
-                if (place.coordinates && place.coordinates.lat && place.coordinates.lng) {
-                    googleMapsUrl += `${place.coordinates.lat},${place.coordinates.lng}/`;
-                } else {
-                    googleMapsUrl += `${encodeURIComponent(place.name + (place.city ? ', ' + place.city : '') + (place.country ? ', ' + place.country : ''))}/`;
-                }
-            });
-
-            routeLinkContainer.innerHTML = `
-                <p class="text-green-600 font-semibold">Rota Oluşturuldu:</p>
-                <a href="${googleMapsUrl}" target="_blank" class="text-blue-600 hover:text-blue-800 underline break-all">${googleMapsUrl}</a>
-            `;
-            console.log("Oluşturulan Rota URL:", googleMapsUrl);
-        });
-
-        addPlaceBtn.addEventListener('click', async () => {
-            if (!currentUserId) {
-                addPlaceMessage.textContent = "Yeni yer eklemek için lütfen giriş yapın.";
-                addPlaceMessage.className = "text-sm mt-2 text-red-600";
-                return;
-            }
-            const placeName = newPlaceNameInput.value.trim();
-            if (!placeName) {
-                addPlaceMessage.textContent = "Lütfen bir yer adı girin.";
-                addPlaceMessage.className = "text-sm mt-2 text-red-600";
-                return;
-            }
-
-            addPlaceBtnText.classList.add('hidden');
-            addPlaceLoader.classList.remove('hidden');
-            addPlaceBtn.disabled = true;
-            addPlaceMessage.textContent = "";
-
-            try {
-                // Burada ideal olarak bir Geocoding API'si (Google Places API gibi) kullanarak
-                // yer adı üzerinden koordinat, şehir, ülke gibi bilgileri çekmek gerekir.
-                // Şimdilik manuel giriş veya basitleştirilmiş bir yapı varsayalım.
-                // Örnek: Kullanıcıdan daha fazla bilgi isteyebilir veya sadece ismi kaydedebiliriz.
-
-                // Bu örnekte, sadece ismi ve varsayılan bazı değerleri kaydediyoruz.
-                // Gerçek bir uygulamada, bu kısmı bir API ile zenginleştirmelisiniz.
-                const newPlace = {
-                    name: placeName,
-                    city: "", // API'den alınabilir
-                    country: "", // API'den alınabilir
-                    category: "Yeni Eklenen",
-                    description: "Kullanıcı tarafından eklendi.",
-                    visited: false,
-                    coordinates: null, // API'den alınabilir { lat: ..., lng: ... }
-                    createdAt: new Date().toISOString(),
-                    userId: currentUserId
-                };
-
-                const docRef = await addDoc(placesCollectionRef, newPlace);
-                console.log("Yeni yer eklendi, ID:", docRef.id);
-                addPlaceMessage.textContent = `"${placeName}" başarıyla eklendi!`;
-                addPlaceMessage.className = "text-sm mt-2 text-green-600";
-                newPlaceNameInput.value = ""; // Giriş alanını temizle
-
-                // API çağrısı simülasyonu için kısa bir bekleme (gerçek API çağrısı daha uzun sürebilir)
-                // await new Promise(resolve => setTimeout(resolve, 1000));
-
-            } catch (error) {
-                console.error("Yeni yer eklenirken hata:", error);
-                addPlaceMessage.textContent = "Yer eklenirken bir hata oluştu: " + error.message;
-                addPlaceMessage.className = "text-sm mt-2 text-red-600";
-            } finally {
-                addPlaceBtnText.classList.remove('hidden');
-                addPlaceLoader.classList.add('hidden');
-                if (currentUserId) addPlaceBtn.disabled = false; // Sadece giriş yapılmışsa tekrar aktif et
-            }
-        });
-
-        // Event listeners for filters
-        filterElement.addEventListener('change', renderPlacesList);
-        countryFilterElement.addEventListener('change', renderPlacesList);
-
-        // Initialize Firebase on page load
-        initializeFirebase();
-
-        // Clean up Firestore listener on page unload
-        window.addEventListener('beforeunload', () => {
-            if (unsubscribePlaces) {
-                console.log("Sayfadan ayrılmadan önce Firestore listener kaldırılıyor.");
-                unsubscribePlaces();
-            }
-        });
-
-    </script>
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/firebase-service.js"></script>
+    <script src="js/ui-components.js"></script>
+    <script src="js/place-manager.js"></script>
+    <script src="js/route-manager.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
