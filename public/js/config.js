@@ -18,7 +18,7 @@ const firebaseConfig = {
 // Application Configuration
 const APP_CONFIG = {
     appId: firebaseConfig.appId || 'default-app-id',
-    currentDataVersion: "1.6",
+    currentDataVersion: "1.7",
     maxPlaceNameLength: 100,
     maxDescriptionLength: 500,
     toastDuration: 5000,
@@ -73,6 +73,68 @@ const MESSAGES = {
 
 // Initial places data for new users
 const INITIAL_PLACES_DATA = [
+    // TÜRKİYE
+    { 
+        userGivenId: 'tr_001', 
+        country: "TÜRKİYE", 
+        name: "Pamukkale", 
+        city: "Denizli", 
+        description: "Pamukkale, Denizli ili sınırları içerisinde yer alan ve UNESCO Dünya Mirası Listesi'nde bulunan doğal bir harikadır. Beyaz kireç taraçaları ve termal suları ile ünlü olan bu eşsiz oluşum, binlerce yıldır akan kalsiyum karbonat açısından zengin termal sularla şekillenmiştir. Antik Hierapolis şehri kalıntıları da burada yer alır.", 
+        category: "Doğa / UNESCO / Termal / Tarihi", 
+        visited: false, 
+        mapQuery: "Pamukkale, Denizli", 
+        selectedForRoute: false,
+        coordinates: { lat: 37.9203, lng: 29.1206 }
+    },
+    { 
+        userGivenId: 'tr_002', 
+        country: "TÜRKİYE", 
+        name: "Kapadokya", 
+        city: "Nevşehir", 
+        description: "Kapadokya, Nevşehir, Kayseri, Aksaray ve Kırşehir illerinin kesiştiği bölgede yer alan, peri bacaları, yeraltı şehirleri ve kaya kiliselerle ünlü UNESCO Dünya Mirası alanıdır. Balon turları, at turları ve yürüyüş rotalarıyla ziyaretçilerine eşsiz deneyimler sunar.", 
+        category: "Doğa / UNESCO / Tarihi / Kültürel", 
+        visited: false, 
+        mapQuery: "Kapadokya, Nevşehir", 
+        selectedForRoute: false,
+        coordinates: { lat: 38.6431, lng: 34.8287 }
+    },
+    { 
+        userGivenId: 'tr_003', 
+        country: "TÜRKİYE", 
+        name: "Efes Antik Kenti", 
+        city: "İzmir", 
+        description: "Efes, İzmir'in Selçuk ilçesinde bulunan ve dünyanın en iyi korunmuş antik kentlerinden biri olan UNESCO Dünya Mirası alanıdır. Celsus Kütüphanesi, Büyük Tiyatro ve Artemis Tapınağı kalıntılarıyla Roma döneminin ihtişamını günümüze taşır.", 
+        category: "Tarihi / UNESCO / Antik Kent / Kültürel", 
+        visited: false, 
+        mapQuery: "Efes Antik Kenti, Selçuk, İzmir", 
+        selectedForRoute: false,
+        coordinates: { lat: 37.9395, lng: 27.3417 }
+    },
+    { 
+        userGivenId: 'tr_004', 
+        country: "TÜRKİYE", 
+        name: "Ayasofya", 
+        city: "İstanbul", 
+        description: "Ayasofya, İstanbul'da bulunan ve hem Bizans hem de Osmanlı mimarisinin en önemli eserlerinden biri olan tarihi yapıdır. 537 yılında inşa edilen bu muhteşem yapı, önce kilise, sonra cami olarak kullanılmış, günümüzde ise tekrar cami olarak hizmet vermektedir.", 
+        category: "Tarihi / Mimari / Dini / UNESCO", 
+        visited: false, 
+        mapQuery: "Ayasofya, İstanbul", 
+        selectedForRoute: false,
+        coordinates: { lat: 41.0086, lng: 28.9802 }
+    },
+    { 
+        userGivenId: 'tr_005', 
+        country: "TÜRKİYE", 
+        name: "Antalya Kaleiçi", 
+        city: "Antalya", 
+        description: "Kaleiçi, Antalya'nın tarihi merkezi olup, Roma, Bizans, Selçuklu ve Osmanlı dönemlerinden kalma eserlerin bir arada bulunduğu büyüleyici bir bölgedir. Dar sokakları, tarihi evleri, butik otelleri ve restoranlarıyla Akdeniz'in incisi olarak bilinir.", 
+        category: "Tarihi / Şehir Merkezi / Kültürel / Turistik", 
+        visited: false, 
+        mapQuery: "Kaleiçi, Antalya", 
+        selectedForRoute: false,
+        coordinates: { lat: 36.8841, lng: 30.7056 }
+    },
+
     // HOLLANDA
     { 
         userGivenId: 'nl_001', 
@@ -133,6 +195,32 @@ const INITIAL_PLACES_DATA = [
         mapQuery: "Giethoorn, Hollanda", 
         selectedForRoute: false,
         coordinates: { lat: 52.7386, lng: 6.0783 }
+    },
+
+    // İTALYA
+    { 
+        userGivenId: 'it_001', 
+        country: "İTALYA", 
+        name: "Roma Kolezyumu", 
+        city: "Roma", 
+        description: "Roma'nın kalbi olan Kolezyum, antik dünyanın en büyük amfitiyatrosu ve Roma İmparatorluğu'nun gücünün simgesidir. MS 80 yılında tamamlanan bu muhteşem yapı, gladyatör dövüşlerine ve halka açık gösterilere ev sahipliği yapmıştır.", 
+        category: "Tarihi / UNESCO / Antik / Mimari", 
+        visited: false, 
+        mapQuery: "Colosseum, Roma", 
+        selectedForRoute: false,
+        coordinates: { lat: 41.8902, lng: 12.4922 }
+    },
+    { 
+        userGivenId: 'it_002', 
+        country: "İTALYA", 
+        name: "Venedik Kanalları", 
+        city: "Venedik", 
+        description: "Venedik, 118 küçük adacık üzerine kurulmuş ve 400'den fazla köprüyle birbirine bağlanmış eşsiz bir şehirdir. Gondol turları, San Marco Meydanı ve Doge Sarayı ile romantik atmosferi ve benzersiz mimarisiyle ünlüdür.", 
+        category: "Şehir / UNESCO / Kanal / Romantik", 
+        visited: false, 
+        mapQuery: "Venedik Kanalları", 
+        selectedForRoute: false,
+        coordinates: { lat: 45.4408, lng: 12.3155 }
     }
 ];
 

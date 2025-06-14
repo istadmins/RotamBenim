@@ -515,19 +515,104 @@ class PlaceManager {
             return;
         }
 
-        // Check for duplicates
-        const isDuplicate = this.places.some(place => 
-            place.name.toLowerCase() === placeName.toLowerCase()
-        );
-
-        if (isDuplicate) {
-            this.addPlaceMessage.textContent = 'Bu yer zaten listede mevcut';
+        // Check for duplicates with more comprehensive matching
+        const duplicateInfo = this.checkForDuplicates(placeName);
+        if (duplicateInfo.isDuplicate) {
+            this.addPlaceMessage.textContent = `Bu yer zaten listede mevcut: "${duplicateInfo.existingPlace.name}" (${duplicateInfo.existingPlace.city || ''}, ${duplicateInfo.existingPlace.country || ''})`;
             this.addPlaceMessage.className = 'text-sm mt-2 text-yellow-600';
             return;
         }
 
         this.addPlaceMessage.textContent = '';
         this.addPlaceMessage.className = 'text-sm mt-2';
+    }
+
+    /**
+     * Check for duplicate places with comprehensive matching
+     * @param {string} placeName - Place name to check
+     * @returns {Object} Duplicate check result
+     */
+    checkForDuplicates(placeName) {
+        const normalizedInput = this.normalizePlaceName(placeName);
+        
+        for (const place of this.places) {
+            const normalizedExisting = this.normalizePlaceName(place.name);
+            
+            // Exact match
+            if (normalizedInput === normalizedExisting) {
+                return { isDuplicate: true, existingPlace: place, matchType: 'exact' };
+            }
+            
+            // Similar match (contains or is contained)
+            if (normalizedInput.length > 3 && normalizedExisting.length > 3) {
+                if (normalizedInput.includes(normalizedExisting) || normalizedExisting.includes(normalizedInput)) {
+                    return { isDuplicate: true, existingPlace: place, matchType: 'similar' };
+                }
+            }
+            
+            // Check alternative names for Turkish places
+            const alternativeMatch = this.checkAlternativeNames(placeName, place);
+            if (alternativeMatch) {
+                return { isDuplicate: true, existingPlace: place, matchType: 'alternative' };
+            }
+        }
+        
+        return { isDuplicate: false };
+    }
+
+    /**
+     * Normalize place name for comparison
+     * @param {string} name - Place name to normalize
+     * @returns {string} Normalized name
+     */
+    normalizePlaceName(name) {
+        if (!name) return '';
+        
+        return name
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s]/g, '') // Remove special characters
+            .replace(/\s+/g, ' ') // Normalize spaces
+            .replace(/ı/g, 'i')
+            .replace(/ğ/g, 'g')
+            .replace(/ü/g, 'u')
+            .replace(/ş/g, 's')
+            .replace(/ö/g, 'o')
+            .replace(/ç/g, 'c');
+    }
+
+    /**
+     * Check alternative names for places
+     * @param {string} inputName - Input place name
+     * @param {Object} existingPlace - Existing place object
+     * @returns {boolean} Whether names match
+     */
+    checkAlternativeNames(inputName, existingPlace) {
+        const alternatives = {
+            'pamukkale': ['pamukkale', 'cotton castle', 'pamuk kale'],
+            'kapadokya': ['kapadokya', 'cappadocia', 'capadocia'],
+            'efes': ['efes', 'ephesus', 'efes antik kenti'],
+            'ayasofya': ['ayasofya', 'hagia sophia', 'aya sofya'],
+            'topkapi': ['topkapi', 'topkapı', 'topkapi palace', 'topkapı sarayı'],
+            'galata kulesi': ['galata kulesi', 'galata tower'],
+            'truva': ['truva', 'troy', 'troya'],
+            'amsterdam': ['amsterdam', 'amsterdam kanalları'],
+            'venedik': ['venedik', 'venice', 'venezia', 'venedik kanalları'],
+            'roma': ['roma', 'rome', 'roma kolezyumu', 'colosseum']
+        };
+        
+        const normalizedInput = this.normalizePlaceName(inputName);
+        const normalizedExisting = this.normalizePlaceName(existingPlace.name);
+        
+        for (const [key, altNames] of Object.entries(alternatives)) {
+            const normalizedAltNames = altNames.map(name => this.normalizePlaceName(name));
+            
+            if (normalizedAltNames.includes(normalizedInput) && normalizedAltNames.includes(normalizedExisting)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     /**
@@ -552,34 +637,569 @@ class PlaceManager {
             return;
         }
 
-        try {
-            uiComponents.setButtonLoading(this.addPlaceBtn, true, 'Ekleniyor...');
-            this.showAddPlaceMessage('', '');
+        // Check for duplicates before making API calls
+        const duplicateInfo = this.checkForDuplicates(placeName);
+        if (duplicateInfo.isDuplicate) {
+            this.showAddPlaceMessage(
+                `Bu yer zaten listede mevcut: "${duplicateInfo.existingPlace.name}" (${duplicateInfo.existingPlace.city || ''}, ${duplicateInfo.existingPlace.country || ''})`, 
+                'warning'
+            );
+            
+            // Highlight the existing place in the list
+            this.highlightExistingPlace(duplicateInfo.existingPlace.id);
+            return;
+        }
 
+        try {
+            uiComponents.setButtonLoading(this.addPlaceBtn, true, 'Yer bilgileri aranıyor...');
+            this.showAddPlaceMessage('Yer bilgileri otomatik olarak aranıyor...', 'info');
+
+            // Get place information from geocoding API
+            const placeInfo = await this.getPlaceInformation(placeName);
+            
+            // Final duplicate check with the resolved place name
+            const finalDuplicateInfo = this.checkForDuplicates(placeInfo.name || placeName);
+            if (finalDuplicateInfo.isDuplicate) {
+                this.showAddPlaceMessage(
+                    `Bu yer zaten listede mevcut: "${finalDuplicateInfo.existingPlace.name}" (${finalDuplicateInfo.existingPlace.city || ''}, ${finalDuplicateInfo.existingPlace.country || ''})`, 
+                    'warning'
+                );
+                this.highlightExistingPlace(finalDuplicateInfo.existingPlace.id);
+                return;
+            }
+            
             const newPlace = {
-                name: placeName,
-                city: '',
-                country: '',
-                category: 'Kullanıcı Ekledi',
-                description: 'Kullanıcı tarafından eklendi.',
-                coordinates: null
+                name: placeInfo.name || placeName,
+                city: placeInfo.city || '',
+                country: placeInfo.country || 'DİĞER',
+                category: placeInfo.category || 'Kullanıcı Ekledi',
+                description: placeInfo.description || 'Kullanıcı tarafından eklendi.',
+                coordinates: placeInfo.coordinates || null,
+                mapQuery: placeInfo.mapQuery || placeName
             };
 
             await firebaseService.addPlace(newPlace);
             
             this.newPlaceNameInput.value = '';
-            this.showAddPlaceMessage(MESSAGES.places.addSuccess, 'success');
+            this.showAddPlaceMessage(
+                `${newPlace.name} başarıyla eklendi! ${newPlace.country !== 'DİĞER' ? `(${newPlace.country})` : ''}`, 
+                'success'
+            );
             
             // Clear success message after delay
             setTimeout(() => {
                 this.showAddPlaceMessage('', '');
-            }, 3000);
+            }, 5000);
 
         } catch (error) {
             console.error('[PlaceManager] Error adding place:', error);
             this.showAddPlaceMessage(MESSAGES.places.addError, 'error');
         } finally {
             uiComponents.setButtonLoading(this.addPlaceBtn, false, 'Yer Ekle');
+        }
+    }
+
+    /**
+     * Highlight existing place in the list
+     * @param {string} placeId - ID of the place to highlight
+     */
+    highlightExistingPlace(placeId) {
+        // Remove any existing highlights
+        document.querySelectorAll('.place-item.highlight-duplicate').forEach(item => {
+            item.classList.remove('highlight-duplicate');
+        });
+
+        // Add highlight to the duplicate place
+        const placeElement = document.querySelector(`[data-id="${placeId}"]`);
+        if (placeElement) {
+            placeElement.classList.add('highlight-duplicate');
+            
+            // Scroll to the highlighted place
+            Utils.scrollToElement(placeElement, 100);
+            
+            // Remove highlight after 3 seconds
+            setTimeout(() => {
+                placeElement.classList.remove('highlight-duplicate');
+            }, 3000);
+        }
+    }
+
+    /**
+     * Get place information from various sources
+     * @param {string} placeName - Place name to search
+     * @returns {Promise<Object>} Place information
+     */
+    async getPlaceInformation(placeName) {
+        console.log(`[PlaceManager] Getting information for: ${placeName}`);
+        
+        try {
+            // Try multiple sources for place information
+            let placeInfo = await this.searchWithNominatim(placeName);
+            
+            if (!placeInfo.country || placeInfo.country === 'DİĞER') {
+                // Fallback to Wikipedia/other sources
+                const wikiInfo = await this.searchWithWikipedia(placeName);
+                placeInfo = { ...placeInfo, ...wikiInfo };
+            }
+            
+            return placeInfo;
+            
+        } catch (error) {
+            console.error('[PlaceManager] Error getting place information:', error);
+            return {
+                name: placeName,
+                city: '',
+                country: 'DİĞER',
+                category: 'Kullanıcı Ekledi',
+                description: 'Kullanıcı tarafından eklendi. Yer bilgileri otomatik olarak bulunamadı.',
+                coordinates: null,
+                mapQuery: placeName
+            };
+        }
+    }
+
+    /**
+     * Search place information using Nominatim (OpenStreetMap)
+     * @param {string} placeName - Place name to search
+     * @returns {Promise<Object>} Place information
+     */
+    async searchWithNominatim(placeName) {
+        try {
+            const encodedName = encodeURIComponent(placeName);
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/search?q=${encodedName}&format=json&limit=1&addressdetails=1&extratags=1&namedetails=1`,
+                {
+                    headers: {
+                        'User-Agent': 'RotamBenim/1.0 (Travel Planning App)'
+                    }
+                }
+            );
+            
+            if (!response.ok) {
+                throw new Error(`Nominatim API error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data && data.length > 0) {
+                const place = data[0];
+                const address = place.address || {};
+                
+                // Determine country and translate to Turkish
+                let country = this.translateCountryName(
+                    address.country || 
+                    address.country_code?.toUpperCase() || 
+                    'DİĞER'
+                );
+                
+                // Get city information
+                let city = address.city || 
+                          address.town || 
+                          address.village || 
+                          address.municipality || 
+                          address.county || '';
+                
+                // Generate description based on place type
+                let description = this.generatePlaceDescription(place, address);
+                let category = this.determinePlaceCategory(place, address);
+                
+                return {
+                    name: place.display_name?.split(',')[0] || placeName,
+                    city: city,
+                    country: country,
+                    category: category,
+                    description: description,
+                    coordinates: {
+                        lat: parseFloat(place.lat),
+                        lng: parseFloat(place.lon)
+                    },
+                    mapQuery: place.display_name || placeName
+                };
+            }
+            
+        } catch (error) {
+            console.error('[PlaceManager] Nominatim search error:', error);
+        }
+        
+        return {
+            name: placeName,
+            city: '',
+            country: 'DİĞER',
+            category: 'Kullanıcı Ekledi',
+            description: 'Kullanıcı tarafından eklendi.',
+            coordinates: null,
+            mapQuery: placeName
+        };
+    }
+
+    /**
+     * Search place information using Wikipedia
+     * @param {string} placeName - Place name to search
+     * @returns {Promise<Object>} Place information
+     */
+    async searchWithWikipedia(placeName) {
+        try {
+            // Check if it's a known Turkish place first
+            const turkishPlaceInfo = this.getTurkishPlaceInfo(placeName);
+            if (turkishPlaceInfo) {
+                return turkishPlaceInfo;
+            }
+
+            const encodedName = encodeURIComponent(placeName);
+            
+            // First, search for the page
+            const searchResponse = await fetch(
+                `https://tr.wikipedia.org/api/rest_v1/page/summary/${encodedName}`
+            );
+            
+            if (searchResponse.ok) {
+                const data = await searchResponse.json();
+                
+                if (data.extract) {
+                    // Try to extract country information from the description
+                    const country = this.extractCountryFromText(data.extract);
+                    
+                    return {
+                        description: data.extract.substring(0, 300) + (data.extract.length > 300 ? '...' : ''),
+                        country: country || 'DİĞER',
+                        category: this.determineCategoryFromDescription(data.extract)
+                    };
+                }
+            }
+            
+        } catch (error) {
+            console.error('[PlaceManager] Wikipedia search error:', error);
+        }
+        
+        return {};
+    }
+
+    /**
+     * Get information for known Turkish places
+     * @param {string} placeName - Place name to check
+     * @returns {Object|null} Place information if found
+     */
+    getTurkishPlaceInfo(placeName) {
+        const turkishPlaces = {
+            'pamukkale': {
+                name: 'Pamukkale',
+                city: 'Denizli',
+                country: 'TÜRKİYE',
+                category: 'Doğa / UNESCO / Termal / Tarihi',
+                description: 'Pamukkale, Denizli ili sınırları içerisinde yer alan ve UNESCO Dünya Mirası Listesi\'nde bulunan doğal bir harikadır. Beyaz kireç taraçaları ve termal suları ile ünlü olan bu eşsiz oluşum, binlerce yıldır akan kalsiyum karbonat açıs��ndan zengin termal sularla şekillenmiştir.',
+                coordinates: { lat: 37.9203, lng: 29.1206 }
+            },
+            'kapadokya': {
+                name: 'Kapadokya',
+                city: 'Nevşehir',
+                country: 'TÜRKİYE',
+                category: 'Doğa / UNESCO / Tarihi / Kültürel',
+                description: 'Kapadokya, peri bacaları, yeraltı şehirleri ve kaya kiliselerle ünlü UNESCO Dünya Mirası alanıdır. Balon turları, at turları ve yürüyüş rotalarıyla ziyaretçilerine eşsiz deneyimler sunar.',
+                coordinates: { lat: 38.6431, lng: 34.8287 }
+            },
+            'cappadocia': {
+                name: 'Kapadokya',
+                city: 'Nevşehir',
+                country: 'TÜRKİYE',
+                category: 'Doğa / UNESCO / Tarihi / Kültürel',
+                description: 'Kapadokya, peri bacaları, yeraltı şehirleri ve kaya kiliselerle ünlü UNESCO Dünya Mirası alanıdır. Balon turları, at turları ve yürüyüş rotalarıyla ziyaretçilerine eşsiz deneyimler sunar.',
+                coordinates: { lat: 38.6431, lng: 34.8287 }
+            },
+            'efes': {
+                name: 'Efes Antik Kenti',
+                city: 'İzmir',
+                country: 'TÜRKİYE',
+                category: 'Tarihi / UNESCO / Antik Kent / Kültürel',
+                description: 'Efes, İzmir\'in Selçuk ilçesinde bulunan ve dünyanın en iyi korunmuş antik kentlerinden biri olan UNESCO Dünya Mirası alanıdır.',
+                coordinates: { lat: 37.9395, lng: 27.3417 }
+            },
+            'ephesus': {
+                name: 'Efes Antik Kenti',
+                city: 'İzmir',
+                country: 'TÜRKİYE',
+                category: 'Tarihi / UNESCO / Antik Kent / Kültürel',
+                description: 'Efes, İzmir\'in Selçuk ilçesinde bulunan ve dünyanın en iyi korunmuş antik kentlerinden biri olan UNESCO Dünya Mirası alanıdır.',
+                coordinates: { lat: 37.9395, lng: 27.3417 }
+            },
+            'ayasofya': {
+                name: 'Ayasofya',
+                city: 'İstanbul',
+                country: 'TÜRKİYE',
+                category: 'Tarihi / Mimari / Dini / UNESCO',
+                description: 'Ayasofya, İstanbul\'da bulunan ve hem Bizans hem de Osmanlı mimarisinin en önemli eserlerinden biri olan tarihi yapıdır.',
+                coordinates: { lat: 41.0086, lng: 28.9802 }
+            },
+            'hagia sophia': {
+                name: 'Ayasofya',
+                city: 'İstanbul',
+                country: 'TÜRKİYE',
+                category: 'Tarihi / Mimari / Dini / UNESCO',
+                description: 'Ayasofya, İstanbul\'da bulunan ve hem Bizans hem de Osmanlı mimarisinin en önemli eserlerinden biri olan tarihi yapıdır.',
+                coordinates: { lat: 41.0086, lng: 28.9802 }
+            },
+            'kaleiçi': {
+                name: 'Antalya Kaleiçi',
+                city: 'Antalya',
+                country: 'TÜRKİYE',
+                category: 'Tarihi / Şehir Merkezi / Kültürel / Turistik',
+                description: 'Kaleiçi, Antalya\'nın tarihi merkezi olup, Roma, Bizans, Selçuklu ve Osmanlı dönemlerinden kalma eserlerin bir arada bulunduğu büyüleyici bir bölgedir.',
+                coordinates: { lat: 36.8841, lng: 30.7056 }
+            },
+            'topkapı': {
+                name: 'Topkapı Sarayı',
+                city: 'İstanbul',
+                country: 'TÜRKİYE',
+                category: 'Tarihi / Müze / Saray / UNESCO',
+                description: 'Topkapı Sarayı, 15. yüzyıldan 19. yüzyıla kadar Osmanlı padişahlarının yaşadığı saray kompleksidir.',
+                coordinates: { lat: 41.0115, lng: 28.9833 }
+            },
+            'galata kulesi': {
+                name: 'Galata Kulesi',
+                city: 'İstanbul',
+                country: 'TÜRKİYE',
+                category: 'Tarihi / Mimari / Manzara',
+                description: 'Galata Kulesi, İstanbul\'un simgelerinden biri olan ve şehrin panoramik manzarasını sunan tarihi kuledir.',
+                coordinates: { lat: 41.0256, lng: 28.9744 }
+            },
+            'troy': {
+                name: 'Truva Antik Kenti',
+                city: 'Çanakkale',
+                country: 'TÜRKİYE',
+                category: 'Tarihi / UNESCO / Antik Kent / Arkeoloji',
+                description: 'Truva, Homeros\'un İlyada destanında geçen efsanevi şehrin kalıntılarının bulunduğu UNESCO Dünya Mirası alanıdır.',
+                coordinates: { lat: 39.9576, lng: 26.2390 }
+            },
+            'truva': {
+                name: 'Truva Antik Kenti',
+                city: 'Çanakkale',
+                country: 'TÜRKİYE',
+                category: 'Tarihi / UNESCO / Antik Kent / Arkeoloji',
+                description: 'Truva, Homeros\'un İlyada destanında geçen efsanevi şehrin kalıntılarının bulunduğu UNESCO Dünya Mirası alanıdır.',
+                coordinates: { lat: 39.9576, lng: 26.2390 }
+            }
+        };
+
+        const normalizedName = placeName.toLowerCase().trim();
+        return turkishPlaces[normalizedName] || null;
+    }
+
+    /**
+     * Translate country name to Turkish
+     * @param {string} countryName - Country name in English
+     * @returns {string} Country name in Turkish
+     */
+    translateCountryName(countryName) {
+        const countryTranslations = {
+            'Turkey': 'TÜRKİYE',
+            'Greece': 'YUNANİSTAN',
+            'Italy': 'İTALYA',
+            'France': 'FRANSA',
+            'Spain': 'İSPANYA',
+            'Germany': 'ALMANYA',
+            'Netherlands': 'HOLLANDA',
+            'Belgium': 'BELÇİKA',
+            'Switzerland': 'İSVİÇRE',
+            'Austria': 'AVUSTURYA',
+            'Czech Republic': 'ÇEK CUMHURİYETİ',
+            'Hungary': 'MACARİSTAN',
+            'Poland': 'POLONYA',
+            'Croatia': 'HIRVATİSTAN',
+            'Slovenia': 'SLOVENYA',
+            'Portugal': 'PORTEKİZ',
+            'United Kingdom': 'BİRLEŞİK KRALLIK',
+            'Ireland': 'İRLANDA',
+            'Norway': 'NORVEÇ',
+            'Sweden': 'İSVEÇ',
+            'Denmark': 'DANİMARKA',
+            'Finland': 'FİNLANDİYA',
+            'Iceland': 'İZLANDA',
+            'Romania': 'ROMANYA',
+            'Bulgaria': 'BULGARİSTAN',
+            'Serbia': 'SIRBİSTAN',
+            'Montenegro': 'KARADAĞ',
+            'Bosnia and Herzegovina': 'BOSNA HERSEK',
+            'Albania': 'ARNAVUTLUK',
+            'North Macedonia': 'KUZEY MAKEDONYA',
+            'Slovakia': 'SLOVAKYA',
+            'Lithuania': 'LİTVANYA',
+            'Latvia': 'LETONYA',
+            'Estonia': 'ESTONYA',
+            'Malta': 'MALTA',
+            'Cyprus': 'KIBRIS',
+            'Luxembourg': 'LÜKSEMBURG',
+            'Monaco': 'MONAKO',
+            'San Marino': 'SAN MARİNO',
+            'Vatican City': 'VATİKAN',
+            'Andorra': 'ANDORRA',
+            'Liechtenstein': 'LİHTENŞTAYN',
+            'TR': 'TÜRKİYE',
+            'GR': 'YUNANİSTAN',
+            'IT': 'İTALYA',
+            'FR': 'FRANSA',
+            'ES': 'İSPANYA',
+            'DE': 'ALMANYA',
+            'NL': 'HOLLANDA',
+            'BE': 'BELÇİKA',
+            'CH': 'İSVİÇRE',
+            'AT': 'AVUSTURYA',
+            'CZ': 'ÇEK CUMHURİYETİ',
+            'HU': 'MACARİSTAN',
+            'PL': 'POLONYA',
+            'HR': 'HIRVATİSTAN',
+            'SI': 'SLOVENYA',
+            'PT': 'PORTEKİZ',
+            'GB': 'BİRLEŞİK KRALLIK',
+            'UK': 'BİRLEŞİK KRALLIK',
+            'IE': 'İRLANDA',
+            'NO': 'NORVEÇ',
+            'SE': 'İSVEÇ',
+            'DK': 'DANİMARKA',
+            'FI': 'FİNLANDİYA',
+            'IS': 'İZLANDA'
+        };
+        
+        return countryTranslations[countryName] || countryName.toUpperCase();
+    }
+
+    /**
+     * Extract country information from text
+     * @param {string} text - Text to analyze
+     * @returns {string|null} Country name
+     */
+    extractCountryFromText(text) {
+        const countryKeywords = {
+            'Türkiye': 'TÜRKİYE',
+            'Turkey': 'TÜRKİYE',
+            'Anadolu': 'TÜRKİYE',
+            'Denizli': 'TÜRKİYE',
+            'Nevşehir': 'TÜRKİYE',
+            'İzmir': 'TÜRKİYE',
+            'İstanbul': 'TÜRKİYE',
+            'Antalya': 'TÜRKİYE',
+            'Ankara': 'TÜRKİYE',
+            'Bursa': 'TÜRKİYE',
+            'Konya': 'TÜRKİYE',
+            'Trabzon': 'TÜRKİYE',
+            'Yunanistan': 'YUNANİSTAN',
+            'Greece': 'YUNANİSTAN',
+            'İtalya': 'İTALYA',
+            'Italy': 'İTALYA',
+            'Fransa': 'FRANSA',
+            'France': 'FRANSA',
+            'İspanya': 'İSPANYA',
+            'Spain': 'İSPANYA',
+            'Almanya': 'ALMANYA',
+            'Germany': 'ALMANYA',
+            'Hollanda': 'HOLLANDA',
+            'Netherlands': 'HOLLANDA',
+            'Belçika': 'BELÇİKA',
+            'Belgium': 'BELÇİKA',
+            'İsviçre': 'İSVİÇRE',
+            'Switzerland': 'İSVİÇRE',
+            'Avusturya': 'AVUSTURYA',
+            'Austria': 'AVUSTURYA'
+        };
+        
+        for (const [keyword, country] of Object.entries(countryKeywords)) {
+            if (text.toLowerCase().includes(keyword.toLowerCase())) {
+                return country;
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * Generate place description based on API data
+     * @param {Object} place - Place data from API
+     * @param {Object} address - Address data
+     * @returns {string} Generated description
+     */
+    generatePlaceDescription(place, address) {
+        const placeType = place.type || place.class || '';
+        const category = place.category || '';
+        const extratags = place.extratags || {};
+        
+        let description = '';
+        
+        // Add basic location info
+        if (address.city || address.town) {
+            description += `${address.city || address.town} şehrinde yer alan `;
+        }
+        
+        // Add type-specific description
+        if (placeType.includes('tourism') || category.includes('tourism')) {
+            description += 'turistik bir destinasyon. ';
+        } else if (placeType.includes('historic') || extratags.historic) {
+            description += 'tarihi bir yer. ';
+        } else if (placeType.includes('natural') || placeType.includes('peak') || placeType.includes('water')) {
+            description += 'doğal bir güzellik. ';
+        } else if (placeType.includes('building') || placeType.includes('architecture')) {
+            description += 'mimari açıdan önemli bir yapı. ';
+        } else {
+            description += 'ilgi çekici bir yer. ';
+        }
+        
+        // Add Wikipedia info if available
+        if (extratags.wikipedia) {
+            description += 'Detaylı bilgi için Wikipedia sayfasını ziyaret edebilirsiniz.';
+        }
+        
+        return description || 'Kullanıcı tarafından eklenen yer.';
+    }
+
+    /**
+     * Determine place category based on API data
+     * @param {Object} place - Place data from API
+     * @param {Object} address - Address data
+     * @returns {string} Place category
+     */
+    determinePlaceCategory(place, address) {
+        const placeType = place.type || place.class || '';
+        const category = place.category || '';
+        const extratags = place.extratags || {};
+        
+        if (placeType.includes('tourism') || category.includes('tourism')) {
+            return 'Turistik / Gezilecek Yer';
+        } else if (placeType.includes('historic') || extratags.historic) {
+            return 'Tarihi / Kültürel';
+        } else if (placeType.includes('natural') || placeType.includes('peak')) {
+            return 'Doğa / Manzara';
+        } else if (placeType.includes('water') || placeType.includes('beach')) {
+            return 'Su Sporları / Plaj';
+        } else if (placeType.includes('building') || placeType.includes('architecture')) {
+            return 'Mimari / Yapı';
+        } else if (placeType.includes('museum')) {
+            return 'Müze / Kültür';
+        } else if (placeType.includes('park') || placeType.includes('garden')) {
+            return 'Park / Bahçe';
+        } else {
+            return 'Kullanıcı Ekledi';
+        }
+    }
+
+    /**
+     * Determine category from description text
+     * @param {string} description - Description text
+     * @returns {string} Category
+     */
+    determineCategoryFromDescription(description) {
+        const text = description.toLowerCase();
+        
+        if (text.includes('müze') || text.includes('museum')) {
+            return 'Müze / Kültür';
+        } else if (text.includes('tarihi') || text.includes('antik') || text.includes('historic')) {
+            return 'Tarihi / Kültürel';
+        } else if (text.includes('doğal') || text.includes('dağ') || text.includes('göl') || text.includes('natural')) {
+            return 'Doğa / Manzara';
+        } else if (text.includes('plaj') || text.includes('deniz') || text.includes('beach')) {
+            return 'Su Sporları / Plaj';
+        } else if (text.includes('park') || text.includes('bahçe') || text.includes('garden')) {
+            return 'Park / Bahçe';
+        } else if (text.includes('kilise') || text.includes('cami') || text.includes('tapınak')) {
+            return 'Dini / Manevi';
+        } else {
+            return 'Turistik / Gezilecek Yer';
         }
     }
 
@@ -596,7 +1216,8 @@ class PlaceManager {
         const typeClasses = {
             success: 'text-green-600',
             error: 'text-red-600',
-            warning: 'text-yellow-600'
+            warning: 'text-yellow-600',
+            info: 'text-blue-600'
         };
 
         this.addPlaceMessage.className = `text-sm mt-2 ${typeClasses[type] || ''}`;

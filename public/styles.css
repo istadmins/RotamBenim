@@ -124,6 +124,28 @@ select:focus {
     opacity: 0.3;
 }
 
+.place-item.highlight-duplicate {
+    background-color: #fef3c7;
+    border-left-color: var(--warning-color);
+    animation: highlightPulse 0.5s ease-in-out;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.3);
+}
+
+@keyframes highlightPulse {
+    0% { 
+        background-color: #fef3c7;
+        transform: scale(1);
+    }
+    50% { 
+        background-color: #fde68a;
+        transform: scale(1.02);
+    }
+    100% { 
+        background-color: #fef3c7;
+        transform: scale(1);
+    }
+}
+
 /* Country header */
 .country-header {
     margin-top: 1.5rem;
