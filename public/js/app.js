@@ -37,7 +37,7 @@ class RotamBenimApp {
         
         try {
             // Show loading state
-            this.updateAuthStatus('Uygulama başlatılıyor...');
+            this.updateAuthStatus('Starting application...');
             
             // Initialize UI components first
             this.modules.uiComponents.initialize();
@@ -65,11 +65,11 @@ class RotamBenimApp {
             this.isInitialized = true;
             
             console.log('[RotamBenimApp] Application initialized successfully');
-            this.updateAuthStatus('Uygulama hazır');
+            this.updateAuthStatus('Application ready');
             
             // Show welcome message
             this.modules.uiComponents.showToast(
-                'RotamBenim\'e hoş geldiniz! Giriş yaparak başlayabilirsiniz.',
+                'Welcome to My Travel List! Sign in to get started.',
                 'info',
                 4000
             );
@@ -112,11 +112,11 @@ class RotamBenimApp {
         if (user) {
             // User signed in
             this.showUserInterface(user);
-            this.updateAuthStatus(`Hoş geldin, ${user.displayName || 'Kullanıcı'}!`);
+            this.updateAuthStatus(`Welcome, ${user.displayName || 'User'}!`);
             
             // Show success toast
             this.modules.uiComponents.showToast(
-                `Merhaba ${user.displayName || 'Kullanıcı'}! Yerleriniz yükleniyor...`,
+                `Hello ${user.displayName || 'User'}! Loading your places...`,
                 'success',
                 3000
             );
@@ -124,7 +124,7 @@ class RotamBenimApp {
         } else {
             // User signed out
             this.showSignInInterface();
-            this.updateAuthStatus('Lütfen Google ile giriş yapın');
+            this.updateAuthStatus('Please sign in with Google');
         }
     }
 
@@ -178,7 +178,7 @@ class RotamBenimApp {
         if (this.userDisplay && this.googleSignInBtn) {
             // Update user info
             if (this.userNameElement) {
-                this.userNameElement.textContent = user.displayName || 'Kullanıcı Adı Yok';
+                this.userNameElement.textContent = user.displayName || 'No Name';
             }
             
             if (this.userPhotoElement && user.photoURL) {
@@ -195,7 +195,7 @@ class RotamBenimApp {
         
         // Show user ID for debugging
         if (this.userIdDisplayElement) {
-            this.userIdDisplayElement.textContent = `Kullanıcı ID: ${user.uid}`;
+            this.userIdDisplayElement.textContent = `User ID: ${user.uid}`;
         }
     }
 
@@ -229,7 +229,7 @@ class RotamBenimApp {
      * @param {Error} error - Error object
      */
     handleInitializationError(error) {
-        const errorMessage = 'Uygulama başlatılamadı: ' + error.message;
+        const errorMessage = 'Failed to start application: ' + error.message;
         
         this.updateAuthStatus(errorMessage);
         
@@ -239,7 +239,7 @@ class RotamBenimApp {
         
         // Show error toast
         this.modules.uiComponents.showToast(
-            'Uygulama başlatılırken bir hata oluştu. Sayfayı yenilemeyi deneyin.',
+            'An error occurred while starting the application. Try refreshing the page.',
             'error',
             0 // Don't auto-hide
         );
@@ -259,7 +259,7 @@ class RotamBenimApp {
             
             // Show user-friendly error message
             this.modules.uiComponents.showToast(
-                'Beklenmeyen bir hata oluştu. Lütfen sayfayı yenileyin.',
+                'An unexpected error occurred. Please refresh the page.',
                 'error'
             );
         });
@@ -278,7 +278,7 @@ class RotamBenimApp {
         // Handle network errors
         window.addEventListener('offline', () => {
             this.modules.uiComponents.showToast(
-                'İnternet bağlantısı kesildi. Bazı özellikler çalışmayabilir.',
+                'Internet connection lost. Some features may not work.',
                 'warning',
                 0
             );
@@ -286,7 +286,7 @@ class RotamBenimApp {
 
         window.addEventListener('online', () => {
             this.modules.uiComponents.showToast(
-                'İnternet bağlantısı yeniden kuruldu.',
+                'Internet connection restored.',
                 'success',
                 3000
             );
@@ -413,11 +413,11 @@ class RotamBenimApp {
             // Re-initialize
             await this.initialize();
             
-            this.modules.uiComponents.showToast('Uygulama yeniden başlatıldı', 'success');
+            this.modules.uiComponents.showToast('Application restarted', 'success');
             
         } catch (error) {
             console.error('[RotamBenimApp] Restart failed:', error);
-            this.modules.uiComponents.showToast('Yeniden başlatma başarısız', 'error');
+            this.modules.uiComponents.showToast('Restart failed', 'error');
         }
     }
 

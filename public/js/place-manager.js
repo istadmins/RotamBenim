@@ -17,13 +17,31 @@ class PlaceManager {
         this.placesListStatusElement = document.getElementById('placesListStatus');
         this.filterCountryElement = document.getElementById('filterCountry');
         this.filterVisitedElement = document.getElementById('filterVisited');
+        
+        // Place tab elements
         this.newPlaceNameInput = document.getElementById('newPlaceNameInput');
         this.addPlaceBtn = document.getElementById('addPlaceBtn');
         this.addPlaceBtnText = document.getElementById('addPlaceBtnText');
         this.addPlaceLoader = document.getElementById('addPlaceLoader');
         this.addPlaceMessage = document.getElementById('addPlaceMessage');
+        
+        // Country tab elements
+        this.newCountryNameInput = document.getElementById('newCountryNameInput');
+        this.addCountryBtn = document.getElementById('addCountryBtn');
+        this.addCountryBtnText = document.getElementById('addCountryBtnText');
+        this.addCountryLoader = document.getElementById('addCountryLoader');
+        this.addCountryMessage = document.getElementById('addCountryMessage');
+        
+        // Tab elements
+        this.addPlaceTab = document.getElementById('addPlaceTab');
+        this.addCountryTab = document.getElementById('addCountryTab');
+        this.addPlaceContent = document.getElementById('addPlaceContent');
+        this.addCountryContent = document.getElementById('addCountryContent');
+        
         this.mapFrame = document.getElementById('mapFrame');
         this.mapLocationName = document.getElementById('mapLocationName');
+
+        this.currentTab = 'place'; // 'place' or 'country'
 
         this.isInitialized = false;
         this.renderDebounced = Utils.debounce(this.renderPlacesList.bind(this), 100);
@@ -63,6 +81,12 @@ class PlaceManager {
             });
         }
 
+        // Tab functionality
+        if (this.addPlaceTab && this.addCountryTab) {
+            this.addPlaceTab.addEventListener('click', () => this.switchTab('place'));
+            this.addCountryTab.addEventListener('click', () => this.switchTab('country'));
+        }
+
         // Add place functionality
         if (this.addPlaceBtn && this.newPlaceNameInput) {
             this.addPlaceBtn.addEventListener('click', () => this.handleAddPlace());
@@ -76,6 +100,51 @@ class PlaceManager {
             this.newPlaceNameInput.addEventListener('input', () => {
                 this.validateAddPlaceInput();
             });
+        }
+
+        // Add country functionality
+        if (this.addCountryBtn && this.newCountryNameInput) {
+            this.addCountryBtn.addEventListener('click', () => this.handleAddCountry());
+            
+            this.newCountryNameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.handleAddCountry();
+                }
+            });
+
+            this.newCountryNameInput.addEventListener('input', () => {
+                this.validateAddCountryInput();
+            });
+        }
+    }
+
+    /**
+     * Switch between add place and add country tabs
+     * @param {string} tab - Tab to switch to ('place' or 'country')
+     */
+    switchTab(tab) {
+        this.currentTab = tab;
+
+        if (tab === 'place') {
+            // Update tab buttons
+            this.addPlaceTab.classList.add('text-sky-600', 'border-b-2', 'border-sky-600');
+            this.addPlaceTab.classList.remove('text-gray-500');
+            this.addCountryTab.classList.remove('text-sky-600', 'border-b-2', 'border-sky-600');
+            this.addCountryTab.classList.add('text-gray-500');
+
+            // Show/hide content
+            this.addPlaceContent.classList.remove('hidden');
+            this.addCountryContent.classList.add('hidden');
+        } else {
+            // Update tab buttons
+            this.addCountryTab.classList.add('text-sky-600', 'border-b-2', 'border-sky-600');
+            this.addCountryTab.classList.remove('text-gray-500');
+            this.addPlaceTab.classList.remove('text-sky-600', 'border-b-2', 'border-sky-600');
+            this.addPlaceTab.classList.add('text-gray-500');
+
+            // Show/hide content
+            this.addCountryContent.classList.remove('hidden');
+            this.addPlaceContent.classList.add('hidden');
         }
     }
 
@@ -118,11 +187,17 @@ class PlaceManager {
             if (this.addPlaceBtn) {
                 this.addPlaceBtn.disabled = false;
             }
-            this.updateStatus('Yerler yükleniyor...');
+            if (this.addCountryBtn) {
+                this.addCountryBtn.disabled = false;
+            }
+            this.updateStatus(MESSAGES.places.loading);
         } else {
             // User signed out
             if (this.addPlaceBtn) {
                 this.addPlaceBtn.disabled = true;
+            }
+            if (this.addCountryBtn) {
+                this.addCountryBtn.disabled = true;
             }
             this.places = [];
             this.filteredPlaces = [];
@@ -641,7 +716,7 @@ class PlaceManager {
         const duplicateInfo = this.checkForDuplicates(placeName);
         if (duplicateInfo.isDuplicate) {
             this.showAddPlaceMessage(
-                `Bu yer zaten listede mevcut: "${duplicateInfo.existingPlace.name}" (${duplicateInfo.existingPlace.city || ''}, ${duplicateInfo.existingPlace.country || ''})`, 
+                `This place already exists in your list: "${duplicateInfo.existingPlace.name}" (${duplicateInfo.existingPlace.city || ''}, ${duplicateInfo.existingPlace.country || ''})`, 
                 'warning'
             );
             
@@ -651,8 +726,8 @@ class PlaceManager {
         }
 
         try {
-            uiComponents.setButtonLoading(this.addPlaceBtn, true, 'Yer bilgileri aranıyor...');
-            this.showAddPlaceMessage('Yer bilgileri otomatik olarak aranıyor...', 'info');
+            uiComponents.setButtonLoading(this.addPlaceBtn, true, 'Searching place info...');
+            this.showAddPlaceMessage('Automatically searching for place information...', 'info');
 
             // Get place information from geocoding API
             const placeInfo = await this.getPlaceInformation(placeName);
@@ -661,7 +736,7 @@ class PlaceManager {
             const finalDuplicateInfo = this.checkForDuplicates(placeInfo.name || placeName);
             if (finalDuplicateInfo.isDuplicate) {
                 this.showAddPlaceMessage(
-                    `Bu yer zaten listede mevcut: "${finalDuplicateInfo.existingPlace.name}" (${finalDuplicateInfo.existingPlace.city || ''}, ${finalDuplicateInfo.existingPlace.country || ''})`, 
+                    `This place already exists in your list: "${finalDuplicateInfo.existingPlace.name}" (${finalDuplicateInfo.existingPlace.city || ''}, ${finalDuplicateInfo.existingPlace.country || ''})`, 
                     'warning'
                 );
                 this.highlightExistingPlace(finalDuplicateInfo.existingPlace.id);
@@ -671,9 +746,9 @@ class PlaceManager {
             const newPlace = {
                 name: placeInfo.name || placeName,
                 city: placeInfo.city || '',
-                country: placeInfo.country || 'DİĞER',
-                category: placeInfo.category || 'Kullanıcı Ekledi',
-                description: placeInfo.description || 'Kullanıcı tarafından eklendi.',
+                country: placeInfo.country || 'OTHER',
+                category: placeInfo.category || 'User Added',
+                description: placeInfo.description || 'Added by user.',
                 coordinates: placeInfo.coordinates || null,
                 mapQuery: placeInfo.mapQuery || placeName
             };
@@ -682,7 +757,7 @@ class PlaceManager {
             
             this.newPlaceNameInput.value = '';
             this.showAddPlaceMessage(
-                `${newPlace.name} başarıyla eklendi! ${newPlace.country !== 'DİĞER' ? `(${newPlace.country})` : ''}`, 
+                `${newPlace.name} added successfully! ${newPlace.country !== 'OTHER' ? `(${newPlace.country})` : ''}`, 
                 'success'
             );
             
@@ -695,7 +770,7 @@ class PlaceManager {
             console.error('[PlaceManager] Error adding place:', error);
             this.showAddPlaceMessage(MESSAGES.places.addError, 'error');
         } finally {
-            uiComponents.setButtonLoading(this.addPlaceBtn, false, 'Yer Ekle');
+            uiComponents.setButtonLoading(this.addPlaceBtn, false, 'Add Place');
         }
     }
 
@@ -747,13 +822,13 @@ class PlaceManager {
         } catch (error) {
             console.error('[PlaceManager] Error getting place information:', error);
             return {
-                name: placeName,
-                city: '',
-                country: 'DİĞER',
-                category: 'Kullanıcı Ekledi',
-                description: 'Kullanıcı tarafından eklendi. Yer bilgileri otomatik olarak bulunamadı.',
-                coordinates: null,
-                mapQuery: placeName
+            name: placeName,
+            city: '',
+            country: 'OTHER',
+            category: 'User Added',
+            description: 'Added by user. Place information could not be found automatically.',
+            coordinates: null,
+            mapQuery: placeName
             };
         }
     }
@@ -1145,7 +1220,7 @@ class PlaceManager {
             description += 'Detaylı bilgi için Wikipedia sayfasını ziyaret edebilirsiniz.';
         }
         
-        return description || 'Kullanıcı tarafından eklenen yer.';
+        return description || 'Place added by user.';
     }
 
     /**
@@ -1174,7 +1249,7 @@ class PlaceManager {
         } else if (placeType.includes('park') || placeType.includes('garden')) {
             return 'Park / Bahçe';
         } else {
-            return 'Kullanıcı Ekledi';
+            return 'User Added';
         }
     }
 
@@ -1201,6 +1276,182 @@ class PlaceManager {
         } else {
             return 'Turistik / Gezilecek Yer';
         }
+    }
+
+    /**
+     * Validate add country input
+     */
+    validateAddCountryInput() {
+        if (!this.newCountryNameInput || !this.addCountryMessage) return;
+
+        const countryName = this.newCountryNameInput.value.trim();
+        
+        if (!countryName) {
+            this.addCountryMessage.textContent = '';
+            this.addCountryMessage.className = 'text-sm mt-2';
+            return;
+        }
+
+        if (countryName.length > 50) {
+            this.addCountryMessage.textContent = MESSAGES.countries.nameTooLong;
+            this.addCountryMessage.className = 'text-sm mt-2 text-red-600';
+            return;
+        }
+
+        // Check if country already has places
+        const normalizedCountry = countryName.toLowerCase();
+        const hasCountryPlaces = this.places.some(place => 
+            place.country && place.country.toLowerCase().includes(normalizedCountry)
+        );
+
+        if (hasCountryPlaces) {
+            this.addCountryMessage.textContent = MESSAGES.countries.alreadyExists;
+            this.addCountryMessage.className = 'text-sm mt-2 text-yellow-600';
+            return;
+        }
+
+        this.addCountryMessage.textContent = '';
+        this.addCountryMessage.className = 'text-sm mt-2';
+    }
+
+    /**
+     * Handle add country
+     */
+    async handleAddCountry() {
+        if (!firebaseService.isAuthenticated()) {
+            this.showAddCountryMessage(MESSAGES.auth.pleaseSignIn, 'error');
+            return;
+        }
+
+        const countryName = this.newCountryNameInput.value.trim();
+        
+        if (!countryName) {
+            this.showAddCountryMessage(MESSAGES.countries.nameRequired, 'error');
+            this.newCountryNameInput.focus();
+            return;
+        }
+
+        if (countryName.length > 50) {
+            this.showAddCountryMessage(MESSAGES.countries.nameTooLong, 'error');
+            return;
+        }
+
+        try {
+            uiComponents.setButtonLoading(this.addCountryBtn, true, 'Loading...');
+            this.showAddCountryMessage(MESSAGES.countries.loading, 'info');
+
+            // Get country places from database
+            const countryPlaces = await this.getCountryPlaces(countryName);
+            
+            if (!countryPlaces || countryPlaces.length === 0) {
+                this.showAddCountryMessage(MESSAGES.countries.notFound, 'warning');
+                return;
+            }
+
+            // Add all places from the country
+            let addedCount = 0;
+            for (const placeData of countryPlaces) {
+                try {
+                    // Check for duplicates before adding
+                    const duplicateInfo = this.checkForDuplicates(placeData.name);
+                    if (!duplicateInfo.isDuplicate) {
+                        await firebaseService.addPlace(placeData);
+                        addedCount++;
+                    }
+                } catch (error) {
+                    console.error(`[PlaceManager] Error adding place ${placeData.name}:`, error);
+                }
+            }
+            
+            this.newCountryNameInput.value = '';
+            this.showAddCountryMessage(
+                `${countryPlaces[0].country} added successfully! ${addedCount} places added to your list.`, 
+                'success'
+            );
+            
+            // Clear success message after delay
+            setTimeout(() => {
+                this.showAddCountryMessage('', '');
+            }, 5000);
+
+        } catch (error) {
+            console.error('[PlaceManager] Error adding country:', error);
+            this.showAddCountryMessage(MESSAGES.countries.addError, 'error');
+        } finally {
+            uiComponents.setButtonLoading(this.addCountryBtn, false, 'Add Country');
+        }
+    }
+
+    /**
+     * Get places for a country from the database
+     * @param {string} countryName - Country name
+     * @returns {Promise<Array>} Array of place objects
+     */
+    async getCountryPlaces(countryName) {
+        const normalizedCountry = countryName.toLowerCase().trim();
+        
+        // Check if country exists in our database
+        if (COUNTRIES_DATABASE[normalizedCountry]) {
+            const countryData = COUNTRIES_DATABASE[normalizedCountry];
+            return countryData.places.map(place => ({
+                name: place.name,
+                city: place.city,
+                country: countryData.name,
+                category: place.category,
+                description: place.description,
+                coordinates: place.coordinates,
+                mapQuery: `${place.name}, ${place.city}`
+            }));
+        }
+
+        // If not in database, try to search online
+        return await this.searchCountryPlacesOnline(countryName);
+    }
+
+    /**
+     * Search for country places online (fallback)
+     * @param {string} countryName - Country name
+     * @returns {Promise<Array>} Array of place objects
+     */
+    async searchCountryPlacesOnline(countryName) {
+        try {
+            // This is a simplified implementation
+            // In a real app, you might use tourism APIs or Wikipedia
+            const searchQuery = `${countryName} tourist attractions`;
+            
+            // For now, return empty array as we don't have a specific API
+            // You could integrate with APIs like:
+            // - Google Places API
+            // - TripAdvisor API
+            // - Wikipedia API for tourist attractions
+            
+            console.log(`[PlaceManager] Online search for ${countryName} not implemented yet`);
+            return [];
+            
+        } catch (error) {
+            console.error('[PlaceManager] Error searching country places online:', error);
+            return [];
+        }
+    }
+
+    /**
+     * Show add country message
+     * @param {string} message - Message text
+     * @param {string} type - Message type (success, error, warning, info)
+     */
+    showAddCountryMessage(message, type) {
+        if (!this.addCountryMessage) return;
+
+        this.addCountryMessage.textContent = message;
+        
+        const typeClasses = {
+            success: 'text-green-600',
+            error: 'text-red-600',
+            warning: 'text-yellow-600',
+            info: 'text-blue-600'
+        };
+
+        this.addCountryMessage.className = `text-sm mt-2 ${typeClasses[type] || ''}`;
     }
 
     /**
