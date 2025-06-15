@@ -15,6 +15,8 @@ const firebaseConfig = {
     measurementId: "G-0QVZ4LDYPJ" 
 };
 
+const pexelsApiKey = 'qLDLKWTXLouQCKT40OyIA982lb5kv0ftITaaLYbaOrx2FKNbGf5sZlYF';
+
 // Application Configuration
 const APP_CONFIG = {
     appId: firebaseConfig.appId || 'default-app-id',

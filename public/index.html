@@ -11,250 +11,46 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-gray-100 text-gray-800 p-4 md:p-8">
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white p-6 rounded-lg shadow-xl flex items-center space-x-4">
-            <div class="loader"></div>
-            <span class="text-gray-700">Loading...</span>
-        </div>
-    </div>
 
-    <!-- Toast Notifications -->
+<body class="bg-gray-800 text-white overflow-hidden">
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">...</div>
     <div id="toastContainer" class="fixed top-4 right-4 z-40 space-y-2"></div>
+    <div id="countrySelectorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">...</div>
 
-    <!-- Country Selector Modal -->
-    <div id="countrySelectorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[80vh] overflow-hidden">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-gray-900" id="countrySelectorTitle">Select Countries to Add</h3>
-                    <button id="closeCountrySelectorBtn" class="text-gray-400 hover:text-gray-600 transition-colors duration-200" aria-label="Close">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="p-6 overflow-y-auto max-h-[60vh]">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="countryGrid">
-                    <!-- Countries will be populated here -->
-                </div>
-            </div>
-            
-            <div class="p-6 border-t border-gray-200 bg-gray-50">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <span class="text-sm text-gray-600">Selected: </span>
-                        <span id="selectedCountryCount" class="font-semibold text-gray-900">0</span>
-                        <span class="text-sm text-gray-600"> countries</span>
-                    </div>
-                    <div class="flex gap-3">
-                        <button id="cancelCountrySelectionBtn" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors duration-200">
-                            Cancel
-                        </button>
-                        <button id="addSelectedCountriesBtn" class="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors duration-200 disabled:bg-gray-400 flex items-center" disabled>
-                            <span id="addSelectedCountriesBtnText">Add Selected Countries</span>
-                            <div id="addSelectedCountriesLoader" class="loader hidden ml-2"></div>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container mx-auto max-w-7xl main-container p-6 md:p-8">
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold title-gradient mb-2">My Travel List</h1>
-            <p class="text-gray-600 mb-4">Mark places to visit, filter, delete and view on map! Click on places to select them for route creation or add new places and countries.</p>
-
-            <!-- Auth Section -->
-            <div id="authContainer" class="mb-4">
-                <button id="googleSignInBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center justify-center mx-auto transition-colors duration-200" aria-label="Sign in with Google">
-                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path d="M12 5.38c1.63 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
+    <header class="fixed top-0 left-0 right-0 z-30 p-4 bg-black bg-opacity-20 backdrop-blur-sm">
+        <div class="container mx-auto max-w-7xl flex justify-between items-center">
+            <h1 class="text-xl font-bold title-gradient">My Travel List</h1>
+            <div id="authContainer">
+                <button id="googleSignInBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center justify-center mx-auto transition-colors duration-200">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">...</svg>
                     Sign in with Google
                 </button>
-                
                 <div id="userDisplay" class="hidden mt-2 flex justify-center items-center">
-                    <img id="userPhoto" class="w-8 h-8 rounded-full mr-2" alt="User Photo" loading="lazy">
-                    <span id="userName" class="text-sm text-gray-700 font-medium"></span>
-                    <button id="signOutBtn" class="ml-4 bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-md text-xs shadow-md transition-colors duration-200" aria-label="Sign out">
-                        Sign Out
-                    </button>
+                    <img id="userPhoto" class="w-8 h-8 rounded-full mr-2" alt="User Photo">
+                    <span id="userName" class="text-sm font-medium"></span>
+                    <button id="signOutBtn" class="ml-4 bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-md text-xs">Sign Out</button>
                 </div>
             </div>
-            
-            <div class="text-center">
-                <p id="authStatus" class="text-xs text-gray-500 mb-1" role="status" aria-live="polite">Authentication status: Checking...</p>
-                <p id="userIdDisplay" class="text-xs text-gray-400"></p>
-            </div>
-        </header>
-
-        <div class="flex flex-col lg:flex-row gap-6">
-            <!-- Main Content -->
-            <main class="w-full lg:w-3/5 xl:w-2/3 pr-0 lg:pr-4">
-                <!-- Add New Place/Country Section -->
-                <section class="mb-6 p-4 border border-gray-200 rounded-lg bg-slate-50" aria-labelledby="add-section-heading">
-                    <h2 id="add-section-heading" class="text-lg font-semibold text-gray-700 mb-4">Add New Place or Country</h2>
-                    
-                    <!-- Tab Navigation -->
-                    <div class="flex mb-4 border-b border-gray-200">
-                        <button id="addPlaceTab" class="px-4 py-2 text-sm font-medium text-sky-600 border-b-2 border-sky-600 focus:outline-none">
-                            Add Place
-                        </button>
-                        <button id="addCountryTab" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none ml-4">
-                            Add Country
-                        </button>
-                    </div>
-
-                    <!-- Add Place Tab Content -->
-                    <div id="addPlaceContent" class="tab-content">
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <label for="newPlaceNameInput" class="sr-only">Place name</label>
-							<input 
-								type="text" 
-								id="newPlaceNameInput" 
-								placeholder="e.g., Eiffel Tower, Pamukkale" 
-								class="flex-grow p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none"
-								maxlength="100"
-								aria-describedby="add-place-message"
-							>
-                            <button 
-                                id="addPlaceBtn" 
-                                class="bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-md shadow-md flex items-center justify-center transition-colors duration-200" 
-                                disabled
-                                aria-label="Add new place"
-                            >
-                                <span id="addPlaceBtnText">Add Place</span>
-                                <div id="addPlaceLoader" class="loader hidden ml-2"></div>
-                            </button>
-                        </div>
-                        <div id="addPlaceMessage" class="text-sm mt-2" role="alert" aria-live="polite"></div>
-                    </div>
-
-                    <!-- Add Country Tab Content -->
-                    <div id="addCountryContent" class="tab-content hidden">
-                        <div class="text-center">
-                            <button 
-                                id="openCountrySelectorBtn" 
-                                class="bg-purple-500 hover:bg-purple-600 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-md shadow-md flex items-center justify-center mx-auto transition-colors duration-200" 
-                                disabled
-                                aria-label="Open country selector"
-                            >
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <span id="openCountrySelectorBtnText">Select Countries to Add</span>
-                            </button>
-                        </div>
-                        <div id="addCountryMessage" class="text-sm mt-2 text-center" role="alert" aria-live="polite"></div>
-                        <p class="text-xs text-gray-500 mt-2 text-center">Select countries to automatically add 3-20 popular tourist destinations from each country.</p>
-                    </div>
-                </section>
-
-                <!-- Places List Section -->
-                <section aria-labelledby="places-heading">
-                    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div>
-                            <h2 id="places-heading" class="text-2xl font-semibold text-gray-700">Places to Visit</h2>
-                            <p class="text-sm text-gray-500">Click on places from the list to create a route.</p>
-                        </div>
-                        
-                        <!-- Filters -->
-                        <div class="filter-container" role="group" aria-label="Filters">
-                            <div>
-                                <label for="filterCountry" class="mr-2 text-gray-600 text-sm font-medium">Country:</label>
-                                <select id="filterCountry" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none" aria-label="Country filter">
-                                    <option value="all">All Countries</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="filterVisited" class="mr-2 text-gray-600 text-sm font-medium">Status:</label>
-                                <select id="filterVisited" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none" aria-label="Visit status filter">
-                                    <option value="all">All</option>
-                                    <option value="notvisited" selected>Not Visited</option>
-                                    <option value="visited">Visited</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Route Generation -->
-                    <div class="mb-4 flex flex-col sm:flex-row gap-2 items-start sm:items-center">
-                        <button 
-                            id="generateRouteBtn" 
-                            class="bg-sky-600 hover:bg-sky-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-md shadow-md transition-colors duration-200" 
-                            disabled
-                            aria-label="Create route with selected places"
-                        >
-                            Create Route with Selected (<span id="selectedCount">0</span>)
-                        </button>
-                        <button 
-                            id="clearSelectionBtn" 
-                            class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md shadow-md transition-colors duration-200 hidden"
-                            aria-label="Clear selection"
-                        >
-                            Clear Selection
-                        </button>
-                    </div>
-                    
-                    <div id="routeLinkContainer" class="mb-4 text-sm" role="region" aria-label="Generated route"></div>
-                    
-                    <!-- Places List -->
-                    <div 
-                        id="placesList" 
-                        class="space-y-1 max-h-[40vh] md:max-h-[50vh] overflow-y-auto custom-scrollbar pr-2" 
-                        role="list" 
-                        aria-label="Places to visit list"
-                        tabindex="0"
-                    >
-                        <p id="placesListStatus" class="text-gray-500 italic p-4" role="status" aria-live="polite">
-                            Please sign in with Google or wait for the places list to load...
-                        </p>
-                    </div>
-                </section>
-            </main>
-
-            <!-- Map Section -->
-            <aside class="w-full lg:w-2/5 xl:w-1/3 mt-6 lg:mt-0" aria-labelledby="map-heading">
-                <h2 id="map-heading" class="text-2xl font-semibold text-gray-700 mb-2">Map</h2>
-                <p id="mapLocationName" class="text-sm text-gray-500 mb-4 h-5" aria-live="polite"></p>
-                
-                <div class="aspect-w-16 aspect-h-9 md:aspect-h-12 lg:aspect-h-10 rounded-lg overflow-hidden shadow-md">
-                    <iframe 
-                        id="mapFrame"
-                        class="w-full h-full border-0"
-                        loading="lazy"
-                        allowfullscreen
-                        referrerpolicy="no-referrer-when-downgrade"
-                        src="https://maps.google.com/maps?output=embed&q=World"
-                        title="Map view"
-                        aria-label="Map view of selected place"
-                    ></iframe>
-                </div>
-                
-                <p class="mt-4 text-xs text-gray-500 leading-relaxed">
-                    Marking a place on the map shows its general location. The route creation feature sends selected places to Google Maps. The add new place feature tries to find information automatically; results depend on API capabilities. Your data is stored securely in Firebase.
-                </p>
-            </aside>
         </div>
-    </div>
+    </header>
 
-    <!-- Scripts -->
+    <main id="fullpage-container" class="w-full h-full overflow-y-auto scroll-snap-y-mandatory">
+        <section class="h-screen w-full flex items-center justify-center scroll-snap-align-start bg-gray-900">
+            <div class="text-center">
+                <h2 class="text-4xl font-bold mb-4">Welcome to Your Travel List</h2>
+                <p id="fullpage-status">Please sign in with Google to see your destinations.</p>
+                <div id="fullpage-loader" class="loader mx-auto mt-4 hidden"></div>
+            </div>
+        </section>
+    </main>
+
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/language-manager.js"></script>
     <script src="js/firebase-service.js"></script>
     <script src="js/ui-components.js"></script>
-    <script src="js/place-suggestions.js"></script>
-    <script src="js/place-manager.js"></script>
-    <script src="js/route-manager.js"></script>
+    <script src="js/fullpage-manager.js"></script>
+    
     <script src="js/app.js"></script>
 </body>
 </html>
