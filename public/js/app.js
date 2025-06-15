@@ -10,6 +10,7 @@ class RotamBenimApp {
             languageManager: window.languageManager,
             firebaseService: window.firebaseService,
             uiComponents: window.uiComponents,
+            placeSuggestions: window.placeSuggestions,
             placeManager: window.placeManager,
             routeManager: window.routeManager
         };
@@ -51,6 +52,9 @@ class RotamBenimApp {
             
             // Setup authentication UI
             this.setupAuthenticationUI();
+            
+            // Initialize place suggestions
+            this.modules.placeSuggestions.initialize();
             
             // Initialize other modules
             this.modules.placeManager.initialize();
