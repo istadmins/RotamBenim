@@ -23,6 +23,47 @@
     <!-- Toast Notifications -->
     <div id="toastContainer" class="fixed top-4 right-4 z-40 space-y-2"></div>
 
+    <!-- Country Selector Modal -->
+    <div id="countrySelectorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[80vh] overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900" id="countrySelectorTitle">Select Countries to Add</h3>
+                    <button id="closeCountrySelectorBtn" class="text-gray-400 hover:text-gray-600 transition-colors duration-200" aria-label="Close">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6 overflow-y-auto max-h-[60vh]">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="countryGrid">
+                    <!-- Countries will be populated here -->
+                </div>
+            </div>
+            
+            <div class="p-6 border-t border-gray-200 bg-gray-50">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-sm text-gray-600">Selected: </span>
+                        <span id="selectedCountryCount" class="font-semibold text-gray-900">0</span>
+                        <span class="text-sm text-gray-600"> countries</span>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="cancelCountrySelectionBtn" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors duration-200">
+                            Cancel
+                        </button>
+                        <button id="addSelectedCountriesBtn" class="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors duration-200 disabled:bg-gray-400 flex items-center" disabled>
+                            <span id="addSelectedCountriesBtnText">Add Selected Countries</span>
+                            <div id="addSelectedCountriesLoader" class="loader hidden ml-2"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container mx-auto max-w-7xl bg-white shadow-xl rounded-lg p-6">
         <header class="mb-8 text-center">
             <h1 class="text-3xl md:text-4xl font-bold text-sky-600 mb-2">My Travel List</h1>
@@ -99,28 +140,21 @@
 
                     <!-- Add Country Tab Content -->
                     <div id="addCountryContent" class="tab-content hidden">
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <label for="newCountryNameInput" class="sr-only">Country name</label>
-                            <input 
-                                type="text" 
-                                id="newCountryNameInput" 
-                                placeholder="e.g., Turkey, France, Japan" 
-                                class="flex-grow p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none"
-                                maxlength="50"
-                                aria-describedby="add-country-message"
-                            >
+                        <div class="text-center">
                             <button 
-                                id="addCountryBtn" 
-                                class="bg-purple-500 hover:bg-purple-600 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-md shadow-md flex items-center justify-center transition-colors duration-200" 
+                                id="openCountrySelectorBtn" 
+                                class="bg-purple-500 hover:bg-purple-600 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-md shadow-md flex items-center justify-center mx-auto transition-colors duration-200" 
                                 disabled
-                                aria-label="Add country with popular places"
+                                aria-label="Open country selector"
                             >
-                                <span id="addCountryBtnText">Add Country</span>
-                                <div id="addCountryLoader" class="loader hidden ml-2"></div>
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span id="openCountrySelectorBtnText">Select Countries to Add</span>
                             </button>
                         </div>
-                        <div id="addCountryMessage" class="text-sm mt-2" role="alert" aria-live="polite"></div>
-                        <p class="text-xs text-gray-500 mt-2">Adding a country will automatically include 3-20 popular tourist destinations from that country.</p>
+                        <div id="addCountryMessage" class="text-sm mt-2 text-center" role="alert" aria-live="polite"></div>
+                        <p class="text-xs text-gray-500 mt-2 text-center">Select countries to automatically add 3-20 popular tourist destinations from each country.</p>
                     </div>
                 </section>
 
@@ -215,6 +249,7 @@
     <!-- Scripts -->
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/language-manager.js"></script>
     <script src="js/firebase-service.js"></script>
     <script src="js/ui-components.js"></script>
     <script src="js/place-manager.js"></script>

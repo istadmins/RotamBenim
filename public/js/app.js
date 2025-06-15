@@ -7,6 +7,7 @@ class RotamBenimApp {
     constructor() {
         this.isInitialized = false;
         this.modules = {
+            languageManager: window.languageManager,
             firebaseService: window.firebaseService,
             uiComponents: window.uiComponents,
             placeManager: window.placeManager,
@@ -39,7 +40,10 @@ class RotamBenimApp {
             // Show loading state
             this.updateAuthStatus('Starting application...');
             
-            // Initialize UI components first
+            // Initialize language manager first
+            this.modules.languageManager.initialize();
+            
+            // Initialize UI components
             this.modules.uiComponents.initialize();
             
             // Initialize Firebase service

@@ -26,11 +26,21 @@ class PlaceManager {
         this.addPlaceMessage = document.getElementById('addPlaceMessage');
         
         // Country tab elements
-        this.newCountryNameInput = document.getElementById('newCountryNameInput');
-        this.addCountryBtn = document.getElementById('addCountryBtn');
-        this.addCountryBtnText = document.getElementById('addCountryBtnText');
-        this.addCountryLoader = document.getElementById('addCountryLoader');
+        this.openCountrySelectorBtn = document.getElementById('openCountrySelectorBtn');
+        this.openCountrySelectorBtnText = document.getElementById('openCountrySelectorBtnText');
         this.addCountryMessage = document.getElementById('addCountryMessage');
+        
+        // Country selector modal elements
+        this.countrySelectorModal = document.getElementById('countrySelectorModal');
+        this.countryGrid = document.getElementById('countryGrid');
+        this.selectedCountryCount = document.getElementById('selectedCountryCount');
+        this.addSelectedCountriesBtn = document.getElementById('addSelectedCountriesBtn');
+        this.addSelectedCountriesBtnText = document.getElementById('addSelectedCountriesBtnText');
+        this.addSelectedCountriesLoader = document.getElementById('addSelectedCountriesLoader');
+        this.closeCountrySelectorBtn = document.getElementById('closeCountrySelectorBtn');
+        this.cancelCountrySelectionBtn = document.getElementById('cancelCountrySelectionBtn');
+        
+        this.selectedCountries = new Set();
         
         // Tab elements
         this.addPlaceTab = document.getElementById('addPlaceTab');
@@ -103,17 +113,29 @@ class PlaceManager {
         }
 
         // Add country functionality
-        if (this.addCountryBtn && this.newCountryNameInput) {
-            this.addCountryBtn.addEventListener('click', () => this.handleAddCountry());
-            
-            this.newCountryNameInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.handleAddCountry();
-                }
-            });
+        if (this.openCountrySelectorBtn) {
+            this.openCountrySelectorBtn.addEventListener('click', () => this.openCountrySelector());
+        }
 
-            this.newCountryNameInput.addEventListener('input', () => {
-                this.validateAddCountryInput();
+        // Country selector modal events
+        if (this.closeCountrySelectorBtn) {
+            this.closeCountrySelectorBtn.addEventListener('click', () => this.closeCountrySelector());
+        }
+
+        if (this.cancelCountrySelectionBtn) {
+            this.cancelCountrySelectionBtn.addEventListener('click', () => this.closeCountrySelector());
+        }
+
+        if (this.addSelectedCountriesBtn) {
+            this.addSelectedCountriesBtn.addEventListener('click', () => this.handleAddSelectedCountries());
+        }
+
+        // Close modal on outside click
+        if (this.countrySelectorModal) {
+            this.countrySelectorModal.addEventListener('click', (e) => {
+                if (e.target === this.countrySelectorModal) {
+                    this.closeCountrySelector();
+                }
             });
         }
     }
@@ -187,8 +209,8 @@ class PlaceManager {
             if (this.addPlaceBtn) {
                 this.addPlaceBtn.disabled = false;
             }
-            if (this.addCountryBtn) {
-                this.addCountryBtn.disabled = false;
+            if (this.openCountrySelectorBtn) {
+                this.openCountrySelectorBtn.disabled = false;
             }
             this.updateStatus(MESSAGES.places.loading);
         } else {
@@ -196,8 +218,8 @@ class PlaceManager {
             if (this.addPlaceBtn) {
                 this.addPlaceBtn.disabled = true;
             }
-            if (this.addCountryBtn) {
-                this.addCountryBtn.disabled = true;
+            if (this.openCountrySelectorBtn) {
+                this.openCountrySelectorBtn.disabled = true;
             }
             this.places = [];
             this.filteredPlaces = [];
@@ -1279,106 +1301,169 @@ class PlaceManager {
     }
 
     /**
-     * Validate add country input
+     * Open country selector modal
      */
-    validateAddCountryInput() {
-        if (!this.newCountryNameInput || !this.addCountryMessage) return;
-
-        const countryName = this.newCountryNameInput.value.trim();
-        
-        if (!countryName) {
-            this.addCountryMessage.textContent = '';
-            this.addCountryMessage.className = 'text-sm mt-2';
-            return;
-        }
-
-        if (countryName.length > 50) {
-            this.addCountryMessage.textContent = MESSAGES.countries.nameTooLong;
-            this.addCountryMessage.className = 'text-sm mt-2 text-red-600';
-            return;
-        }
-
-        // Check if country already has places
-        const normalizedCountry = countryName.toLowerCase();
-        const hasCountryPlaces = this.places.some(place => 
-            place.country && place.country.toLowerCase().includes(normalizedCountry)
-        );
-
-        if (hasCountryPlaces) {
-            this.addCountryMessage.textContent = MESSAGES.countries.alreadyExists;
-            this.addCountryMessage.className = 'text-sm mt-2 text-yellow-600';
-            return;
-        }
-
-        this.addCountryMessage.textContent = '';
-        this.addCountryMessage.className = 'text-sm mt-2';
-    }
-
-    /**
-     * Handle add country
-     */
-    async handleAddCountry() {
+    openCountrySelector() {
         if (!firebaseService.isAuthenticated()) {
             this.showAddCountryMessage(MESSAGES.auth.pleaseSignIn, 'error');
             return;
         }
 
-        const countryName = this.newCountryNameInput.value.trim();
-        
-        if (!countryName) {
-            this.showAddCountryMessage(MESSAGES.countries.nameRequired, 'error');
-            this.newCountryNameInput.focus();
-            return;
-        }
+        this.selectedCountries.clear();
+        this.populateCountryGrid();
+        this.updateSelectedCountryCount();
+        this.countrySelectorModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
 
-        if (countryName.length > 50) {
-            this.showAddCountryMessage(MESSAGES.countries.nameTooLong, 'error');
-            return;
+    /**
+     * Close country selector modal
+     */
+    closeCountrySelector() {
+        this.countrySelectorModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        this.selectedCountries.clear();
+        this.updateSelectedCountryCount();
+    }
+
+    /**
+     * Populate country grid in modal
+     */
+    populateCountryGrid() {
+        if (!this.countryGrid) return;
+
+        this.countryGrid.innerHTML = '';
+
+        Object.entries(COUNTRIES_DATABASE).forEach(([countryKey, countryData]) => {
+            // Check if country already has places in user's list
+            const hasCountryPlaces = this.places.some(place => 
+                place.country && place.country.toLowerCase() === countryData.name.toLowerCase()
+            );
+
+            const countryCard = document.createElement('div');
+            countryCard.className = `border border-gray-200 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:shadow-md ${hasCountryPlaces ? 'bg-gray-100 opacity-60' : 'hover:border-purple-300'}`;
+            countryCard.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex-grow">
+                        <h4 class="font-semibold text-gray-900">${countryData.name}</h4>
+                        <p class="text-sm text-gray-600">${countryData.places.length} places</p>
+                        ${hasCountryPlaces ? '<p class="text-xs text-orange-600 mt-1">Already in your list</p>' : ''}
+                    </div>
+                    <div class="ml-3">
+                        ${hasCountryPlaces ? 
+                            '<svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>' :
+                            '<div class="w-6 h-6 border-2 border-gray-300 rounded"></div>'
+                        }
+                    </div>
+                </div>
+            `;
+
+            if (!hasCountryPlaces) {
+                countryCard.addEventListener('click', () => {
+                    this.toggleCountrySelection(countryKey, countryData, countryCard);
+                });
+            }
+
+            this.countryGrid.appendChild(countryCard);
+        });
+    }
+
+    /**
+     * Toggle country selection
+     */
+    toggleCountrySelection(countryKey, countryData, cardElement) {
+        if (this.selectedCountries.has(countryKey)) {
+            this.selectedCountries.delete(countryKey);
+            cardElement.classList.remove('bg-purple-100', 'border-purple-500');
+            cardElement.classList.add('hover:border-purple-300');
+            const checkbox = cardElement.querySelector('div:last-child > div');
+            checkbox.innerHTML = '<div class="w-6 h-6 border-2 border-gray-300 rounded"></div>';
+        } else {
+            this.selectedCountries.add(countryKey);
+            cardElement.classList.add('bg-purple-100', 'border-purple-500');
+            cardElement.classList.remove('hover:border-purple-300');
+            const checkbox = cardElement.querySelector('div:last-child');
+            checkbox.innerHTML = '<svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>';
         }
+        this.updateSelectedCountryCount();
+    }
+
+    /**
+     * Update selected country count
+     */
+    updateSelectedCountryCount() {
+        if (this.selectedCountryCount) {
+            this.selectedCountryCount.textContent = this.selectedCountries.size;
+        }
+        
+        if (this.addSelectedCountriesBtn) {
+            this.addSelectedCountriesBtn.disabled = this.selectedCountries.size === 0;
+        }
+    }
+
+    /**
+     * Handle adding selected countries
+     */
+    async handleAddSelectedCountries() {
+        if (this.selectedCountries.size === 0) return;
 
         try {
-            uiComponents.setButtonLoading(this.addCountryBtn, true, 'Loading...');
-            this.showAddCountryMessage(MESSAGES.countries.loading, 'info');
-
-            // Get country places from database
-            const countryPlaces = await this.getCountryPlaces(countryName);
+            uiComponents.setButtonLoading(this.addSelectedCountriesBtn, true, 'Adding...');
             
-            if (!countryPlaces || countryPlaces.length === 0) {
-                this.showAddCountryMessage(MESSAGES.countries.notFound, 'warning');
-                return;
-            }
+            let totalAdded = 0;
+            const countryNames = [];
 
-            // Add all places from the country
-            let addedCount = 0;
-            for (const placeData of countryPlaces) {
-                try {
-                    // Check for duplicates before adding
-                    const duplicateInfo = this.checkForDuplicates(placeData.name);
-                    if (!duplicateInfo.isDuplicate) {
-                        await firebaseService.addPlace(placeData);
-                        addedCount++;
+            for (const countryKey of this.selectedCountries) {
+                const countryData = COUNTRIES_DATABASE[countryKey];
+                if (!countryData) continue;
+
+                countryNames.push(countryData.name);
+                
+                // Add all places from the country
+                for (const placeData of countryData.places) {
+                    try {
+                        // Check for duplicates before adding
+                        const duplicateInfo = this.checkForDuplicates(placeData.name);
+                        if (!duplicateInfo.isDuplicate) {
+                            const newPlace = {
+                                name: placeData.name,
+                                city: placeData.city,
+                                country: countryData.name,
+                                category: placeData.category,
+                                description: placeData.description,
+                                coordinates: placeData.coordinates,
+                                mapQuery: `${placeData.name}, ${placeData.city}`
+                            };
+                            await firebaseService.addPlace(newPlace);
+                            totalAdded++;
+                        }
+                    } catch (error) {
+                        console.error(`[PlaceManager] Error adding place ${placeData.name}:`, error);
                     }
-                } catch (error) {
-                    console.error(`[PlaceManager] Error adding place ${placeData.name}:`, error);
                 }
             }
+
+            this.closeCountrySelector();
             
-            this.newCountryNameInput.value = '';
-            this.showAddCountryMessage(
-                `${countryPlaces[0].country} added successfully! ${addedCount} places added to your list.`, 
-                'success'
-            );
+            // Show success message
+            const message = `${countryNames.join(', ')} added successfully! ${totalAdded} places added to your list.`;
+            this.showAddCountryMessage(message, 'success');
             
             // Clear success message after delay
             setTimeout(() => {
                 this.showAddCountryMessage('', '');
             }, 5000);
 
+            // Refresh the page to show new places
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+
         } catch (error) {
-            console.error('[PlaceManager] Error adding country:', error);
+            console.error('[PlaceManager] Error adding countries:', error);
             this.showAddCountryMessage(MESSAGES.countries.addError, 'error');
         } finally {
-            uiComponents.setButtonLoading(this.addCountryBtn, false, 'Add Country');
+            uiComponents.setButtonLoading(this.addSelectedCountriesBtn, false, 'Add Selected Countries');
         }
     }
 
