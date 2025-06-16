@@ -1,4 +1,4 @@
-/* RotamBenim - Enhanced & Modernized Styles */
+/* RotamBenim - Enhanced & Modernized Styles - Foton Theme Inspired */
 
 :root {
     --primary-color: #0ea5e9; /* sky-500 */
@@ -20,6 +20,7 @@
     --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -29,9 +30,14 @@
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
-    background-color: var(--gray-50); /* Daha açık bir arka plan */
+    background-color: #000; /* Foton teması gibi koyu arka plan */
+    color: #fff;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    position: relative;
 }
 
 /* Geliştirilmiş Odaklanma Stilleri */
@@ -41,12 +47,40 @@ body {
     border-radius: var(--border-radius);
 }
 
+/* Arka plan overlay */
+.bg-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.4;
+    transition: all var(--transition-slow);
+    z-index: -1;
+}
+
+/* Varsayılan arka plan */
+.bg-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 100%);
+    z-index: -1;
+}
+
 /* Ana Konteyner */
 .main-container {
-    background-color: white;
+    background-color: rgba(15, 23, 42, 0.7); /* Koyu arka plan, hafif şeffaf */
+    backdrop-filter: blur(10px);
     border-radius: 1rem; /* Daha yuvarlak köşeler */
     box-shadow: var(--shadow-xl);
-    border: 1px solid var(--gray-200);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     overflow: hidden;
 }
 
@@ -56,6 +90,11 @@ body {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    font-size: 3.5rem;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    font-weight: 800;
+    margin-bottom: 1rem;
 }
 
 /* Custom scrollbar */
@@ -63,17 +102,20 @@ body {
     width: 8px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-    background: var(--gray-100);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 10px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: var(--gray-500);
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 /* Loading spinner */
 .loader {
-    border: 3px solid var(--gray-200);
+    border: 3px solid rgba(255, 255, 255, 0.2);
     border-top: 3px solid var(--primary-color);
     border-radius: 50%;
     width: 20px;
@@ -85,6 +127,53 @@ body {
     100% { transform: rotate(360deg); }
 }
 
+/* Ülke arka planları */
+.country-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity var(--transition-slow);
+    z-index: -2;
+}
+
+.country-background.active {
+    opacity: 0.6;
+}
+
+/* Ülke arka plan görselleri */
+.bg-turkiye {
+    background-image: url('https://images.unsplash.com/photo-1589561454226-796a8aa89b05?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+}
+
+.bg-italya {
+    background-image: url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+}
+
+.bg-fransa {
+    background-image: url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+}
+
+.bg-ispanya {
+    background-image: url('https://images.unsplash.com/photo-1543783207-ec64e4d95325?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+}
+
+.bg-yunanistan {
+    background-image: url('https://images.unsplash.com/photo-1533105079780-92b9be482077?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+}
+
+.bg-almanya {
+    background-image: url('https://images.unsplash.com/photo-1467269204594-9661b134dd2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+}
+
+.bg-default {
+    background-image: url('https://images.unsplash.com/photo-1530521954074-e64f6810b32d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+}
+
 /* Geliştirilmiş Yer Kartları */
 .place-item {
     transition: all var(--transition-normal);
@@ -92,41 +181,52 @@ body {
     position: relative;
     border-left: 4px solid transparent;
     border-radius: var(--border-radius);
+    background-color: rgba(255, 255, 255, 0.05);
+    margin-bottom: 0.5rem;
+    padding: 0.75rem;
 }
 .place-item:hover {
-    background-color: #f0f9ff;
+    background-color: rgba(255, 255, 255, 0.1);
     transform: translateY(-2px) scale(1.01);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.3);
     border-left-color: var(--primary-color);
 }
 .place-item.selected-for-route {
-    background-color: #e0f2fe; /* sky-100 */
+    background-color: rgba(14, 165, 233, 0.15);
     border-left-color: var(--primary-hover);
     transform: translateY(-2px) scale(1.01);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.4);
 }
 .place-item.highlight-duplicate {
-    background-color: #fef3c7;
+    background-color: rgba(245, 158, 11, 0.15);
     border-left-color: var(--warning-color);
     animation: highlightPulse 0.5s ease-in-out;
 }
 @keyframes highlightPulse {
-    50% { background-color: #fde68a; }
+    50% { background-color: rgba(245, 158, 11, 0.3); }
 }
 
 /* Ülke Başlığı */
 .country-header {
     margin-top: 1.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--gray-200);
-    font-size: 1.125rem; /* Biraz daha küçük */
-    font-weight: 500;
-    color: var(--gray-700);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
     position: sticky;
-    top: -1px; /* Kaydırma sırasında boşluk olmaması için */
-    background: rgba(255, 255, 255, 0.85); /* Hafif şeffaf arka plan */
+    top: -1px;
+    background: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(8px);
     z-index: 10;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.country-header:hover {
+    color: var(--primary-color);
 }
 
 /* İkonlu Form Girişi */
