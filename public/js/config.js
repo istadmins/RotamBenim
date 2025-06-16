@@ -14,7 +14,7 @@ const APP_CONFIG = {
     
     // API keys
     apiKeys: {
-        pexels: '', // Pexels API anahtarınızı buraya ekleyin
+        pexels: 'qLDLKWTXLouQCKT40OyIA982lb5kv0ftITaaLYbaOrx2FKNbGf5sZlYF', // Pexels API anahtarınızı buraya ekleyin
     },
     
     // Application limits
