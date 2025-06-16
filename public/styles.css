@@ -30,8 +30,8 @@
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
-    background-color: #000; /* Foton teması gibi koyu arka plan */
-    color: #fff;
+    background-color: #f8fafc; /* Açık arka plan */
+    color: #1e293b;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     margin: 0;
@@ -76,11 +76,10 @@ body {
 
 /* Ana Konteyner */
 .main-container {
-    background-color: rgba(15, 23, 42, 0.7); /* Koyu arka plan, hafif şeffaf */
-    backdrop-filter: blur(10px);
+    background-color: white;
     border-radius: 1rem; /* Daha yuvarlak köşeler */
     box-shadow: var(--shadow-xl);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--gray-200);
     overflow: hidden;
 }
 
@@ -90,11 +89,8 @@ body {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    font-size: 3.5rem;
-    letter-spacing: -1px;
-    text-transform: uppercase;
-    font-weight: 800;
-    margin-bottom: 1rem;
+    font-size: 2.5rem;
+    font-weight: 700;
 }
 
 /* Custom scrollbar */
