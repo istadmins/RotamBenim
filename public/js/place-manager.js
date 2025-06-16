@@ -516,6 +516,33 @@ class PlaceManager {
             this.renderDebounced();
         }
     }
+    
+    /**
+     * Update map with place location
+     * @param {Object} place - Place object
+     */
+    updateMap(place) {
+        if (!this.mapFrame || !this.mapLocationName) return;
+        
+        // Update map location name
+        this.mapLocationName.textContent = `${place.name}, ${place.city || ''} ${place.country || ''}`.trim();
+        
+        // Update map iframe source
+        let mapQuery;
+        if (place.coordinates && place.coordinates.lat && place.coordinates.lng) {
+            // Use coordinates if available
+            mapQuery = `${place.coordinates.lat},${place.coordinates.lng}`;
+        } else {
+            // Use place name and location
+            mapQuery = encodeURIComponent(
+                `${place.name}${place.city ? ', ' + place.city : ''}${place.country ? ', ' + place.country : ''}`
+            );
+        }
+        
+        this.mapFrame.src = `https://maps.google.com/maps?output=embed&q=${mapQuery}`;
+        
+        console.log(`[PlaceManager] Map updated to show: ${place.name}`);
+    }
 
     /**
      * Handle visited status toggle
