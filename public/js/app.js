@@ -12,10 +12,14 @@ class RotamBenimApp {
             uiComponents: window.uiComponents,
             placeSuggestions: window.placeSuggestions,
             placeManager: window.placeManager,
+<<<<<<< HEAD
             routeManager: window.routeManager,
             authAdapter: window.authAdapter,
             backgroundManager: window.backgroundManager,
             parallaxScrollManager: window.parallaxScrollManager
+=======
+            routeManager: window.routeManager
+>>>>>>> parent of 8509642 (sum)
         };
         
         // DOM elements
@@ -53,7 +57,12 @@ class RotamBenimApp {
             // Initialize Firebase service
             await this.modules.firebaseService.initialize();
             
+<<<<<<< HEAD
             // Authentication is now handled by authAdapter
+=======
+            // Setup authentication UI
+            this.setupAuthenticationUI();
+>>>>>>> parent of 8509642 (sum)
             
             // Initialize place suggestions
             this.modules.placeSuggestions.initialize();
@@ -90,9 +99,147 @@ class RotamBenimApp {
         }
     }
 
+<<<<<<< HEAD
     // Authentication methods have been moved to auth-adapter.js
 
     /**
+=======
+    /**
+     * Setup authentication UI
+     */
+    setupAuthenticationUI() {
+        // Setup Firebase auth state listener
+        this.modules.firebaseService.onAuthStateChange((user) => {
+            this.handleAuthStateChange(user);
+        });
+
+        // Google Sign-In button
+        if (this.googleSignInBtn) {
+            this.googleSignInBtn.addEventListener('click', async () => {
+                await this.handleGoogleSignIn();
+            });
+        }
+
+        // Sign-Out button
+        if (this.signOutBtn) {
+            this.signOutBtn.addEventListener('click', async () => {
+                await this.handleSignOut();
+            });
+        }
+    }
+
+    /**
+     * Handle authentication state changes
+     * @param {Object|null} user - Firebase user object
+     */
+    handleAuthStateChange(user) {
+        if (user) {
+            // User signed in
+            this.showUserInterface(user);
+            this.updateAuthStatus(`Welcome, ${user.displayName || 'User'}!`);
+            
+            // Show success toast
+            this.modules.uiComponents.showToast(
+                `Hello ${user.displayName || 'User'}! Loading your places...`,
+                'success',
+                3000
+            );
+            
+        } else {
+            // User signed out
+            this.showSignInInterface();
+            this.updateAuthStatus('Please sign in with Google');
+        }
+    }
+
+    /**
+     * Handle Google Sign-In
+     */
+    async handleGoogleSignIn() {
+        if (!this.googleSignInBtn) return;
+
+        try {
+            this.updateAuthStatus(MESSAGES.auth.signingIn);
+            this.googleSignInBtn.disabled = true;
+            
+            await this.modules.firebaseService.signInWithGoogle();
+            
+            // Success is handled by auth state change listener
+            
+        } catch (error) {
+            console.error('[RotamBenimApp] Google sign-in error:', error);
+            this.updateAuthStatus(error.message || MESSAGES.auth.signInError);
+            this.modules.uiComponents.showToast(error.message || MESSAGES.auth.signInError, 'error');
+            
+        } finally {
+            this.googleSignInBtn.disabled = false;
+        }
+    }
+
+    /**
+     * Handle sign out
+     */
+    async handleSignOut() {
+        try {
+            this.updateAuthStatus('Çıkış yapılıyor...');
+            
+            await this.modules.firebaseService.signOut();
+            
+            this.modules.uiComponents.showToast(MESSAGES.auth.signOutSuccess, 'success', 2000);
+            
+        } catch (error) {
+            console.error('[RotamBenimApp] Sign-out error:', error);
+            this.updateAuthStatus(error.message || MESSAGES.auth.signOutError);
+            this.modules.uiComponents.showToast(error.message || MESSAGES.auth.signOutError, 'error');
+        }
+    }
+
+    /**
+     * Show user interface (authenticated state)
+     * @param {Object} user - Firebase user object
+     */
+    showUserInterface(user) {
+        if (this.userDisplay && this.googleSignInBtn) {
+            // Update user info
+            if (this.userNameElement) {
+                this.userNameElement.textContent = user.displayName || 'No Name';
+            }
+            
+            if (this.userPhotoElement && user.photoURL) {
+                this.userPhotoElement.src = user.photoURL;
+                this.userPhotoElement.classList.remove('hidden');
+            } else if (this.userPhotoElement) {
+                this.userPhotoElement.classList.add('hidden');
+            }
+            
+            // Show user display, hide sign-in button
+            this.userDisplay.classList.remove('hidden');
+            this.googleSignInBtn.classList.add('hidden');
+        }
+        
+        // Show user ID for debugging
+        if (this.userIdDisplayElement) {
+            this.userIdDisplayElement.textContent = `User ID: ${user.uid}`;
+        }
+    }
+
+    /**
+     * Show sign-in interface (unauthenticated state)
+     */
+    showSignInInterface() {
+        if (this.userDisplay && this.googleSignInBtn) {
+            this.userDisplay.classList.add('hidden');
+            this.googleSignInBtn.classList.remove('hidden');
+            this.googleSignInBtn.disabled = false;
+        }
+        
+        if (this.userIdDisplayElement) {
+            this.userIdDisplayElement.textContent = '';
+        }
+    }
+
+    /**
+>>>>>>> parent of 8509642 (sum)
      * Update authentication status message
      * @param {string} message - Status message
      */
