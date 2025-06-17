@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="styles-new.css">
 </head>
 <<<<<<< HEAD
+<<<<<<< HEAD
 <body>
     <!-- Navigation -->
     <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 transition-all duration-300">
@@ -36,6 +37,8 @@
                         <button id="signOutBtn" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-lg text-sm shadow-lg transition-all duration-300">
                             Sign Out
 =======
+=======
+>>>>>>> parent of 8509642 (sum)
 <body class="bg-gray-100 text-gray-800 p-4 md:p-8">
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
@@ -82,12 +85,16 @@
                         <button id="addSelectedCountriesBtn" class="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors duration-200 disabled:bg-gray-400 flex items-center" disabled>
                             <span id="addSelectedCountriesBtnText">Add Selected Countries</span>
                             <div id="addSelectedCountriesLoader" class="loader hidden ml-2"></div>
+<<<<<<< HEAD
+>>>>>>> parent of 8509642 (sum)
+=======
 >>>>>>> parent of 8509642 (sum)
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
     </nav>
 
@@ -256,6 +263,42 @@
             </div>
         </header>
 
+=======
+    </div>
+
+    <div class="container mx-auto max-w-7xl main-container p-6 md:p-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold title-gradient mb-2">My Travel List</h1>
+            <p class="text-gray-600 mb-4">Mark places to visit, filter, delete and view on map! Click on places to select them for route creation or add new places and countries.</p>
+
+            <!-- Auth Section -->
+            <div id="authContainer" class="mb-4">
+                <button id="googleSignInBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center justify-center mx-auto transition-colors duration-200" aria-label="Sign in with Google">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path d="M12 5.38c1.63 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Sign in with Google
+                </button>
+                
+                <div id="userDisplay" class="hidden mt-2 flex justify-center items-center">
+                    <img id="userPhoto" class="w-8 h-8 rounded-full mr-2" alt="User Photo" loading="lazy">
+                    <span id="userName" class="text-sm text-gray-700 font-medium"></span>
+                    <button id="signOutBtn" class="ml-4 bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-md text-xs shadow-md transition-colors duration-200" aria-label="Sign out">
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <p id="authStatus" class="text-xs text-gray-500 mb-1" role="status" aria-live="polite">Authentication status: Checking...</p>
+                <p id="userIdDisplay" class="text-xs text-gray-400"></p>
+            </div>
+        </header>
+
+>>>>>>> parent of 8509642 (sum)
         <div class="flex flex-col lg:flex-row gap-6">
             <!-- Main Content -->
             <main class="w-full lg:w-3/5 xl:w-2/3 pr-0 lg:pr-4">
@@ -387,6 +430,9 @@
                 <p id="mapLocationName" class="text-sm text-gray-500 mb-4 h-5" aria-live="polite"></p>
                 
                 <div class="aspect-w-16 aspect-h-9 md:aspect-h-12 lg:aspect-h-10 rounded-lg overflow-hidden shadow-md">
+<<<<<<< HEAD
+>>>>>>> parent of 8509642 (sum)
+=======
 >>>>>>> parent of 8509642 (sum)
                     <iframe 
                         id="mapFrame"
@@ -396,6 +442,7 @@
                         referrerpolicy="no-referrer-when-downgrade"
                         src="https://maps.google.com/maps?output=embed&q=World"
                         title="Map view"
+<<<<<<< HEAD
 <<<<<<< HEAD
                     ></iframe>
                 </div>
@@ -489,6 +536,8 @@
     <div id="toastContainer" class="fixed top-4 right-4 z-40 space-y-2"></div>
 
 =======
+=======
+>>>>>>> parent of 8509642 (sum)
                         aria-label="Map view of selected place"
                     ></iframe>
                 </div>
@@ -500,6 +549,9 @@
         </div>
     </div>
 
+<<<<<<< HEAD
+>>>>>>> parent of 8509642 (sum)
+=======
 >>>>>>> parent of 8509642 (sum)
     <!-- Scripts -->
     <script src="js/config.js"></script>
@@ -511,10 +563,13 @@
     <script src="js/place-manager.js"></script>
     <script src="js/route-manager.js"></script>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <script src="js/place-card.js"></script>
     <script src="js/background-manager.js"></script>
     <script src="js/parallax-scroll.js"></script>
     <script src="js/auth-adapter.js"></script>
+=======
+>>>>>>> parent of 8509642 (sum)
 =======
 >>>>>>> parent of 8509642 (sum)
     <script src="js/app.js"></script>

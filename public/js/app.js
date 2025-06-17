@@ -13,10 +13,14 @@ class RotamBenimApp {
             placeSuggestions: window.placeSuggestions,
             placeManager: window.placeManager,
 <<<<<<< HEAD
+<<<<<<< HEAD
             routeManager: window.routeManager,
             authAdapter: window.authAdapter,
             backgroundManager: window.backgroundManager,
             parallaxScrollManager: window.parallaxScrollManager
+=======
+            routeManager: window.routeManager
+>>>>>>> parent of 8509642 (sum)
 =======
             routeManager: window.routeManager
 >>>>>>> parent of 8509642 (sum)
@@ -58,8 +62,11 @@ class RotamBenimApp {
             await this.modules.firebaseService.initialize();
             
 <<<<<<< HEAD
+<<<<<<< HEAD
             // Authentication is now handled by authAdapter
 =======
+=======
+>>>>>>> parent of 8509642 (sum)
             // Setup authentication UI
             this.setupAuthenticationUI();
 >>>>>>> parent of 8509642 (sum)
@@ -239,6 +246,9 @@ class RotamBenimApp {
     }
 
     /**
+<<<<<<< HEAD
+>>>>>>> parent of 8509642 (sum)
+=======
 >>>>>>> parent of 8509642 (sum)
      * Update authentication status message
      * @param {string} message - Status message
