@@ -7,17 +7,8 @@ class RotamBenimApp {
     constructor() {
         this.isInitialized = false;
         this.modules = {
-            languageManager: window.languageManager,
-            firebaseService: window.firebaseService,
-            uiComponents: window.uiComponents,
-            placeSuggestions: window.placeSuggestions,
-            placeManager: window.placeManager,
-<<<<<<< HEAD
-<<<<<<< HEAD
-            routeManager: window.routeManager,
-            authAdapter: window.authAdapter,
-            backgroundManager: window.backgroundManager,
-            parallaxScrollManager: window.parallaxScrollManager
+            routeManager: window.routeManager
+>>>>>>> parent of 8509642 (sum)
 =======
             routeManager: window.routeManager
 >>>>>>> parent of 8509642 (sum)
@@ -62,8 +53,9 @@ class RotamBenimApp {
             await this.modules.firebaseService.initialize();
             
 <<<<<<< HEAD
-<<<<<<< HEAD
-            // Authentication is now handled by authAdapter
+// Setup authentication UI
+            this.setupAuthenticationUI();
+>>>>>>> parent of 8509642 (sum)
 =======
 =======
 >>>>>>> parent of 8509642 (sum)
