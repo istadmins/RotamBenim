@@ -176,11 +176,21 @@ class TravelApp {
     }
 
     async getPlaceDetails(input) {
-        // Try to find in world/country database first
+        // Try to find in world/country database first (case-insensitive, partial match)
+        const normalizedInput = input.trim().toLowerCase();
+        let bestMatch = null;
         for (const country in this.countryDatabase) {
-            const found = this.countryDatabase[country].find(p => p.name.toLowerCase() === input.toLowerCase());
-            if (found) return found;
+            for (const place of this.countryDatabase[country]) {
+                if (place.name.toLowerCase() === normalizedInput) {
+                    return place;
+                }
+                // Partial match (start or contains)
+                if (!bestMatch && (place.name.toLowerCase().startsWith(normalizedInput) || place.name.toLowerCase().includes(normalizedInput))) {
+                    bestMatch = place;
+                }
+            }
         }
+        if (bestMatch) return bestMatch;
         // Fallback: minimal info
         return { name: input, city: '', country: '', category: 'User Added', description: 'Added by user', visited: false };
     }
