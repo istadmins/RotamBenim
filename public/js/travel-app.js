@@ -126,8 +126,20 @@ class TravelApp {
         const placesRef = this.firebase.collection(this.db, `users/${this.currentUser.uid}/places`);
         const q = this.firebase.query(placesRef, this.firebase.orderBy('country'), this.firebase.orderBy('name'));
         if (this.unsubscribe) { this.unsubscribe(); this.unsubscribe = null; }
-        this.unsubscribe = this.firebase.onSnapshot(q, (snapshot) => {
+        this.unsubscribe = this.firebase.onSnapshot(q, async (snapshot) => {
             this.places = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            // If user has no places and initial data exists, seed them
+            if (this.places.length === 0 && window.initialPlacesData && Array.isArray(window.initialPlacesData)) {
+                for (const place of window.initialPlacesData) {
+                    await this.firebase.addDoc(placesRef, {
+                        ...place,
+                        createdAt: new Date().toISOString(),
+                        userId: this.currentUser.uid
+                    });
+                }
+                // After seeding, reload places (will trigger onSnapshot again)
+                return;
+            }
             this.renderPlaces();
             this.updateCountryFilter();
         });
