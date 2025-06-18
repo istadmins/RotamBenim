@@ -1,6 +1,9 @@
+/**
+ * Configuration for RotamBenim Travel App
+ */
+
 // Firebase Configuration
-// TODO: Replace with your own Firebase project settings
-const firebaseConfig = {
+window.firebaseConfig = {
     apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA", 
     authDomain: "rotambenim.firebaseapp.com", 
     projectId: "rotambenim", 
@@ -11,51 +14,31 @@ const firebaseConfig = {
 };
 
 // Application Configuration
->>>>>>> parent of 8509642 (sum)
-const APP_CONFIG = {
-=======
-// Firebase Configuration
-// TODO: Replace with your own Firebase project settings
-const firebaseConfig = {
-    apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA", 
-    authDomain: "rotambenim.firebaseapp.com", 
-    projectId: "rotambenim", 
-    storageBucket: "rotambenim.firebasestorage.app", 
-    messagingSenderId: "374285362920", 
-    appId: "1:374285362920:web:b4058cf4a93e7337168b5d", 
-    measurementId: "G-0QVZ4LDYPJ" 
-};
-
-// Application Configuration
->>>>>>> parent of 8509642 (sum)
 const APP_CONFIG = {
     // Application settings
-    appName: 'RotamBenim',
-    version: '1.0.0',
-    
-    // Firebase configuration
-    firebaseConfig: {
-        // Your Firebase config here
-    },
+    appName: 'My Travel Itinerary',
+    version: '2.0.0',
     
     // API keys
     apiKeys: {
-        pexels: 'qLDLKWTXLouQCKT40OyIA982lb5kv0ftITaaLYbaOrx2FKNbGf5sZlYF', // Pexels API anahtarınızı buraya ekleyin
+        pexels: 'qLDLKWTXLouQCKT40OyIA982lb5kv0ftITaaLYbaOrx2FKNbGf5sZlYF'
     },
     
     // Application limits
     maxPlaceNameLength: 100,
-    maxPlacesPerCountry: 20,
+    maxPlacesPerRoute: 25,
     
     // UI settings
     toastDuration: 3000,
     animationDuration: 300,
+    debounceDelay: 300,
     
     // Feature flags
     features: {
-        enableParallaxScrolling: true,
-        enableDynamicBackgrounds: true,
-        enableMicroAnimations: true
+        enablePlaceSuggestions: true,
+        enableCountryImages: true,
+        enableRouteGeneration: true,
+        enableRealTimeSync: true
     }
 };
 
@@ -75,29 +58,19 @@ const MESSAGES = {
         noResults: 'No places match your filters.',
         nameRequired: 'Please enter a place name.',
         nameTooLong: 'Place name is too long.',
+        addSuccess: 'Place added successfully!',
         addError: 'Error adding place. Please try again.',
         updateError: 'Error updating place. Please try again.',
         deleteSuccess: 'Place deleted successfully.',
         deleteError: 'Error deleting place. Please try again.'
     },
-    countries: {
-        addError: 'Error adding countries. Please try again.'
+    routes: {
+        minPlacesRequired: 'Select at least 2 places to create a route',
+        routeCreated: 'Route created successfully!',
+        routeError: 'Error creating route. Please try again.'
     }
 };
 
-// Countries database
-const COUNTRIES_DATABASE = {
-    // Sample data structure - will be populated from Firebase
-    turkiye: {
-        name: 'TÜRKİYE',
-        places: []
-    },
-    italya: {
-        name: 'İTALYA',
-        places: []
-    },
-    fransa: {
-        name: 'FRANSA',
-        places: []
-    }
-};
+// Make configurations globally available
+window.APP_CONFIG = APP_CONFIG;
+window.MESSAGES = MESSAGES;
