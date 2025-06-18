@@ -1,190 +1,273 @@
 /**
- * Language Manager for RotamBenim application
- * Handles multi-language support and translations
+ * Language Manager for Travel App
+ * Supports Turkish and English languages
  */
 
 class LanguageManager {
     constructor() {
         this.currentLanguage = 'en'; // Default language
-        this.translations = {};
         this.supportedLanguages = ['en', 'tr'];
         this.isInitialized = false;
         
         // Load saved language preference
-        const savedLanguage = localStorage.getItem('rotamBenim_language');
+        const savedLanguage = localStorage.getItem('travelApp_language');
         if (savedLanguage && this.supportedLanguages.includes(savedLanguage)) {
             this.currentLanguage = savedLanguage;
         }
+        
+        // Language data
+        this.translations = {
+            en: {
+                // App Title and Description
+                appTitle: "My Travel Itinerary",
+                appDescription: "Discover amazing places around the world, create your travel routes, and track your adventures!",
+                
+                // Authentication
+                signInWithGoogle: "Sign in with Google",
+                signOut: "Sign Out",
+                pleaseSignIn: "Please sign in with Google to see your places...",
+                welcome: "Welcome",
+                signingIn: "Signing in...",
+                signingOut: "Signing out...",
+                
+                // Language Selection
+                language: "Language",
+                english: "English",
+                turkish: "Türkçe",
+                
+                // Add Place Section
+                addNewPlace: "Add New Place",
+                addNewCountry: "Add New Country",
+                placeholderPlace: "e.g., Pam...",
+                placeholderCountry: "e.g., Japan",
+                addPlace: "Add Place",
+                addCountry: "Add Country",
+                addPlaces: "Add Places",
+                
+                // Places List
+                placesToVisit: "Places to Visit",
+                clickToSelect: "Click on places to select them for route creation",
+                country: "Country",
+                status: "Status",
+                allCountries: "All Countries",
+                all: "All",
+                notVisited: "Not Visited",
+                visited: "Visited",
+                
+                // Route Generation
+                createRoute: "Create Route with Selected Places",
+                selectPlaces: "Select places to create route",
+                selectOneMore: "Select one more place",
+                routeCreated: "Route created successfully!",
+                openInGoogleMaps: "Open in Google Maps",
+                
+                // Map
+                map: "Map",
+                clickToView: "Click on places to view them on the map. Route creation will open Google Maps with your selected destinations.",
+                
+                // Messages
+                enterPlaceName: "Please enter a place name",
+                enterCountryName: "Please enter a country name",
+                addingPlace: "Adding place...",
+                addingCountry: "Adding country...",
+                placeAdded: "added to your itinerary",
+                countryAdded: "places added from",
+                errorAddingPlace: "Error adding place",
+                errorAddingCountry: "Error adding country",
+                confirmDelete: "Are you sure you want to delete",
+                deleted: "deleted",
+                errorDeleting: "Error deleting place",
+                signInToAdd: "Please sign in to add places",
+                signInToManage: "Please sign in to manage your travel itinerary",
+                loadingPlaces: "Loading your places...",
+                placesInItinerary: "places in your itinerary",
+                
+                // Place Details
+                delete: "Delete",
+                category: "Category",
+                description: "Description",
+                city: "City",
+                userAdded: "User Added",
+                addedByUser: "Added by user",
+                
+                // Country Places
+                selectCountryPlaces: "Select places to add from",
+                selectedPlaces: "selected places",
+                addSelectedPlaces: "Add Selected Places",
+                cancel: "Cancel",
+                
+                // Tabs
+                addPlaceTab: "Add Place",
+                addCountryTab: "Add Country"
+            },
+            tr: {
+                // App Title and Description
+                appTitle: "Seyahat Rotam",
+                appDescription: "Dünyanın dört bir yanındaki harika yerleri keşfedin, seyahat rotalarınızı oluşturun ve maceralarınızı takip edin!",
+                
+                // Authentication
+                signInWithGoogle: "Google ile Giriş Yap",
+                signOut: "Çıkış Yap",
+                pleaseSignIn: "Yerlerinizi görmek için lütfen Google ile giriş yapın...",
+                welcome: "Hoşgeldin",
+                signingIn: "Giriş yapılıyor...",
+                signingOut: "Çıkış yapılıyor...",
+                
+                // Language Selection
+                language: "Dil",
+                english: "English",
+                turkish: "Türkçe",
+                
+                // Add Place Section
+                addNewPlace: "Yeni Yer Ekle",
+                addNewCountry: "Yeni Ülke Ekle",
+                placeholderPlace: "örn: Pam...",
+                placeholderCountry: "örn: Japonya",
+                addPlace: "Yer Ekle",
+                addCountry: "Ülke Ekle",
+                addPlaces: "Yerleri Ekle",
+                
+                // Places List
+                placesToVisit: "Gezilecek Yerler",
+                clickToSelect: "Rota oluşturmak için yerlere tıklayarak seçin",
+                country: "Ülke",
+                status: "Durum",
+                allCountries: "Tüm Ülkeler",
+                all: "Tümü",
+                notVisited: "Gezilmedi",
+                visited: "Gezildi",
+                
+                // Route Generation
+                createRoute: "Seçilen Yerlerle Rota Oluştur",
+                selectPlaces: "Rota oluşturmak için yer seçin",
+                selectOneMore: "Bir yer daha seçin",
+                routeCreated: "Rota başarıyla oluşturuldu!",
+                openInGoogleMaps: "Google Haritalar'da Aç",
+                
+                // Map
+                map: "Harita",
+                clickToView: "Yerleri haritada görmek için tıklayın. Rota oluşturma, seçtiğiniz destinasyonlarla Google Haritalar'ı açacaktır.",
+                
+                // Messages
+                enterPlaceName: "Lütfen bir yer adı girin",
+                enterCountryName: "Lütfen bir ülke adı girin",
+                addingPlace: "Yer ekleniyor...",
+                addingCountry: "Ülke ekleniyor...",
+                placeAdded: "rotanıza eklendi",
+                countryAdded: "yerden yer eklendi",
+                errorAddingPlace: "Yer eklenirken hata oluştu",
+                errorAddingCountry: "Ülke eklenirken hata oluştu",
+                confirmDelete: "silmek istediğinizden emin misiniz",
+                deleted: "silindi",
+                errorDeleting: "Yer silinirken hata oluştu",
+                signInToAdd: "Yer eklemek için lütfen giriş yapın",
+                signInToManage: "Seyahat rotanızı yönetmek için lütfen Google ile giriş yapın",
+                loadingPlaces: "Yerleriniz yükleniyor...",
+                placesInItinerary: "yer rotanızda",
+                
+                // Place Details
+                delete: "Sil",
+                category: "Kategori",
+                description: "Açıklama",
+                city: "Şehir",
+                userAdded: "Kullanıcı Ekledi",
+                addedByUser: "Kullanıcı tarafından eklendi",
+                
+                // Country Places
+                selectCountryPlaces: "eklenecek yerleri seçin",
+                selectedPlaces: "seçilen yer",
+                addSelectedPlaces: "Seçilen Yerleri Ekle",
+                cancel: "İptal",
+                
+                // Tabs
+                addPlaceTab: "Yer Ekle",
+                addCountryTab: "Ülke Ekle"
+            }
+        };
     }
 
     /**
      * Initialize language manager
      */
     initialize() {
-        if (this.isInitialized) return;
+        if (this.isInitialized) {
+            console.warn('[LanguageManager] Already initialized');
+            return;
+        }
 
-        console.log('[LanguageManager] Initializing...');
-        this.loadTranslations();
         this.createLanguageSelector();
-        this.applyTranslations();
+        this.updatePageLanguage();
+        
         this.isInitialized = true;
-        console.log('[LanguageManager] Initialized successfully');
+        console.log('[LanguageManager] Language Manager initialized');
     }
 
     /**
-     * Load all translations
+     * Get translation for a key
+     * @param {string} key - Translation key
+     * @returns {string} Translated text
      */
-    loadTranslations() {
-        this.translations = {
-            en: {
-                // Header
-                appTitle: "My Travel List",
-                appDescription: "Mark places to visit, filter, delete and view on map! Click on places to select them for route creation or add new places and countries.",
-                signInWithGoogle: "Sign in with Google",
-                signOut: "Sign Out",
-                authStatus: "Authentication status: Checking...",
-                
-                // Add Section
-                addNewPlaceOrCountry: "Add New Place or Country",
-                addPlace: "Add Place",
-                addCountry: "Add Country",
-                placeholderPlace: "e.g., Eiffel Tower, Pamukkale, Sumela Monastery",
-                placeholderCountry: "e.g., Turkey, France, Japan",
-                addPlaceBtn: "Add Place",
-                addCountryBtn: "Add Country",
-                countryDescription: "Adding a country will automatically include 3-20 popular tourist destinations from that country.",
-                
-                // Places List
-                placesToVisit: "Places to Visit",
-                clickToCreateRoute: "Click on places from the list to create a route.",
-                country: "Country:",
-                allCountries: "All Countries",
-                status: "Status:",
-                all: "All",
-                notVisited: "Not Visited",
-                visited: "Visited",
-                createRoute: "Create Route with Selected",
-                clearSelection: "Clear Selection",
-                
-                // Map
-                map: "Map",
-                mapDescription: "Marking a place on the map shows its general location. The route creation feature sends selected places to Google Maps. The add new place feature tries to find information automatically; results depend on API capabilities. Your data is stored securely in Firebase.",
-                
-                // Messages
-                loading: "Loading...",
-                pleaseSignIn: "Please sign in with Google or wait for the places list to load...",
-                welcome: "Welcome to My Travel List! Sign in to get started.",
-                
-                // Place item
-                visitedLabel: "Visited",
-                notVisitedLabel: "Not Visited",
-                deleteBtn: "Delete",
-                
-                // Route
-                routeCreated: "Route Created!",
-                openInGoogleMaps: "Open in Google Maps",
-                copyLink: "Copy Link",
-                closeRoute: "Close",
-                
-                // Countries
-                selectCountries: "Select Countries to Add",
-                availableCountries: "Available Countries",
-                selectedCountries: "Selected Countries",
-                addSelectedCountries: "Add Selected Countries",
-                removeFromSelection: "Remove from selection",
-                addToSelection: "Add to selection",
-                
-                // Language
-                language: "Language",
-                english: "English",
-                turkish: "Türkçe"
-            },
-            tr: {
-                // Header
-                appTitle: "Gezi Listem",
-                appDescription: "Gezilecek yerleri işaretle, filtrele, sil ve haritada gör! Rota oluşturmak için yerlere tıklayarak seçin veya yeni yer ve ülkeler ekleyin.",
-                signInWithGoogle: "Google ile Giriş Yap",
-                signOut: "Çıkış Yap",
-                authStatus: "Kimlik durumu: Kontrol ediliyor...",
-                
-                // Add Section
-                addNewPlaceOrCountry: "Yeni Yer veya Ülke Ekle",
-                addPlace: "Yer Ekle",
-                addCountry: "Ülke Ekle",
-                placeholderPlace: "örn: Eyfel Kulesi, Pamukkale, Sümela Manastırı",
-                placeholderCountry: "örn: Türkiye, Fransa, Japonya",
-                addPlaceBtn: "Yer Ekle",
-                addCountryBtn: "Ülke Ekle",
-                countryDescription: "Ülke eklemek, o ülkeden 3-20 popüler turistik destinasyonu otomatik olarak ekleyecektir.",
-                
-                // Places List
-                placesToVisit: "Gezilecek Yerler",
-                clickToCreateRoute: "Rota oluşturmak için listeden yerlere tıklayın.",
-                country: "Ülke:",
-                allCountries: "Tüm Ülkeler",
-                status: "Durum:",
-                all: "Tümü",
-                notVisited: "Gezilmedi",
-                visited: "Gezildi",
-                createRoute: "Seçilenlerle Rota Oluştur",
-                clearSelection: "Seçimi Temizle",
-                
-                // Map
-                map: "Harita",
-                mapDescription: "Haritada bir yerin işaretlenmesi, o yerin genel konumunu gösterir. Rota oluşturma özelliği, seçilen yerleri Google Haritalar'a gönderir. Yeni yer ekleme özelliği, bilgileri otomatik olarak bulmaya çalışır; sonuçlar API'lerin yeteneklerine bağlıdır. Verileriniz Firebase'de güvenli şekilde saklanır.",
-                
-                // Messages
-                loading: "Yükleniyor...",
-                pleaseSignIn: "Lütfen Google ile giriş yapın veya yer listesinin yüklenmesini bekleyin...",
-                welcome: "Gezi Listem'e hoş geldiniz! Başlamak için giriş yapın.",
-                
-                // Place item
-                visitedLabel: "Gezildi",
-                notVisitedLabel: "Gezilmedi",
-                deleteBtn: "Sil",
-                
-                // Route
-                routeCreated: "Rota Oluşturuldu!",
-                openInGoogleMaps: "Google Haritalar'da Aç",
-                copyLink: "Linki Kopyala",
-                closeRoute: "Kapat",
-                
-                // Countries
-                selectCountries: "Eklenecek Ülkeleri Seçin",
-                availableCountries: "Mevcut Ülkeler",
-                selectedCountries: "Seçilen Ülkeler",
-                addSelectedCountries: "Seçilen Ülkeleri Ekle",
-                removeFromSelection: "Seçimden çıkar",
-                addToSelection: "Seçime ekle",
-                
-                // Language
-                language: "Dil",
-                english: "English",
-                turkish: "Türkçe"
-            }
-        };
+    t(key) {
+        const translation = this.translations[this.currentLanguage]?.[key];
+        if (!translation) {
+            console.warn(`[LanguageManager] Translation not found for key: ${key}`);
+            return key;
+        }
+        return translation;
     }
 
     /**
-     * Create language selector in header
+     * Change language
+     * @param {string} language - Language code
+     */
+    changeLanguage(language) {
+        if (!this.supportedLanguages.includes(language)) {
+            console.warn(`[LanguageManager] Unsupported language: ${language}`);
+            return;
+        }
+
+        this.currentLanguage = language;
+        localStorage.setItem('travelApp_language', language);
+        
+        this.updatePageLanguage();
+        
+        // Dispatch language change event
+        const event = new CustomEvent('languageChanged', {
+            detail: { language: this.currentLanguage }
+        });
+        document.dispatchEvent(event);
+        
+        console.log(`[LanguageManager] Language changed to: ${language}`);
+    }
+
+    /**
+     * Get current language
+     * @returns {string} Current language code
+     */
+    getCurrentLanguage() {
+        return this.currentLanguage;
+    }
+
+    /**
+     * Create language selector
      */
     createLanguageSelector() {
         const authContainer = document.getElementById('authContainer');
         if (!authContainer) return;
 
-        // Create language selector
-        const languageSelector = document.createElement('div');
-        languageSelector.className = 'flex items-center justify-center mt-2 mb-2';
-        languageSelector.innerHTML = `
+        // Create language selector container
+        const languageContainer = document.createElement('div');
+        languageContainer.className = 'flex items-center justify-center mt-4 mb-2';
+        languageContainer.innerHTML = `
             <label for="languageSelect" class="mr-2 text-sm text-gray-600">${this.t('language')}:</label>
-            <select id="languageSelect" class="p-1 border border-gray-300 rounded text-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none">
+            <select id="languageSelect" class="p-2 border border-gray-300 rounded-md text-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none">
                 <option value="en" ${this.currentLanguage === 'en' ? 'selected' : ''}>${this.t('english')}</option>
                 <option value="tr" ${this.currentLanguage === 'tr' ? 'selected' : ''}>${this.t('turkish')}</option>
             </select>
         `;
 
-        // Insert before auth container
-        authContainer.parentNode.insertBefore(languageSelector, authContainer);
+        // Insert after auth container
+        authContainer.parentNode.insertBefore(languageContainer, authContainer.nextSibling);
 
         // Add event listener
         const select = document.getElementById('languageSelect');
@@ -194,152 +277,129 @@ class LanguageManager {
     }
 
     /**
-     * Get translation for a key
-     * @param {string} key - Translation key
-     * @returns {string} Translated text
+     * Update page language
      */
-    t(key) {
-        return this.translations[this.currentLanguage]?.[key] || key;
-    }
-
-    /**
-     * Change language
-     * @param {string} language - Language code
-     */
-    changeLanguage(language) {
-        if (!this.supportedLanguages.includes(language)) return;
-        
-        this.currentLanguage = language;
-        localStorage.setItem('rotamBenim_language', language);
-        
-        // Update HTML lang attribute
-        document.documentElement.lang = language;
-        
-        // Apply translations
-        this.applyTranslations();
-        
-        // Notify other components
-        window.dispatchEvent(new CustomEvent('languageChanged', { 
-            detail: { language: language } 
-        }));
-        
-        console.log(`[LanguageManager] Language changed to: ${language}`);
-    }
-
-    /**
-     * Apply translations to DOM elements
-     */
-    applyTranslations() {
+    updatePageLanguage() {
         // Update page title
-        document.title = this.t('appTitle') + ' - RotamBenim';
-        
+        document.title = this.t('appTitle');
+
         // Update meta description
         const metaDesc = document.querySelector('meta[name="description"]');
         if (metaDesc) {
-            metaDesc.content = this.t('appDescription');
+            metaDesc.setAttribute('content', this.t('appDescription'));
         }
 
-        // Update text content using data attributes
-        this.updateElementsWithTranslations();
-    }
-
-    /**
-     * Update DOM elements with translations
-     */
-    updateElementsWithTranslations() {
-        // Main header
+        // Update main header
         const appTitle = document.querySelector('h1');
         if (appTitle) appTitle.textContent = this.t('appTitle');
 
         const appDesc = document.querySelector('header p');
         if (appDesc) appDesc.textContent = this.t('appDescription');
 
-        // Auth section
+        // Update authentication elements
+        this.updateAuthElements();
+        
+        // Update add place section
+        this.updateAddPlaceSection();
+        
+        // Update places list section
+        this.updatePlacesListSection();
+        
+        // Update route section
+        this.updateRouteSection();
+        
+        // Update map section
+        this.updateMapSection();
+        
+        // Update language selector
+        this.updateLanguageSelector();
+    }
+
+    /**
+     * Update authentication elements
+     */
+    updateAuthElements() {
         const signInBtn = document.getElementById('googleSignInBtn');
         if (signInBtn) {
-            const textSpan = signInBtn.querySelector('svg').nextSibling;
-            if (textSpan) textSpan.textContent = this.t('signInWithGoogle');
+            const textNode = signInBtn.childNodes[signInBtn.childNodes.length - 1];
+            if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+                textNode.textContent = this.t('signInWithGoogle');
+            }
         }
 
         const signOutBtn = document.getElementById('signOutBtn');
         if (signOutBtn) signOutBtn.textContent = this.t('signOut');
-
-        // Add section
-        const addSectionHeading = document.getElementById('add-section-heading');
-        if (addSectionHeading) addSectionHeading.textContent = this.t('addNewPlaceOrCountry');
-
-        const addPlaceTab = document.getElementById('addPlaceTab');
-        if (addPlaceTab) addPlaceTab.textContent = this.t('addPlace');
-
-        const addCountryTab = document.getElementById('addCountryTab');
-        if (addCountryTab) addCountryTab.textContent = this.t('addCountry');
-
-        const newPlaceInput = document.getElementById('newPlaceNameInput');
-        if (newPlaceInput) newPlaceInput.placeholder = this.t('placeholderPlace');
-
-        const newCountryInput = document.getElementById('newCountryNameInput');
-        if (newCountryInput) newCountryInput.placeholder = this.t('placeholderCountry');
-
-        const addPlaceBtn = document.getElementById('addPlaceBtnText');
-        if (addPlaceBtn) addPlaceBtn.textContent = this.t('addPlaceBtn');
-
-        const addCountryBtn = document.getElementById('addCountryBtnText');
-        if (addCountryBtn) addCountryBtn.textContent = this.t('addCountryBtn');
-
-        // Places section
-        const placesHeading = document.getElementById('places-heading');
-        if (placesHeading) placesHeading.textContent = this.t('placesToVisit');
-
-        const clickToCreate = document.querySelector('#places-heading + p');
-        if (clickToCreate) clickToCreate.textContent = this.t('clickToCreateRoute');
-
-        // Filters
-        const countryLabel = document.querySelector('label[for="filterCountry"]');
-        if (countryLabel) countryLabel.textContent = this.t('country');
-
-        const statusLabel = document.querySelector('label[for="filterVisited"]');
-        if (statusLabel) statusLabel.textContent = this.t('status');
-
-        // Filter options
-        this.updateFilterOptions();
-
-        // Buttons
-        const generateRouteBtn = document.getElementById('generateRouteBtn');
-        if (generateRouteBtn) {
-            const text = generateRouteBtn.childNodes[0];
-            if (text) text.textContent = this.t('createRoute') + ' (';
-        }
-
-        const clearSelectionBtn = document.getElementById('clearSelectionBtn');
-        if (clearSelectionBtn) clearSelectionBtn.textContent = this.t('clearSelection');
-
-        // Map section
-        const mapHeading = document.getElementById('map-heading');
-        if (mapHeading) mapHeading.textContent = this.t('map');
-
-        const mapDesc = document.querySelector('aside p:last-child');
-        if (mapDesc) mapDesc.textContent = this.t('mapDescription');
-
-        // Loading overlay
-        const loadingText = document.querySelector('#loadingOverlay span');
-        if (loadingText) loadingText.textContent = this.t('loading');
     }
 
     /**
-     * Update filter dropdown options
+     * Update add place section
+     */
+    updateAddPlaceSection() {
+        // Tab buttons
+        const addPlaceTab = document.getElementById('addPlaceTab');
+        if (addPlaceTab) addPlaceTab.textContent = this.t('addPlaceTab');
+
+        const addCountryTab = document.getElementById('addCountryTab');
+        if (addCountryTab) addCountryTab.textContent = this.t('addCountryTab');
+
+        // Section headers
+        const addPlaceHeader = document.querySelector('[data-translate="addNewPlace"]');
+        if (addPlaceHeader) addPlaceHeader.textContent = this.t('addNewPlace');
+
+        const addCountryHeader = document.querySelector('[data-translate="addNewCountry"]');
+        if (addCountryHeader) addCountryHeader.textContent = this.t('addNewCountry');
+
+        // Input placeholders
+        const placeInput = document.getElementById('newPlaceNameInput');
+        if (placeInput) placeInput.placeholder = this.t('placeholderPlace');
+
+        const countryInput = document.getElementById('newCountryNameInput');
+        if (countryInput) countryInput.placeholder = this.t('placeholderCountry');
+
+        // Button texts
+        const addPlaceBtnText = document.getElementById('addPlaceBtnText');
+        if (addPlaceBtnText) addPlaceBtnText.textContent = this.t('addPlace');
+
+        const addCountryBtnText = document.getElementById('addCountryBtnText');
+        if (addCountryBtnText) addCountryBtnText.textContent = this.t('addCountry');
+    }
+
+    /**
+     * Update places list section
+     */
+    updatePlacesListSection() {
+        const placesHeader = document.querySelector('[data-translate="placesToVisit"]');
+        if (placesHeader) placesHeader.textContent = this.t('placesToVisit');
+
+        const clickToSelect = document.querySelector('[data-translate="clickToSelect"]');
+        if (clickToSelect) clickToSelect.textContent = this.t('clickToSelect');
+
+        // Filter labels
+        const countryLabel = document.querySelector('label[for="filterCountry"]');
+        if (countryLabel) countryLabel.textContent = this.t('country') + ':';
+
+        const statusLabel = document.querySelector('label[for="filterVisited"]');
+        if (statusLabel) statusLabel.textContent = this.t('status') + ':';
+
+        // Filter options
+        this.updateFilterOptions();
+    }
+
+    /**
+     * Update filter options
      */
     updateFilterOptions() {
-        const filterCountry = document.getElementById('filterCountry');
-        if (filterCountry) {
-            const allCountriesOption = filterCountry.querySelector('option[value="all"]');
-            if (allCountriesOption) allCountriesOption.textContent = this.t('allCountries');
+        const countryFilter = document.getElementById('filterCountry');
+        if (countryFilter) {
+            const allOption = countryFilter.querySelector('option[value="all"]');
+            if (allOption) allOption.textContent = this.t('allCountries');
         }
 
-        const filterVisited = document.getElementById('filterVisited');
-        if (filterVisited) {
-            const options = filterVisited.querySelectorAll('option');
+        const visitedFilter = document.getElementById('filterVisited');
+        if (visitedFilter) {
+            const options = visitedFilter.querySelectorAll('option');
             options.forEach(option => {
-                switch(option.value) {
+                switch (option.value) {
                     case 'all':
                         option.textContent = this.t('all');
                         break;
@@ -355,48 +415,81 @@ class LanguageManager {
     }
 
     /**
-     * Get current language
-     * @returns {string} Current language code
+     * Update route section
      */
-    getCurrentLanguage() {
-        return this.currentLanguage;
-    }
-
-    /**
-     * Get supported languages
-     * @returns {Array} Array of supported language codes
-     */
-    getSupportedLanguages() {
-        return this.supportedLanguages;
-    }
-
-    /**
-     * Add new language support
-     * @param {string} languageCode - Language code
-     * @param {Object} translations - Translation object
-     */
-    addLanguage(languageCode, translations) {
-        this.supportedLanguages.push(languageCode);
-        this.translations[languageCode] = translations;
-        
-        // Update language selector if it exists
-        const languageSelect = document.getElementById('languageSelect');
-        if (languageSelect) {
-            const option = document.createElement('option');
-            option.value = languageCode;
-            option.textContent = translations.language || languageCode.toUpperCase();
-            languageSelect.appendChild(option);
+    updateRouteSection() {
+        const generateRouteBtn = document.getElementById('generateRouteBtn');
+        if (generateRouteBtn) {
+            // This will be updated by the route manager based on selection count
         }
     }
 
     /**
-     * Clean up resources
+     * Update map section
+     */
+    updateMapSection() {
+        const mapTitle = document.querySelector('[data-translate="map"]');
+        if (mapTitle) mapTitle.textContent = this.t('map');
+
+        const mapDescription = document.querySelector('[data-translate="clickToView"]');
+        if (mapDescription) mapDescription.textContent = this.t('clickToView');
+    }
+
+    /**
+     * Update language selector
+     */
+    updateLanguageSelector() {
+        const languageLabel = document.querySelector('label[for="languageSelect"]');
+        if (languageLabel) languageLabel.textContent = this.t('language') + ':';
+
+        const languageSelect = document.getElementById('languageSelect');
+        if (languageSelect) {
+            const options = languageSelect.querySelectorAll('option');
+            options.forEach(option => {
+                switch (option.value) {
+                    case 'en':
+                        option.textContent = this.t('english');
+                        break;
+                    case 'tr':
+                        option.textContent = this.t('turkish');
+                        break;
+                }
+            });
+        }
+    }
+
+    /**
+     * Get language manager status
+     * @returns {Object} Status information
+     */
+    getStatus() {
+        return {
+            isInitialized: this.isInitialized,
+            currentLanguage: this.currentLanguage,
+            supportedLanguages: this.supportedLanguages
+        };
+    }
+
+    /**
+     * Clean up language manager
      */
     cleanup() {
         console.log('[LanguageManager] Cleaning up...');
-        // Remove event listeners if needed
+        
+        // Remove language selector
+        const languageContainer = document.querySelector('label[for="languageSelect"]')?.parentElement;
+        if (languageContainer) {
+            languageContainer.remove();
+        }
+        
+        console.log('[LanguageManager] Cleanup completed');
     }
 }
 
-// Create and export language manager instance
+// Create global instance
 window.languageManager = new LanguageManager();
+
+// Export for module systems
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = LanguageManager;
+}
