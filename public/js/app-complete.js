@@ -39,26 +39,18 @@ class CompleteTravelApp {
     }
     
     async initializeFirebase() {
-        if (typeof initializeApp === 'undefined') {
-            console.error('Firebase not loaded');
-            return;
-        }
-        
         try {
-            // Firebase configuration
-            const firebaseConfig = {
-                apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA",
-                authDomain: "rotambenim.firebaseapp.com",
-                projectId: "rotambenim",
-                storageBucket: "rotambenim.firebasestorage.app",
-                messagingSenderId: "374285362920",
-                appId: "1:374285362920:web:b4058cf4a93e7337168b5d",
-                measurementId: "G-0QVZ4LDYPJ"
-            };
+            // Dinamik import ve config dosyasından okuma
+            const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js');
+            const { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
+            const { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, writeBatch } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
             
+            // Config dosyasından al
+            const firebaseConfig = window.APP_CONFIG?.firebaseConfig;
             this.app = initializeApp(firebaseConfig);
             this.auth = getAuth(this.app);
             this.db = getFirestore(this.app);
+            this.firebase = { GoogleAuthProvider, signInWithPopup, signOut, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, writeBatch };
             
             // Set up auth state listener
             onAuthStateChanged(this.auth, (user) => {
@@ -236,14 +228,13 @@ class CompleteTravelApp {
     }
     
     async signInWithGoogle() {
-        if (!this.auth) {
+        if (!this.auth || !this.firebase) {
             console.error('Auth not initialized');
             return;
         }
-        
         try {
-            const provider = new GoogleAuthProvider();
-            await signInWithPopup(this.auth, provider);
+            const provider = new this.firebase.GoogleAuthProvider();
+            await this.firebase.signInWithPopup(this.auth, provider);
         } catch (error) {
             console.error('Google sign in error:', error);
             const authStatus = document.getElementById('authStatus');
@@ -257,7 +248,7 @@ class CompleteTravelApp {
         if (!this.auth) return;
         
         try {
-            await signOut(this.auth);
+            await this.firebase.signOut(this.auth);
             this.selectedRouteOrder = [];
             this.updateRouteButton();
         } catch (error) {
@@ -286,10 +277,10 @@ class CompleteTravelApp {
         if (!this.currentUserId || !this.db) return;
         
         try {
-            const placesRef = collection(this.db, `artifacts/rotambenim/users/${this.currentUserId}/places`);
-            const q = query(placesRef, orderBy("country"), orderBy("name"));
+            const placesRef = this.firebase.collection(this.db, `artifacts/rotambenim/users/${this.currentUserId}/places`);
+            const q = this.firebase.query(placesRef, this.firebase.orderBy("country"), this.firebase.orderBy("name"));
             
-            const unsubscribe = onSnapshot(q, (snapshot) => {
+            const unsubscribe = this.firebase.onSnapshot(q, (snapshot) => {
                 this.placesData = snapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
@@ -485,8 +476,8 @@ class CompleteTravelApp {
         if (!this.currentUserId || !this.db) return;
         
         try {
-            const placeRef = doc(this.db, `artifacts/rotambenim/users/${this.currentUserId}/places`, placeId);
-            await updateDoc(placeRef, { visited: visited });
+            const placeRef = this.firebase.doc(this.db, `artifacts/rotambenim/users/${this.currentUserId}/places`, placeId);
+            await this.firebase.updateDoc(placeRef, { visited: visited });
         } catch (error) {
             console.error('Error updating place visited status:', error);
         }
@@ -500,8 +491,8 @@ class CompleteTravelApp {
         }
         
         try {
-            const placeRef = doc(this.db, `artifacts/rotambenim/users/${this.currentUserId}/places`, place.id);
-            await deleteDoc(placeRef);
+            const placeRef = this.firebase.doc(this.db, `artifacts/rotambenim/users/${this.currentUserId}/places`, place.id);
+            await this.firebase.deleteDoc(placeRef);
             
             // Remove from selected route if present
             this.selectedRouteOrder = this.selectedRouteOrder.filter(p => p.id !== place.id);
@@ -553,30 +544,27 @@ class CompleteTravelApp {
     }
     
     async addNewPlace() {
-        if (!this.currentUserId) {
-            alert(window.languageManager.getText('pleaseSignInToAdd'));
-            return;
-        }
-        
-        const placeInput = document.getElementById('newPlaceNameInput');
-        const placeName = placeInput.value.trim();
-        
-        if (!placeName) {
-            alert(window.languageManager.getText('enterPlaceName'));
-            return;
-        }
-        
-        // Check if place already exists
-        const existingPlace = this.placesData.find(p => 
-            p.name.toLowerCase() === placeName.toLowerCase()
-        );
-        
-        if (existingPlace) {
-            alert('Bu yer zaten listenizde mevcut!');
-            return;
-        }
-        
+        const addPlaceBtn = document.getElementById('addPlaceBtn');
+        const addPlaceLoader = document.getElementById('addPlaceLoader');
+        if (addPlaceBtn) addPlaceBtn.disabled = true;
+        if (addPlaceLoader) addPlaceLoader.classList.remove('hidden');
         try {
+            if (!this.currentUserId) {
+                alert(window.languageManager.getText('pleaseSignInToAdd'));
+                return;
+            }
+            const placeInput = document.getElementById('newPlaceNameInput');
+            const placeName = placeInput.value.trim();
+            if (!placeName) {
+                alert(window.languageManager.getText('enterPlaceName'));
+                return;
+            }
+            // Check if place already exists
+            const existingPlace = this.placesData.find(p => p.name.toLowerCase() === placeName.toLowerCase());
+            if (existingPlace) {
+                alert('Bu yer zaten listenizde mevcut!');
+                return;
+            }
             const newPlace = {
                 name: placeName,
                 city: '',
@@ -588,16 +576,16 @@ class CompleteTravelApp {
                 createdAt: new Date().toISOString(),
                 userId: this.currentUserId
             };
-            
-            const placesRef = collection(this.db, `artifacts/rotambenim/users/${this.currentUserId}/places`);
-            await addDoc(placesRef, newPlace);
-            
+            const placesRef = this.firebase.collection(this.db, `artifacts/rotambenim/users/${this.currentUserId}/places`);
+            await this.firebase.addDoc(placesRef, newPlace);
             placeInput.value = '';
             alert(window.languageManager.getText('placeAdded'));
-            
         } catch (error) {
             console.error('Error adding place:', error);
             alert('Yer eklenirken hata oluştu.');
+        } finally {
+            if (addPlaceBtn) addPlaceBtn.disabled = false;
+            if (addPlaceLoader) addPlaceLoader.classList.add('hidden');
         }
     }
     
@@ -634,8 +622,8 @@ class CompleteTravelApp {
         }
         
         try {
-            const placesRef = collection(this.db, `artifacts/rotambenim/users/${this.currentUserId}/places`);
-            const batch = writeBatch(this.db);
+            const placesRef = this.firebase.collection(this.db, `artifacts/rotambenim/users/${this.currentUserId}/places`);
+            const batch = this.firebase.writeBatch(this.db);
             
             countryData.places.forEach(place => {
                 const newPlace = {
@@ -645,11 +633,11 @@ class CompleteTravelApp {
                     userId: this.currentUserId
                 };
                 
-                const placeRef = doc(placesRef);
-                batch.set(placeRef, newPlace);
+                const placeRef = this.firebase.doc(placesRef);
+                this.firebase.set(placeRef, newPlace);
             });
             
-            await batch.commit();
+            await this.firebase.commit(batch);
             
             countryInput.value = '';
             alert(`${countryData.places.length} ${window.languageManager.getText('placeAdded')} ${countryName} ülkesinden!`);
