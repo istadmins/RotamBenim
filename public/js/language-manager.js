@@ -529,3 +529,5 @@ window.languageManager = new LanguageManager();
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = LanguageManager;
 }
+
+window.languageManager.applyLanguage = window.languageManager.updatePageLanguage.bind(window.languageManager);

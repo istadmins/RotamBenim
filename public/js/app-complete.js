@@ -34,30 +34,26 @@ class CompleteTravelApp {
         // Initialize language manager
         if (window.languageManager) {
             this.currentLanguage = window.languageManager.getCurrentLanguage();
-            window.languageManager.applyLanguage();
+            window.languageManager.updatePageLanguage();
         }
     }
     
     async initializeFirebase() {
+        console.log('Firebase başlatılıyor...');
         try {
-            // Dinamik import ve config dosyasından okuma
             const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js');
             const { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
             const { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, writeBatch } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
-            
-            // Config dosyasından al
             const firebaseConfig = window.APP_CONFIG?.firebaseConfig;
+            console.log('Firebase config:', firebaseConfig);
             this.app = initializeApp(firebaseConfig);
             this.auth = getAuth(this.app);
             this.db = getFirestore(this.app);
             this.firebase = { GoogleAuthProvider, signInWithPopup, signOut, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, writeBatch };
-            
-            // Set up auth state listener
             onAuthStateChanged(this.auth, (user) => {
                 this.handleAuthStateChange(user);
             });
-            
-            console.log('Firebase initialized successfully');
+            console.log('Firebase başarıyla başlatıldı.');
         } catch (error) {
             console.error('Firebase initialization error:', error);
         }
@@ -551,18 +547,23 @@ class CompleteTravelApp {
         try {
             if (!this.currentUserId) {
                 alert(window.languageManager.getText('pleaseSignInToAdd'));
+                if (addPlaceBtn) addPlaceBtn.disabled = false;
+                if (addPlaceLoader) addPlaceLoader.classList.add('hidden');
                 return;
             }
             const placeInput = document.getElementById('newPlaceNameInput');
             const placeName = placeInput.value.trim();
             if (!placeName) {
                 alert(window.languageManager.getText('enterPlaceName'));
+                if (addPlaceBtn) addPlaceBtn.disabled = false;
+                if (addPlaceLoader) addPlaceLoader.classList.add('hidden');
                 return;
             }
-            // Check if place already exists
             const existingPlace = this.placesData.find(p => p.name.toLowerCase() === placeName.toLowerCase());
             if (existingPlace) {
                 alert('Bu yer zaten listenizde mevcut!');
+                if (addPlaceBtn) addPlaceBtn.disabled = false;
+                if (addPlaceLoader) addPlaceLoader.classList.add('hidden');
                 return;
             }
             const newPlace = {
