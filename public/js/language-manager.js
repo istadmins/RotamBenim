@@ -116,7 +116,8 @@ class LanguageManager {
                 // Country Background
                 backgroundImage: 'Arka Plan Resmi',
                 loadingImage: 'Resim yükleniyor...',
-                imageError: 'Resim yüklenemedi'
+                imageError: 'Resim yüklenemedi',
+                noPlacesFound: "Bu kriterlere uygun yer bulunamadı."
             },
             en: {
                 // App Title and Description
@@ -217,7 +218,8 @@ class LanguageManager {
                 // Country Background
                 backgroundImage: 'Background Image',
                 loadingImage: 'Loading image...',
-                imageError: 'Failed to load image'
+                imageError: 'Failed to load image',
+                noPlacesFound: "No places found matching these criteria."
             }
         };
     }
@@ -520,6 +522,10 @@ class LanguageManager {
         
         console.log('[LanguageManager] Cleanup completed');
     }
+
+    getSupportedLanguages() {
+        return this.supportedLanguages;
+    }
 }
 
 // Create global instance
@@ -532,3 +538,4 @@ if (typeof module !== 'undefined' && module.exports) {
 
 window.languageManager.applyLanguage = window.languageManager.updatePageLanguage.bind(window.languageManager);
 window.languageManager.getText = window.languageManager.t.bind(window.languageManager);
+window.languageManager.getSupportedLanguages = function() { return this.supportedLanguages; };
