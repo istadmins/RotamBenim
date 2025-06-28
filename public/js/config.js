@@ -16,7 +16,7 @@ const firebaseConfig = {
 // Pexels API Configuration
 // TODO: Replace with your actual Pexels API key
 // Get your free API key from: https://www.pexels.com/api/
-const PEXELS_API_KEY = 'YOUR_PEXELS_API_KEY_HERE';
+const PEXELS_API_KEY = 'qLDLKWTXLouQCKT40OyIA982lb5kv0ftITaaLYbaOrx2FKNbGf5sZlYF';
 
 // App Configuration
 const APP_CONFIG = {
