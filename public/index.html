@@ -1,66 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Travel Itinerary</title>
+    <title>Rotam Benim - Seyahat Planlayıcısı</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: background-image 0.5s ease-in-out;
         }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-        .place-item:hover {
-            background-color: #f0f9ff;
-        }
-        .place-item.selected-for-route {
-            background-color: #dbeafe;
-            border-left: 4px solid #2563eb;
-        }
-        .country-header {
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e5e7eb;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1e3a8a;
-            position: relative;
-            cursor: pointer;
-        }
-        .country-header:hover .country-image {
-            opacity: 1;
-            visibility: visible;
-        }
-        .country-image {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 300px;
-            height: 200px;
-            background-size: cover;
-            background-position: center;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            border: 3px solid white;
-        }
+        
         .category-tag {
             display: inline-block;
             background-color: #e0e7ff;
@@ -69,26 +23,105 @@
             border-radius: 0.375rem;
             font-size: 0.75rem;
             font-weight: 500;
-            margin-top: 0.25rem;
             margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
         }
+        
+        .place-item {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .place-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .place-item.selected-for-route {
+            background-color: #dbeafe;
+            border-left: 4px solid #2563eb;
+        }
+        
+        .country-header {
+            position: relative;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e3a8a;
+        }
+        
+        .country-header:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        }
+        
+        .tab-button {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .tab-button.active {
+            background-color: #2563eb;
+            color: white;
+        }
+        
+        .tab-button:not(.active) {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+        
+        .tab-button:not(.active):hover {
+            background-color: #d1d5db;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
         .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             animation: spin 1s linear infinite;
-            display: none;
-            margin-left: 10px;
         }
-        .loader.show {
-            display: inline-block;
-        }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         .delete-place-btn {
             background-color: #fee2e2;
             color: #b91c1c;
@@ -98,50 +131,9 @@
             font-weight: 500;
             transition: background-color 0.3s ease;
         }
+        
         .delete-place-btn:hover {
             background-color: #fecaca;
-        }
-        .suggestions-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            max-height: 300px;
-            overflow-y: auto;
-            z-index: 50;
-            display: none;
-        }
-        .suggestions-dropdown.show {
-            display: block;
-        }
-        .suggestion-item {
-            padding: 0.75rem;
-            cursor: pointer;
-            border-bottom: 1px solid #f3f4f6;
-            transition: background-color 0.2s;
-        }
-        .suggestion-item:hover {
-            background-color: #f9fafb;
-        }
-        .suggestion-item:last-child {
-            border-bottom: none;
-        }
-        .filter-container > div {
-            margin-bottom: 0.5rem;
-        }
-        @media (min-width: 640px) {
-            .filter-container {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-            }
-            .filter-container > div {
-                margin-bottom: 0;
-            }
         }
     </style>
 </head>
@@ -149,8 +141,19 @@
     <div class="container mx-auto max-w-6xl bg-white shadow-xl rounded-lg my-8 p-6">
         <!-- Header -->
         <header class="mb-8 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-sky-600 mb-2">My Travel Itinerary</h1>
-            <p class="text-gray-600 mb-6">Discover amazing places around the world, create your travel routes, and track your adventures!</p>
+            <div class="flex justify-between items-center mb-6">
+                <div></div> <!-- Spacer -->
+                <h1 class="text-3xl md:text-4xl font-bold text-sky-600 mb-2">Rotam Benim</h1>
+                <div class="flex items-center space-x-4">
+                    <!-- Language Selector -->
+                    <select id="languageSelector" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
+                        <option value="tr">Türkçe</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+            </div>
+            
+            <p class="text-gray-600 mb-6">Dünyanın harika yerlerini keşfedin, seyahat rotalarınızı oluşturun ve maceralarınızı takip edin!</p>
             
             <!-- Centered Authentication -->
             <div id="authContainer" class="flex justify-center items-center mb-4">
@@ -161,13 +164,13 @@
                         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                         <path d="M12 5.38c1.63 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                     </svg>
-                    Sign in with Google
+                    Google ile Giriş Yap
                 </button>
                 <div id="userDisplay" class="hidden items-center">
                     <img id="userPhoto" class="w-8 h-8 rounded-full mr-3 border-2 border-blue-400" alt="User Photo">
                     <span id="userName" class="text-gray-700 font-medium mr-4"></span>
                     <button id="signOutBtn" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-md text-sm shadow-md transition-colors duration-200">
-                        Sign Out
+                        Çıkış Yap
                     </button>
                 </div>
             </div>
@@ -178,46 +181,77 @@
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Left Column - Places Management -->
             <div class="flex-1">
-                <!-- Add New Place -->
+                <!-- Add New Place/Country Section -->
                 <div class="mb-6 p-4 border border-gray-200 rounded-lg bg-slate-50">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-3">Add New Place</h3>
-                    <div class="relative">
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <div class="flex-grow relative">
-                                <input type="text" id="newPlaceNameInput" placeholder="e.g., Pam..." 
-                                       class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none">
-                                <div id="suggestionsDropdown" class="suggestions-dropdown">
-                                    <!-- Suggestions will be populated here -->
+                    <h3 class="text-lg font-semibold text-gray-700 mb-3">Yeni Ekle</h3>
+                    
+                    <!-- Tab Buttons -->
+                    <div class="flex space-x-1 mb-4 bg-gray-200 p-1 rounded-lg">
+                        <button id="addPlaceTab" class="tab-button active flex-1 py-2 px-4 rounded-md text-sm font-medium">
+                            Yer Ekle
+                        </button>
+                        <button id="addCountryTab" class="tab-button flex-1 py-2 px-4 rounded-md text-sm font-medium">
+                            Ülke Ekle
+                        </button>
+                    </div>
+                    
+                    <!-- Add Place Tab -->
+                    <div id="addPlaceContent">
+                        <div class="relative">
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <div class="flex-grow relative">
+                                    <input type="text" id="newPlaceNameInput" placeholder="örn: Paris, Eyfel Kulesi..." 
+                                           class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none">
                                 </div>
+                                <button id="addPlaceBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 px-6 rounded-md shadow-md flex items-center justify-center transition-colors duration-200" disabled>
+                                    <span id="addPlaceBtnText">Yer Ekle</span>
+                                    <div id="addPlaceLoader" class="loader"></div>
+                                </button>
                             </div>
-                            <button id="addPlaceBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 px-6 rounded-md shadow-md flex items-center justify-center transition-colors duration-200" disabled>
-                                <span id="addPlaceBtnText">Add Place</span>
-                                <div id="addPlaceLoader" class="loader"></div>
-                            </button>
+                            <div id="addPlaceMessage" class="text-sm mt-2"></div>
                         </div>
-                        <div id="addPlaceMessage" class="text-sm mt-2"></div>
+                    </div>
+                    
+                    <!-- Add Country Tab -->
+                    <div id="addCountryContent" class="hidden">
+                        <div class="relative">
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <div class="flex-grow relative">
+                                    <input type="text" id="newCountryNameInput" placeholder="örn: Fransa, İtalya, İspanya..." 
+                                           class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none">
+                                </div>
+                                <button id="addCountryBtn" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-md shadow-md flex items-center justify-center transition-colors duration-200" disabled>
+                                    <span id="addCountryBtnText">Ülke Ekle</span>
+                                    <div id="addCountryLoader" class="loader"></div>
+                                </button>
+                            </div>
+                            <div id="addCountryMessage" class="text-sm mt-2"></div>
+                            <div class="text-xs text-gray-600 mt-2 bg-blue-50 p-2 rounded">
+                                💡 Ülke eklendiğinde, o ülkenin en popüler 10-30 turistik yeri otomatik olarak listenize eklenecektir.
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Places List Header -->
                 <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h2 class="text-2xl font-semibold text-gray-700">Places to Visit</h2>
-                        <p class="text-sm text-gray-500">Click on places to select them for route creation</p>
+                        <h2 class="text-2xl font-semibold text-gray-700">Gidilecek Yerler</h2>
+                        <p class="text-sm text-gray-500">Rota oluşturmak için yerleri tıklayın</p>
                     </div>
                     <div class="filter-container">
                         <div>
-                            <label for="filterCountry" class="mr-2 text-gray-600">Country:</label>
+                            <label for="filterCountry" class="mr-2 text-gray-600">Ülke:</label>
                             <select id="filterCountry" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
-                                <option value="all">All Countries</option>
+                                <option value="all">Tüm Ülkeler</option>
                             </select>
                         </div>
                         <div>
-                            <label for="filterVisited" class="mr-2 text-gray-600">Status:</label>
+                            <label for="filterVisited" class="mr-2 text-gray-600">Durum:</label>
                             <select id="filterVisited" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
-                                <option value="all">All</option>
-                                <option value="notvisited" selected>Not Visited</option>
-                                <option value="visited">Visited</option>
+                                <option value="all">Tümü</option>
+                                <option value="notvisited" selected>Gezilmedi</option>
+                                <option value="visited">Gezildi</option>
                             </select>
                         </div>
                     </div>
@@ -226,33 +260,15 @@
                 <!-- Route Generation -->
                 <div class="mb-4">
                     <button id="generateRouteBtn" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-md shadow-md disabled:opacity-50 transition-colors duration-200" disabled>
-                        Create Route with Selected Places
+                        Seçili Yerlerle Rota Oluştur
                     </button>
                 </div>
                 <div id="routeLinkContainer" class="mb-4 text-sm"></div>
 
                 <!-- Places List -->
                 <div id="placesList" class="space-y-2 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
-                    <p id="placesListStatus" class="text-gray-500 italic p-4 text-center">Please sign in with Google to see your places...</p>
+                    <p id="placesListStatus" class="text-gray-500 italic p-4 text-center">Yerleri görmek için lütfen giriş yapın...</p>
                 </div>
-            </div>
-
-            <!-- Right Column - Map -->
-            <div class="w-full lg:w-2/5">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-2">Map</h2>
-                <p id="mapLocationName" class="text-sm text-gray-500 mb-4 h-5"></p>
-                <div class="aspect-video rounded-lg overflow-hidden shadow-md">
-                    <iframe id="mapFrame"
-                            class="w-full h-full border-0"
-                            loading="lazy"
-                            allowfullscreen
-                            referrerpolicy="no-referrer-when-downgrade"
-                            src="https://maps.google.com/maps?output=embed&q=World">
-                    </iframe>
-                </div>
-                <p class="mt-4 text-xs text-gray-500">
-                    Click on places to view them on the map. Route creation will open Google Maps with your selected destinations.
-                </p>
             </div>
         </div>
     </div>
@@ -262,11 +278,9 @@
 
     <!-- Scripts -->
     <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/firebase-service.js"></script>
-    <script src="js/ui-components.js"></script>
-    <script src="js/initial-data.js"></script>
-    <script src="js/place-suggestions-enhanced.js"></script>
-    <script src="js/travel-app.js"></script>
+    <script src="js/language-manager.js"></script>
+    <script src="js/pexels-service.js"></script>
+    <script src="js/country-place-service.js"></script>
+    <script src="js/app-complete.js"></script>
 </body>
 </html>

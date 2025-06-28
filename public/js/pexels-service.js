@@ -1,11 +1,21 @@
 // Pexels API Service for Country Background Images
 class PexelsService {
     constructor() {
-        // Pexels API Key - Replace with your actual API key
-        this.apiKey = 'YOUR_PEXELS_API_KEY'; // TODO: Replace with actual API key
+        // Get API key from config
+        this.apiKey = window.APP_CONFIG?.PEXELS_API_KEY || 'YOUR_PEXELS_API_KEY';
         this.baseUrl = 'https://api.pexels.com/v1';
         this.cache = new Map();
         this.cacheExpiry = 24 * 60 * 60 * 1000; // 24 hours
+        
+        // Initialize with config
+        this.initializeFromConfig();
+    }
+    
+    // Initialize from config
+    initializeFromConfig() {
+        if (window.APP_CONFIG?.PEXELS_API_KEY && window.APP_CONFIG.PEXELS_API_KEY !== 'YOUR_PEXELS_API_KEY_HERE') {
+            this.apiKey = window.APP_CONFIG.PEXELS_API_KEY;
+        }
     }
     
     // Set API key (can be called from config)
@@ -23,57 +33,15 @@ class PexelsService {
             return cached;
         }
         
-        try {
-            // Search for country-related images
-            const searchQuery = `${countryName} landscape travel destination`;
-            const response = await this.searchPhotos(searchQuery, {
-                per_page: 1,
-                orientation: 'landscape',
-                size: 'large',
-                ...options
-            });
-            
-            if (response && response.photos && response.photos.length > 0) {
-                const photo = response.photos[0];
-                const imageData = {
-                    url: photo.src.large,
-                    photographer: photo.photographer,
-                    photographerUrl: photo.photographer_url,
-                    alt: photo.alt || `${countryName} landscape`,
-                    width: photo.width,
-                    height: photo.height
-                };
-                
-                // Cache the result
-                this.setCache(cacheKey, imageData);
-                return imageData;
-            }
-            
-            return null;
-        } catch (error) {
-            console.error('Error fetching country image:', error);
-            return null;
-        }
-    }
-    
-    // Search photos
-    async searchPhotos(query, options = {}) {
-        if (!this.apiKey || this.apiKey === 'YOUR_PEXELS_API_KEY') {
-            console.warn('Pexels API key not configured. Using fallback images.');
-            return this.getFallbackImage(query);
+        // Check if API key is valid
+        if (!this.apiKey || this.apiKey === 'YOUR_PEXELS_API_KEY' || this.apiKey === 'YOUR_PEXELS_API_KEY_HERE') {
+            console.warn('Pexels API key not configured. Please add your API key to config.js');
+            return this.getFallbackImage(countryName);
         }
         
         try {
-            const params = new URLSearchParams({
-                query: query,
-                per_page: options.per_page || 1,
-                page: options.page || 1
-            });
-            
-            if (options.orientation) params.append('orientation', options.orientation);
-            if (options.size) params.append('size', options.size);
-            
-            const response = await fetch(`${this.baseUrl}/search?${params}`, {
+            const query = this.buildSearchQuery(countryName, options);
+            const response = await fetch(`${this.baseUrl}/search?query=${encodeURIComponent(query)}&per_page=1&orientation=landscape`, {
                 headers: {
                     'Authorization': this.apiKey
                 }
@@ -83,27 +51,86 @@ class PexelsService {
                 throw new Error(`Pexels API error: ${response.status}`);
             }
             
-            return await response.json();
+            const data = await response.json();
+            
+            if (data.photos && data.photos.length > 0) {
+                const photo = data.photos[0];
+                const imageData = {
+                    url: photo.src.large,
+                    photographer: photo.photographer,
+                    photographerUrl: photo.photographer_url,
+                    alt: photo.alt || `${countryName} landscape`
+                };
+                
+                // Cache the result
+                this.setCache(cacheKey, imageData);
+                return imageData;
+            } else {
+                console.warn(`No images found for ${countryName}`);
+                return this.getFallbackImage(countryName);
+            }
+            
         } catch (error) {
-            console.error('Pexels API search error:', error);
-            return this.getFallbackImage(query);
+            console.error('Error fetching country image:', error);
+            return this.getFallbackImage(countryName);
         }
     }
     
+    // Build search query for country
+    buildSearchQuery(countryName, options = {}) {
+        const queries = [
+            `${countryName} landscape`,
+            `${countryName} nature`,
+            `${countryName} cityscape`,
+            `${countryName} travel`
+        ];
+        
+        // Add specific terms based on country
+        const countrySpecificTerms = {
+            'FRANSA': ['france', 'paris', 'eiffel tower', 'provence'],
+            'İTALYA': ['italy', 'rome', 'venice', 'tuscany'],
+            'İSPANYA': ['spain', 'barcelona', 'madrid', 'andalusia'],
+            'ALMANYA': ['germany', 'berlin', 'munich', 'bavaria'],
+            'HOLLANDA': ['netherlands', 'amsterdam', 'tulips', 'windmills'],
+            'BELÇİKA': ['belgium', 'brussels', 'bruges', 'chocolate'],
+            'İSVİÇRE': ['switzerland', 'alps', 'zurich', 'geneva'],
+            'AVUSTURYA': ['austria', 'vienna', 'salzburg', 'tyrol'],
+            'MACARİSTAN': ['hungary', 'budapest', 'danube', 'thermal baths'],
+            'ÇEK CUMHURİYETİ': ['czech republic', 'prague', 'bohemia', 'castle'],
+            'POLONYA': ['poland', 'warsaw', 'krakow', 'wieliczka'],
+            'SLOVAKYA': ['slovakia', 'bratislava', 'tatras', 'castles'],
+            'SLOVENYA': ['slovenia', 'ljubljana', 'lake bled', 'julian alps'],
+            'HIRVATİSTAN': ['croatia', 'dubrovnik', 'plitvice', 'adriatic'],
+            'YUNANİSTAN': ['greece', 'athens', 'santorini', 'acropolis'],
+            'PORTEKİZ': ['portugal', 'lisbon', 'porto', 'algarve'],
+            'İRLANDA': ['ireland', 'dublin', 'cliffs of moher', 'guinness'],
+            'İNGİLTERE': ['england', 'london', 'stonehenge', 'cotswolds'],
+            'İSKOÇYA': ['scotland', 'edinburgh', 'highlands', 'loch ness'],
+            'GALLER': ['wales', 'cardiff', 'snowdonia', 'castles'],
+            'NORVEÇ': ['norway', 'oslo', 'fjords', 'northern lights'],
+            'İSVEÇ': ['sweden', 'stockholm', 'gothenburg', 'lapland'],
+            'FİNLANDİYA': ['finland', 'helsinki', 'lapland', 'aurora'],
+            'DANİMARKA': ['denmark', 'copenhagen', 'legoland', 'viking'],
+            'İZLANDA': ['iceland', 'reykjavik', 'geysers', 'volcanoes']
+        };
+        
+        const countryKey = countryName.toUpperCase();
+        if (countrySpecificTerms[countryKey]) {
+            queries.push(...countrySpecificTerms[countryKey]);
+        }
+        
+        // Return the best query
+        return queries[0];
+    }
+    
     // Get fallback image when API is not available
-    getFallbackImage(query) {
+    getFallbackImage(countryName) {
         // Return a placeholder or default image
         return {
-            photos: [{
-                src: {
-                    large: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop'
-                },
-                photographer: 'Unsplash',
-                photographer_url: 'https://unsplash.com',
-                alt: 'Travel landscape',
-                width: 800,
-                height: 600
-            }]
+            url: `https://via.placeholder.com/1200x800/3b82f6/ffffff?text=${encodeURIComponent(countryName)}`,
+            photographer: 'Placeholder',
+            photographerUrl: '',
+            alt: `${countryName} placeholder image`
         };
     }
     
@@ -124,24 +151,78 @@ class PexelsService {
         });
     }
     
+    // Clear cache
     clearCache() {
         this.cache.clear();
     }
     
-    // Preload country images for better performance
-    async preloadCountryImages(countries) {
-        const promises = countries.map(country => 
-            this.getCountryImage(country, { per_page: 1 })
-        );
+    // Get cache size
+    getCacheSize() {
+        return this.cache.size;
+    }
+    
+    // Get multiple images for a country (for gallery)
+    async getCountryImages(countryName, count = 5) {
+        const cacheKey = `country_gallery_${countryName.toLowerCase()}`;
+        
+        // Check cache first
+        const cached = this.getFromCache(cacheKey);
+        if (cached) {
+            return cached;
+        }
+        
+        if (!this.apiKey || this.apiKey === 'YOUR_PEXELS_API_KEY' || this.apiKey === 'YOUR_PEXELS_API_KEY_HERE') {
+            return this.getFallbackGallery(countryName, count);
+        }
         
         try {
-            await Promise.allSettled(promises);
-            console.log('Country images preloaded');
+            const query = this.buildSearchQuery(countryName);
+            const response = await fetch(`${this.baseUrl}/search?query=${encodeURIComponent(query)}&per_page=${count}&orientation=landscape`, {
+                headers: {
+                    'Authorization': this.apiKey
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Pexels API error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.photos && data.photos.length > 0) {
+                const images = data.photos.map(photo => ({
+                    url: photo.src.large,
+                    photographer: photo.photographer,
+                    photographerUrl: photo.photographer_url,
+                    alt: photo.alt || `${countryName} landscape`
+                }));
+                
+                this.setCache(cacheKey, images);
+                return images;
+            } else {
+                return this.getFallbackGallery(countryName, count);
+            }
+            
         } catch (error) {
-            console.error('Error preloading country images:', error);
+            console.error('Error fetching country images:', error);
+            return this.getFallbackGallery(countryName, count);
         }
+    }
+    
+    // Get fallback gallery
+    getFallbackGallery(countryName, count) {
+        const images = [];
+        for (let i = 0; i < count; i++) {
+            images.push({
+                url: `https://via.placeholder.com/1200x800/3b82f6/ffffff?text=${encodeURIComponent(countryName)}`,
+                photographer: 'Placeholder',
+                photographerUrl: '',
+                alt: `${countryName} placeholder image ${i + 1}`
+            });
+        }
+        return images;
     }
 }
 
-// Global Pexels service instance
+// Initialize Pexels service
 window.pexelsService = new PexelsService(); 

@@ -3,43 +3,53 @@
  */
 
 // Firebase Configuration
-window.firebaseConfig = {
-    apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA", 
-    authDomain: "rotambenim.firebaseapp.com", 
-    projectId: "rotambenim", 
-    storageBucket: "rotambenim.firebasestorage.app", 
-    messagingSenderId: "374285362920", 
-    appId: "1:374285362920:web:b4058cf4a93e7337168b5d", 
-    measurementId: "G-0QVZ4LDYPJ" 
+const firebaseConfig = {
+    apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA",
+    authDomain: "rotambenim.firebaseapp.com",
+    projectId: "rotambenim",
+    storageBucket: "rotambenim.firebasestorage.app",
+    messagingSenderId: "374285362920",
+    appId: "1:374285362920:web:b4058cf4a93e7337168b5d",
+    measurementId: "G-0QVZ4LDYPJ"
 };
 
-// Application Configuration
+// Pexels API Configuration
+// TODO: Replace with your actual Pexels API key
+// Get your free API key from: https://www.pexels.com/api/
+const PEXELS_API_KEY = 'YOUR_PEXELS_API_KEY_HERE';
+
+// App Configuration
 const APP_CONFIG = {
-    // Application settings
-    appName: 'My Travel Itinerary',
+    name: 'Rotam Benim',
     version: '2.0.0',
-    
-    // API keys
-    apiKeys: {
-        pexels: 'qLDLKWTXLouQCKT40OyIA982lb5kv0ftITaaLYbaOrx2FKNbGf5sZlYF'
-    },
-    
-    // Application limits
-    maxPlaceNameLength: 100,
-    maxPlacesPerRoute: 25,
-    
-    // UI settings
-    toastDuration: 3000,
-    animationDuration: 300,
-    debounceDelay: 300,
-    
-    // Feature flags
-    features: {
-        enablePlaceSuggestions: true,
-        enableCountryImages: true,
-        enableRouteGeneration: true,
-        enableRealTimeSync: true
-    }
+    defaultLanguage: 'tr',
+    supportedLanguages: ['tr', 'en'],
+    maxPlacesPerCountry: 30,
+    minPlacesPerCountry: 10,
+    cacheExpiryHours: 24,
+    enableBackgroundImages: true,
+    enableOfflineMode: true,
+    enableNotifications: true
+};
+
+// Feature Flags
+const FEATURES = {
+    countryBackgrounds: true,
+    multiLanguage: true,
+    routeGeneration: true,
+    placeSuggestions: true,
+    offlineSupport: true,
+    analytics: false
+};
+
+// UI Configuration
+const UI_CONFIG = {
+    theme: 'light', // 'light' or 'dark'
+    animations: true,
+    autoSave: true,
+    showPlaceCount: true,
+    showCountryStats: true,
+    enableKeyboardShortcuts: true
 };
 
 // Messages
@@ -71,6 +81,23 @@ const MESSAGES = {
     }
 };
 
-// Make configurations globally available
-window.APP_CONFIG = APP_CONFIG;
-window.MESSAGES = MESSAGES;
+// Export configurations
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        firebaseConfig,
+        PEXELS_API_KEY,
+        APP_CONFIG,
+        FEATURES,
+        UI_CONFIG
+    };
+} else {
+    // Browser environment
+    window.APP_CONFIG = {
+        firebaseConfig,
+        PEXELS_API_KEY,
+        APP_CONFIG,
+        FEATURES,
+        UI_CONFIG
+    };
+    window.MESSAGES = MESSAGES;
+}
