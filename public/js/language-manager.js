@@ -5,8 +5,8 @@
 
 class LanguageManager {
     constructor() {
-        this.currentLanguage = 'en'; // Default language
-        this.supportedLanguages = ['en', 'tr'];
+        this.currentLanguage = 'tr'; // Default language
+        this.supportedLanguages = ['tr', 'en'];
         this.isInitialized = false;
         
         // Load saved language preference
@@ -17,6 +17,107 @@ class LanguageManager {
         
         // Language data
         this.translations = {
+            tr: {
+                // App Title and Description
+                appTitle: "Seyahat Rotam",
+                appDescription: "Dünyanın dört bir yanındaki harika yerleri keşfedin, seyahat rotalarınızı oluşturun ve maceralarınızı takip edin!",
+                
+                // Authentication
+                signInWithGoogle: "Google ile Giriş Yap",
+                signOut: "Çıkış Yap",
+                pleaseSignIn: "Lütfen Google ile giriş yapın",
+                welcome: "Hoşgeldin",
+                signingIn: "Giriş yapılıyor...",
+                signingOut: "Çıkış yapılıyor...",
+                
+                // Language Selection
+                language: "Dil",
+                english: "İngilizce",
+                turkish: "Türkçe",
+                
+                // Add Place Section
+                addNewPlace: "Yeni Yer Ekle",
+                addNewCountry: "Yeni Ülke Ekle",
+                placeholderPlace: "örn: Paris, Eyfel Kulesi...",
+                placeholderCountry: "örn: Japonya",
+                addPlace: "Yer Ekle",
+                addCountry: "Ülke Ekle",
+                addPlaces: "Yerleri Ekle",
+                
+                // Places List
+                placesToVisit: "Gidilecek Yerler",
+                clickToSelect: "Rota oluşturmak için yerleri tıklayın",
+                country: "Ülke",
+                status: "Durum",
+                allCountries: "Tüm Ülkeler",
+                all: "Tümü",
+                notVisited: "Gezilmedi",
+                visited: "Gezildi",
+                
+                // Route Generation
+                createRoute: "Seçili Yerlerle Rota Oluştur",
+                selectPlaces: "Rota oluşturmak için yer seçin",
+                selectOneMore: "Bir yer daha seçin",
+                routeCreated: "Rota Oluşturuldu:",
+                openInGoogleMaps: "Google Haritalar'da Aç",
+                
+                // Map
+                map: "Harita",
+                clickToView: "Yerleri haritada görmek için tıklayın. Rota oluşturma, seçtiğiniz destinasyonlarla Google Haritalar'ı açacaktır.",
+                
+                // Messages
+                enterPlaceName: "Lütfen bir yer adı girin",
+                enterCountryName: "Lütfen bir ülke adı girin",
+                addingPlace: "Ekleniyor...",
+                addingCountry: "Ülke ekleniyor...",
+                placeAdded: "Yer başarıyla eklendi!",
+                countryAdded: "yerden yer eklendi",
+                errorAddingPlace: "Yer eklenirken hata oluştu",
+                errorAddingCountry: "Ülke eklenirken hata oluştu",
+                confirmDelete: "silmek istediğinizden emin misiniz",
+                deleted: "silindi",
+                errorDeleting: "Yer silinirken hata oluştu",
+                signInToAdd: "Yer eklemek için lütfen giriş yapın",
+                signInToManage: "Seyahat rotanızı yönetmek için lütfen Google ile giriş yapın",
+                loadingPlaces: "Yerler yükleniyor...",
+                placesInItinerary: "yer rotanızda",
+                
+                // Place Details
+                delete: "Sil",
+                category: "Kategori",
+                description: "Açıklama",
+                city: "Şehir",
+                userAdded: "Kullanıcı Ekledi",
+                addedByUser: "Kullanıcı tarafından eklendi",
+                
+                // Country Places
+                selectCountryPlaces: "eklenecek yerleri seçin",
+                selectedPlaces: "seçilen yer",
+                addSelectedPlaces: "Seçilen Yerleri Ekle",
+                cancel: "İptal",
+                
+                // Tabs
+                addPlaceTab: "Yer Ekle",
+                addCountryTab: "Ülke Ekle",
+                
+                // Header
+                title: 'Rotam Benim',
+                subtitle: 'Dünyanın harika yerlerini keşfedin, seyahat rotalarınızı oluşturun ve maceralarınızı takip edin!',
+                
+                // Status Messages
+                authChecking: 'Kimlik durumu kontrol ediliyor...',
+                authError: 'Giriş hatası',
+                authCancelled: 'Giriş iptal edildi. Lütfen tekrar deneyin',
+                networkError: 'Ağ hatası. Lütfen internet bağlantınızı kontrol edin',
+                firebaseError: 'Firebase başlatılamadı',
+                dataLoading: 'Veriler yükleniyor...',
+                dataError: 'Veri yükleme hatası',
+                
+                // Country Background
+                backgroundImage: 'Arka Plan Resmi',
+                loadingImage: 'Resim yükleniyor...',
+                imageError: 'Resim yüklenemedi'
+            },
             en: {
                 // App Title and Description
                 appTitle: "My Travel Itinerary",
@@ -25,7 +126,7 @@ class LanguageManager {
                 // Authentication
                 signInWithGoogle: "Sign in with Google",
                 signOut: "Sign Out",
-                pleaseSignIn: "Please sign in with Google to see your places...",
+                pleaseSignIn: "Please sign in with Google",
                 welcome: "Welcome",
                 signingIn: "Signing in...",
                 signingOut: "Signing out...",
@@ -33,12 +134,12 @@ class LanguageManager {
                 // Language Selection
                 language: "Language",
                 english: "English",
-                turkish: "Türkçe",
+                turkish: "Turkish",
                 
                 // Add Place Section
                 addNewPlace: "Add New Place",
                 addNewCountry: "Add New Country",
-                placeholderPlace: "e.g., Pam...",
+                placeholderPlace: "e.g., Paris, Eiffel Tower...",
                 placeholderCountry: "e.g., Japan",
                 addPlace: "Add Place",
                 addCountry: "Add Country",
@@ -58,7 +159,7 @@ class LanguageManager {
                 createRoute: "Create Route with Selected Places",
                 selectPlaces: "Select places to create route",
                 selectOneMore: "Select one more place",
-                routeCreated: "Route created successfully!",
+                routeCreated: "Route Created:",
                 openInGoogleMaps: "Open in Google Maps",
                 
                 // Map
@@ -70,7 +171,7 @@ class LanguageManager {
                 enterCountryName: "Please enter a country name",
                 addingPlace: "Adding place...",
                 addingCountry: "Adding country...",
-                placeAdded: "added to your itinerary",
+                placeAdded: "Place added successfully!",
                 countryAdded: "places added from",
                 errorAddingPlace: "Error adding place",
                 errorAddingCountry: "Error adding country",
@@ -79,7 +180,7 @@ class LanguageManager {
                 errorDeleting: "Error deleting place",
                 signInToAdd: "Please sign in to add places",
                 signInToManage: "Please sign in to manage your travel itinerary",
-                loadingPlaces: "Loading your places...",
+                loadingPlaces: "Loading places...",
                 placesInItinerary: "places in your itinerary",
                 
                 // Place Details
@@ -98,90 +199,25 @@ class LanguageManager {
                 
                 // Tabs
                 addPlaceTab: "Add Place",
-                addCountryTab: "Add Country"
-            },
-            tr: {
-                // App Title and Description
-                appTitle: "Seyahat Rotam",
-                appDescription: "Dünyanın dört bir yanındaki harika yerleri keşfedin, seyahat rotalarınızı oluşturun ve maceralarınızı takip edin!",
+                addCountryTab: "Add Country",
                 
-                // Authentication
-                signInWithGoogle: "Google ile Giriş Yap",
-                signOut: "Çıkış Yap",
-                pleaseSignIn: "Yerlerinizi görmek için lütfen Google ile giriş yapın...",
-                welcome: "Hoşgeldin",
-                signingIn: "Giriş yapılıyor...",
-                signingOut: "Çıkış yapılıyor...",
+                // Header
+                title: 'My Travel Itinerary',
+                subtitle: 'Discover amazing places around the world, create your travel routes, and track your adventures!',
                 
-                // Language Selection
-                language: "Dil",
-                english: "English",
-                turkish: "Türkçe",
+                // Status Messages
+                authChecking: 'Checking authentication status...',
+                authError: 'Authentication error',
+                authCancelled: 'Sign in cancelled. Please try again',
+                networkError: 'Network error. Please check your internet connection',
+                firebaseError: 'Failed to initialize Firebase',
+                dataLoading: 'Loading data...',
+                dataError: 'Data loading error',
                 
-                // Add Place Section
-                addNewPlace: "Yeni Yer Ekle",
-                addNewCountry: "Yeni Ülke Ekle",
-                placeholderPlace: "örn: Pam...",
-                placeholderCountry: "örn: Japonya",
-                addPlace: "Yer Ekle",
-                addCountry: "Ülke Ekle",
-                addPlaces: "Yerleri Ekle",
-                
-                // Places List
-                placesToVisit: "Gezilecek Yerler",
-                clickToSelect: "Rota oluşturmak için yerlere tıklayarak seçin",
-                country: "Ülke",
-                status: "Durum",
-                allCountries: "Tüm Ülkeler",
-                all: "Tümü",
-                notVisited: "Gezilmedi",
-                visited: "Gezildi",
-                
-                // Route Generation
-                createRoute: "Seçilen Yerlerle Rota Oluştur",
-                selectPlaces: "Rota oluşturmak için yer seçin",
-                selectOneMore: "Bir yer daha seçin",
-                routeCreated: "Rota başarıyla oluşturuldu!",
-                openInGoogleMaps: "Google Haritalar'da Aç",
-                
-                // Map
-                map: "Harita",
-                clickToView: "Yerleri haritada görmek için tıklayın. Rota oluşturma, seçtiğiniz destinasyonlarla Google Haritalar'ı açacaktır.",
-                
-                // Messages
-                enterPlaceName: "Lütfen bir yer adı girin",
-                enterCountryName: "Lütfen bir ülke adı girin",
-                addingPlace: "Yer ekleniyor...",
-                addingCountry: "Ülke ekleniyor...",
-                placeAdded: "rotanıza eklendi",
-                countryAdded: "yerden yer eklendi",
-                errorAddingPlace: "Yer eklenirken hata oluştu",
-                errorAddingCountry: "Ülke eklenirken hata oluştu",
-                confirmDelete: "silmek istediğinizden emin misiniz",
-                deleted: "silindi",
-                errorDeleting: "Yer silinirken hata oluştu",
-                signInToAdd: "Yer eklemek için lütfen giriş yapın",
-                signInToManage: "Seyahat rotanızı yönetmek için lütfen Google ile giriş yapın",
-                loadingPlaces: "Yerleriniz yükleniyor...",
-                placesInItinerary: "yer rotanızda",
-                
-                // Place Details
-                delete: "Sil",
-                category: "Kategori",
-                description: "Açıklama",
-                city: "Şehir",
-                userAdded: "Kullanıcı Ekledi",
-                addedByUser: "Kullanıcı tarafından eklendi",
-                
-                // Country Places
-                selectCountryPlaces: "eklenecek yerleri seçin",
-                selectedPlaces: "seçilen yer",
-                addSelectedPlaces: "Seçilen Yerleri Ekle",
-                cancel: "İptal",
-                
-                // Tabs
-                addPlaceTab: "Yer Ekle",
-                addCountryTab: "Ülke Ekle"
+                // Country Background
+                backgroundImage: 'Background Image',
+                loadingImage: 'Loading image...',
+                imageError: 'Failed to load image'
             }
         };
     }
