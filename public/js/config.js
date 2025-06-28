@@ -1,55 +1,52 @@
 /**
- * Configuration for RotamBenim Travel App
+ * Configuration for RotamBenim application
  */
 
+<<<<<<< HEAD
+=======
 // Firebase Configuration
+// TODO: Replace with your own Firebase project settings
 const firebaseConfig = {
-    apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA",
-    authDomain: "rotambenim.firebaseapp.com",
-    projectId: "rotambenim",
-    storageBucket: "rotambenim.firebasestorage.app",
-    messagingSenderId: "374285362920",
-    appId: "1:374285362920:web:b4058cf4a93e7337168b5d",
-    measurementId: "G-0QVZ4LDYPJ"
+    apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA", 
+    authDomain: "rotambenim.firebaseapp.com", 
+    projectId: "rotambenim", 
+    storageBucket: "rotambenim.firebasestorage.app", 
+    messagingSenderId: "374285362920", 
+    appId: "1:374285362920:web:b4058cf4a93e7337168b5d", 
+    measurementId: "G-0QVZ4LDYPJ" 
 };
 
-// Pexels API Configuration
-// TODO: Replace with your actual Pexels API key
-// Get your free API key from: https://www.pexels.com/api/
-const PEXELS_API_KEY = 'qLDLKWTXLouQCKT40OyIA982lb5kv0ftITaaLYbaOrx2FKNbGf5sZlYF';
-
-// App Configuration
+// Application Configuration
+>>>>>>> parent of 8509642 (sum)
 const APP_CONFIG = {
-    name: 'Rotam Benim',
-    version: '2.0.0',
-    defaultLanguage: 'tr',
-    supportedLanguages: ['tr', 'en'],
-    maxPlacesPerCountry: 30,
-    minPlacesPerCountry: 10,
-    cacheExpiryHours: 24,
-    enableBackgroundImages: true,
-    enableOfflineMode: true,
-    enableNotifications: true
-};
-
-// Feature Flags
-const FEATURES = {
-    countryBackgrounds: true,
-    multiLanguage: true,
-    routeGeneration: true,
-    placeSuggestions: true,
-    offlineSupport: true,
-    analytics: false
-};
-
-// UI Configuration
-const UI_CONFIG = {
-    theme: 'light', // 'light' or 'dark'
-    animations: true,
-    autoSave: true,
-    showPlaceCount: true,
-    showCountryStats: true,
-    enableKeyboardShortcuts: true
+    // Application settings
+    appName: 'RotamBenim',
+    version: '1.0.0',
+    
+    // Firebase configuration
+    firebaseConfig: {
+        // Your Firebase config here
+    },
+    
+    // API keys
+    apiKeys: {
+        pexels: 'qLDLKWTXLouQCKT40OyIA982lb5kv0ftITaaLYbaOrx2FKNbGf5sZlYF', // Pexels API anahtarınızı buraya ekleyin
+    },
+    
+    // Application limits
+    maxPlaceNameLength: 100,
+    maxPlacesPerCountry: 20,
+    
+    // UI settings
+    toastDuration: 3000,
+    animationDuration: 300,
+    
+    // Feature flags
+    features: {
+        enableParallaxScrolling: true,
+        enableDynamicBackgrounds: true,
+        enableMicroAnimations: true
+    }
 };
 
 // Messages
@@ -68,36 +65,29 @@ const MESSAGES = {
         noResults: 'No places match your filters.',
         nameRequired: 'Please enter a place name.',
         nameTooLong: 'Place name is too long.',
-        addSuccess: 'Place added successfully!',
         addError: 'Error adding place. Please try again.',
         updateError: 'Error updating place. Please try again.',
         deleteSuccess: 'Place deleted successfully.',
         deleteError: 'Error deleting place. Please try again.'
     },
-    routes: {
-        minPlacesRequired: 'Select at least 2 places to create a route',
-        routeCreated: 'Route created successfully!',
-        routeError: 'Error creating route. Please try again.'
+    countries: {
+        addError: 'Error adding countries. Please try again.'
     }
 };
 
-// Export configurations
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        firebaseConfig,
-        PEXELS_API_KEY,
-        APP_CONFIG,
-        FEATURES,
-        UI_CONFIG
-    };
-} else {
-    // Browser environment
-    window.APP_CONFIG = {
-        firebaseConfig,
-        PEXELS_API_KEY,
-        APP_CONFIG,
-        FEATURES,
-        UI_CONFIG
-    };
-    window.MESSAGES = MESSAGES;
-}
+// Countries database
+const COUNTRIES_DATABASE = {
+    // Sample data structure - will be populated from Firebase
+    turkiye: {
+        name: 'TÜRKİYE',
+        places: []
+    },
+    italya: {
+        name: 'İTALYA',
+        places: []
+    },
+    fransa: {
+        name: 'FRANSA',
+        places: []
+    }
+};
