@@ -117,7 +117,8 @@ class LanguageManager {
                 backgroundImage: 'Arka Plan Resmi',
                 loadingImage: 'Resim yükleniyor...',
                 imageError: 'Resim yüklenemedi',
-                noPlacesFound: "Bu kriterlere uygun yer bulunamadı."
+                noPlacesFound: "Bu kriterlere uygun yer bulunamadı.",
+                placeNamePlaceholder: "örn: Paris, Eyfel Kulesi..."
             },
             en: {
                 // App Title and Description
@@ -219,7 +220,8 @@ class LanguageManager {
                 backgroundImage: 'Background Image',
                 loadingImage: 'Loading image...',
                 imageError: 'Failed to load image',
-                noPlacesFound: "No places found matching these criteria."
+                noPlacesFound: "No places found matching these criteria.",
+                placeNamePlaceholder: "e.g., Paris, Eiffel Tower..."
             }
         };
     }
