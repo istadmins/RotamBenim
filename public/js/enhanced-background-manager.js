@@ -7,7 +7,7 @@ class EnhancedBackgroundManager {
     constructor() {
         this.backgrounds = new Map();
         this.currentCountry = null;
-        this.pexelsApiKey = 'YOUR_PEXELS_API_KEY'; // Replace with your Pexels API key
+        this.pexelsApiKey = 'qLDLKWTXLouQCKT40OyIA982lb5kv0ftITaaLYbaOrx2FKNbGf5sZlYF'; // Replace with your Pexels API key
         this.isInitialized = false;
         this.cache = new Map();
         this.preloadedImages = new Set();
