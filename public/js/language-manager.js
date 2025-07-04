@@ -257,8 +257,11 @@ class LanguageManager {
         // Auth section
         const signInBtn = document.getElementById('googleSignInBtn');
         if (signInBtn) {
-            const textSpan = signInBtn.querySelector('svg').nextSibling;
-            if (textSpan) textSpan.textContent = this.t('signInWithGoogle');
+            const svg = signInBtn.querySelector('svg');
+            if (svg && svg.nextSibling) {
+                const textSpan = svg.nextSibling;
+                if (textSpan) textSpan.textContent = this.t('signInWithGoogle');
+            }
         }
 
         const signOutBtn = document.getElementById('signOutBtn');
