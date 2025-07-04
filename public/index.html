@@ -31,7 +31,7 @@
             border-radius: 16px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             padding: 32px;
-            max-width: 800px;
+            max-width: 1200px;
             width: 100%;
             text-align: center;
         }
@@ -139,7 +139,7 @@
         }
         .table {
             width: 100%;
-            min-width: 600px;
+            min-width: 900px;
             font-size: 14px;
             background: white;
             border-radius: 8px;
@@ -149,6 +149,7 @@
         .table th, .table td {
             padding: 8px 12px;
             white-space: nowrap;
+            vertical-align: top;
         }
         .table th {
             background: #f1f3f9;
@@ -163,6 +164,17 @@
             max-width: 180px;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+        .table td.description {
+            max-width: 350px;
+            white-space: normal;
+            word-break: break-word;
+        }
+        .country-group-row {
+            background: #e3eafc;
+            font-weight: bold;
+            font-size: 16px;
+            text-align: left;
         }
     </style>
 </head>
@@ -210,6 +222,7 @@
                       <th>Şehir</th>
                       <th>Ülke</th>
                       <th>Kategori</th>
+                      <th>Açıklama</th>
                       <th>Ziyaret Edildi mi?</th>
                     </tr>
                   </thead>
@@ -360,14 +373,31 @@
           // Tabloyu temizle
           placesTableBody.innerHTML = '';
 
+          // Verileri ülkeye göre grupla
+          const places = [];
           snapshot.forEach(doc => {
             const data = doc.data();
+            places.push(data);
+          });
+          // Ülkeye göre sırala ve grupla
+          places.sort((a, b) => (a.country || '').localeCompare(b.country || ''));
+          let currentCountry = null;
+          places.forEach(data => {
+            if (data.country !== currentCountry) {
+              currentCountry = data.country;
+              // Ülke başlığı satırı ekle
+              const countryRow = document.createElement('tr');
+              countryRow.className = 'country-group-row';
+              countryRow.innerHTML = `<td colspan="6">${currentCountry || 'Diğer'}</td>`;
+              placesTableBody.appendChild(countryRow);
+            }
             const row = document.createElement('tr');
             row.innerHTML = `
               <td>${data.name || ''}</td>
               <td>${data.city || ''}</td>
               <td>${data.country || ''}</td>
               <td>${data.category || ''}</td>
+              <td class="description">${data.description || ''}</td>
               <td>${data.visited ? 'Evet' : 'Hayır'}</td>
             `;
             placesTableBody.appendChild(row);
