@@ -147,9 +147,11 @@
             border-spacing: 0;
         }
         .table th, .table td {
-            padding: 8px 12px;
+            padding: 16px 14px;
             white-space: nowrap;
             vertical-align: top;
+            min-height: 32px;
+            line-height: 1.6;
         }
         .table th {
             background: #f1f3f9;
@@ -219,7 +221,7 @@
               <select id="visitedFilter" style="min-width: 120px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;">
                 <option value="all">Tümü</option>
                 <option value="visited">Gezildi</option>
-                <option value="notvisited">Gezilmedi</option>
+                <option value="notvisited" selected>Gezilmedi</option>
               </select>
             </div>
             
@@ -412,7 +414,7 @@
           // Varsayılan ülke: ALMANYA
           if (!countryFilter.value) countryFilter.value = 'ALMANYA';
           // Varsayılan ziyaret filtresi: Gezilmedi
-          if (!visitedFilter.value) visitedFilter.value = 'notvisited';
+          visitedFilter.value = 'notvisited';
 
           // Filtreye göre verileri süz
           const selectedCountry = countryFilter.value;
