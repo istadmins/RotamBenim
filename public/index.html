@@ -210,7 +210,6 @@
                         <div id="userEmail" style="color: #626976; font-size: 14px;"></div>
                     </div>
                 </div>
-                <div id="userId" style="font-size: 12px; color: #626976; margin-bottom: 15px;"></div>
                 <button id="logoutBtn" class="logout-btn">Çıkış Yap</button>
             </div>
             
@@ -283,7 +282,6 @@
         const userAvatar = document.getElementById('userAvatar');
         const userName = document.getElementById('userName');
         const userEmail = document.getElementById('userEmail');
-        const userId = document.getElementById('userId');
         const logoutBtn = document.getElementById('logoutBtn');
         const statusMessage = document.getElementById('statusMessage');
         const placesTableContainer = document.getElementById('placesTableContainer');
@@ -347,7 +345,6 @@
                 
                 userName.textContent = user.displayName || 'Kullanıcı';
                 userEmail.textContent = user.email || '';
-                userId.textContent = `ID: ${user.uid}`;
                 
                 if (user.photoURL) {
                     userAvatar.src = user.photoURL;
@@ -439,10 +436,11 @@
               placesTableBody.appendChild(countryRow);
             }
             const row = document.createElement('tr');
+            const categoryHtml = (data.category || '').replace(/\s*\/\s*/g, '<br>');
             row.innerHTML = `
               <td>${data.name || ''}</td>
               <td>${data.city || ''}</td>
-              <td>${data.category || ''}</td>
+              <td>${categoryHtml}</td>
               <td class="description">${data.description || ''}</td>
               <td style="text-align:center;"><input type="checkbox" class="visited-checkbox" data-docid="${data._docId}" ${data.visited ? 'checked' : ''}></td>
             `;
