@@ -226,8 +226,9 @@
                 <option value="visited">Gezildi</option>
                 <option value="notvisited" selected>Gezilmedi</option>
               </select>
-              <label for="searchBox">Ara:</label>
-              <input id="searchBox" type="text" placeholder="Yer adı ile ara..." style="min-width: 180px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;" />
+              <label for="searchBox">Yeni Yer:</label>
+              <input id="searchBox" type="text" placeholder="Yeni yer adı..." style="min-width: 180px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;" />
+              <button id="addPlaceBtn" style="padding: 6px 18px; border-radius: 6px; border: none; background: #206bc4; color: white; font-weight: 500; cursor: pointer;">Ekle</button>
             </div>
             
             <!-- Gezilecek Yerler Tablosu -->
@@ -259,7 +260,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -288,6 +289,8 @@
         const statusMessage = document.getElementById('statusMessage');
         const placesTableContainer = document.getElementById('placesTableContainer');
         const placesTableBody = document.querySelector('#placesTable tbody');
+        const addPlaceBtn = document.getElementById('addPlaceBtn');
+        const searchBox = document.getElementById('searchBox');
 
         // Show status message
         function showStatus(message, type = 'info') {
@@ -372,6 +375,36 @@
         // Event listeners
         googleSignInBtn.addEventListener('click', handleGoogleSignIn);
         logoutBtn.addEventListener('click', handleSignOut);
+        addPlaceBtn.addEventListener('click', async () => {
+          const user = auth.currentUser;
+          if (!user) {
+            showStatus('Giriş yapmadan yer ekleyemezsiniz.', 'error');
+            return;
+          }
+          const name = searchBox.value.trim();
+          if (!name) {
+            showStatus('Lütfen bir yer adı girin.', 'error');
+            return;
+          }
+          addPlaceBtn.disabled = true;
+          try {
+            await addDoc(collection(db, `users/${user.uid}/places`), {
+              name,
+              city: '',
+              country: countryFilter.value || '',
+              category: '',
+              description: '',
+              visited: false
+            });
+            showStatus('Yeni yer eklendi!', 'success');
+            searchBox.value = '';
+            loadPlacesTable(user);
+          } catch (err) {
+            showStatus('Yer eklenirken hata: ' + err.message, 'error');
+          } finally {
+            addPlaceBtn.disabled = false;
+          }
+        });
 
         // Initialize
         console.log('Firebase initialized successfully');
@@ -392,7 +425,6 @@
           // Filtre comboboxlarını hazırla
           const countryFilter = document.getElementById('countryFilter');
           const visitedFilter = document.getElementById('visitedFilter');
-          const searchBox = document.getElementById('searchBox');
 
           // Tüm ülkeleri topla ve sırala
           const places = [];
@@ -421,16 +453,11 @@
 
           // Filtreye göre verileri süz
           let filtered = [];
-          const searchValue = searchBox.value.trim().toLowerCase();
-          if (searchValue) {
-            filtered = places.filter(p => (p.name || '').toLowerCase().startsWith(searchValue));
-          } else {
-            const selectedCountry = countryFilter.value;
-            const selectedVisited = visitedFilter.value;
-            filtered = places.filter(p => p.country === selectedCountry);
-            if (selectedVisited === 'visited') filtered = filtered.filter(p => p.visited);
-            else if (selectedVisited === 'notvisited') filtered = filtered.filter(p => !p.visited);
-          }
+          const selectedCountry = countryFilter.value;
+          const selectedVisited = visitedFilter.value;
+          filtered = places.filter(p => p.country === selectedCountry);
+          if (selectedVisited === 'visited') filtered = filtered.filter(p => p.visited);
+          else if (selectedVisited === 'notvisited') filtered = filtered.filter(p => !p.visited);
 
           // Ülkeye göre grupla kaldırıldı, sadece seçili ülke veya arama sonucu gösterilecek
           let currentCountry = null;
@@ -481,17 +508,12 @@
         document.addEventListener('DOMContentLoaded', () => {
           const countryFilter = document.getElementById('countryFilter');
           const visitedFilter = document.getElementById('visitedFilter');
-          const searchBox = document.getElementById('searchBox');
-          if (countryFilter && visitedFilter && searchBox) {
+          if (countryFilter && visitedFilter) {
             countryFilter.addEventListener('change', () => {
               const user = auth.currentUser;
               if (user) loadPlacesTable(user);
             });
             visitedFilter.addEventListener('change', () => {
-              const user = auth.currentUser;
-              if (user) loadPlacesTable(user);
-            });
-            searchBox.addEventListener('input', () => {
               const user = auth.currentUser;
               if (user) loadPlacesTable(user);
             });
