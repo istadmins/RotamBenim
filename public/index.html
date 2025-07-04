@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -166,6 +165,25 @@
             
             <!-- Status Messages -->
             <div id="statusMessage"></div>
+            
+            <!-- Gezilecek Yerler Tablosu -->
+            <div id="placesTableContainer" style="margin-top: 30px; display: none;">
+              <h3>Gezilecek Yerler</h3>
+              <table id="placesTable" class="table">
+                <thead>
+                  <tr>
+                    <th>Yer Adı</th>
+                    <th>Şehir</th>
+                    <th>Ülke</th>
+                    <th>Kategori</th>
+                    <th>Ziyaret Edildi mi?</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Satırlar buraya eklenecek -->
+                </tbody>
+              </table>
+            </div>
         </div>
     </div>
 
@@ -175,6 +193,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -191,6 +210,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const analytics = getAnalytics(app);
+        const db = getFirestore(app);
 
         // DOM elements
         const googleSignInBtn = document.getElementById('googleSignInBtn');
@@ -201,6 +221,8 @@
         const userId = document.getElementById('userId');
         const logoutBtn = document.getElementById('logoutBtn');
         const statusMessage = document.getElementById('statusMessage');
+        const placesTableContainer = document.getElementById('placesTableContainer');
+        const placesTableBody = document.querySelector('#placesTable tbody');
 
         // Show status message
         function showStatus(message, type = 'info') {
@@ -280,6 +302,7 @@
         onAuthStateChanged(auth, (user) => {
             console.log('Auth state changed:', user ? 'User signed in' : 'User signed out');
             updateUI(user);
+            loadPlacesTable(user);
         });
 
         // Event listeners
@@ -289,6 +312,34 @@
         // Initialize
         console.log('Firebase initialized successfully');
         showStatus('Uygulama hazır. Giriş yapabilirsiniz.', 'info');
+
+        async function loadPlacesTable(user) {
+          if (!user) {
+            placesTableContainer.style.display = 'none';
+            return;
+          }
+          // Kullanıcıya ait places koleksiyonu yolu
+          const placesCol = collection(db, `users/${user.uid}/places`);
+          const snapshot = await getDocs(placesCol);
+
+          // Tabloyu temizle
+          placesTableBody.innerHTML = '';
+
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${data.name || ''}</td>
+              <td>${data.city || ''}</td>
+              <td>${data.country || ''}</td>
+              <td>${data.category || ''}</td>
+              <td>${data.visited ? 'Evet' : 'Hayır'}</td>
+            `;
+            placesTableBody.appendChild(row);
+          });
+
+          placesTableContainer.style.display = '';
+        }
     </script>
 </body>
 
