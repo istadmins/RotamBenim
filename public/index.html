@@ -211,6 +211,18 @@
             <!-- Status Messages -->
             <div id="statusMessage"></div>
             
+            <!-- Filtreler -->
+            <div id="filters" style="display: flex; gap: 16px; justify-content: flex-start; align-items: center; margin-bottom: 18px; margin-top: 18px;">
+              <label for="countryFilter">Ülke:</label>
+              <select id="countryFilter" style="min-width: 140px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;"></select>
+              <label for="visitedFilter">Ziyaret:</label>
+              <select id="visitedFilter" style="min-width: 120px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;">
+                <option value="all">Tümü</option>
+                <option value="visited">Gezildi</option>
+                <option value="notvisited">Gezilmedi</option>
+              </select>
+            </div>
+            
             <!-- Gezilecek Yerler Tablosu -->
             <div id="placesTableWrapper" class="table-responsive">
               <div id="placesTableContainer" style="margin-top: 0; display: none;">
@@ -373,16 +385,46 @@
           // Tabloyu temizle
           placesTableBody.innerHTML = '';
 
-          // Verileri ülkeye göre grupla
+          // Filtre comboboxlarını hazırla
+          const countryFilter = document.getElementById('countryFilter');
+          const visitedFilter = document.getElementById('visitedFilter');
+
+          // Tüm ülkeleri topla ve sırala
           const places = [];
+          const countrySet = new Set();
           snapshot.forEach(doc => {
             const data = doc.data();
             places.push({ ...data, _docId: doc.id });
+            if (data.country) countrySet.add(data.country);
           });
-          // Ülkeye göre sırala ve grupla
-          places.sort((a, b) => (a.country || '').localeCompare(b.country || ''));
+          const countries = Array.from(countrySet).sort();
+
+          // Ülke combobox'ını doldur (sadece ilk yüklemede veya ülke sayısı değiştiyse)
+          if (countryFilter.options.length === 0 || countryFilter.options.length !== countries.length) {
+            countryFilter.innerHTML = '';
+            countries.forEach(c => {
+              const opt = document.createElement('option');
+              opt.value = c;
+              opt.textContent = c;
+              countryFilter.appendChild(opt);
+            });
+          }
+          // Varsayılan ülke: ALMANYA
+          if (!countryFilter.value) countryFilter.value = 'ALMANYA';
+          // Varsayılan ziyaret filtresi: Gezilmedi
+          if (!visitedFilter.value) visitedFilter.value = 'notvisited';
+
+          // Filtreye göre verileri süz
+          const selectedCountry = countryFilter.value;
+          const selectedVisited = visitedFilter.value;
+          let filtered = places.filter(p => p.country === selectedCountry);
+          if (selectedVisited === 'visited') filtered = filtered.filter(p => p.visited);
+          else if (selectedVisited === 'notvisited') filtered = filtered.filter(p => !p.visited);
+
+          // Ülkeye göre grupla kaldırıldı, sadece seçili ülke gösterilecek
           let currentCountry = null;
-          places.forEach(data => {
+          filtered.sort((a, b) => (a.country || '').localeCompare(b.country || ''));
+          filtered.forEach(data => {
             if (data.country !== currentCountry) {
               currentCountry = data.country;
               // Ülke başlığı satırı ekle
@@ -423,6 +465,22 @@
 
           placesTableContainer.style.display = '';
         }
+
+        // Filtre değişince tabloyu güncelle
+        document.addEventListener('DOMContentLoaded', () => {
+          const countryFilter = document.getElementById('countryFilter');
+          const visitedFilter = document.getElementById('visitedFilter');
+          if (countryFilter && visitedFilter) {
+            countryFilter.addEventListener('change', () => {
+              const user = auth.currentUser;
+              if (user) loadPlacesTable(user);
+            });
+            visitedFilter.addEventListener('change', () => {
+              const user = auth.currentUser;
+              if (user) loadPlacesTable(user);
+            });
+          }
+        });
     </script>
 </body>
 
