@@ -16,12 +16,20 @@ class FirebaseService {
      * @returns {Promise<boolean>} Success status
      */
     async initialize() {
+        if (this.isInitialized) return true; // Zaten başlatıldıysa tekrar başlatma
         try {
             if (!firebaseConfig.apiKey) throw new Error('Firebase config eksik!');
-            const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js');
+            const { getApps, initializeApp } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js');
+            let app;
+            const apps = getApps();
+            if (apps.length > 0) {
+                app = apps[0];
+            } else {
+                app = initializeApp(firebaseConfig);
+            }
+            this.app = app;
             const { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
             const { getFirestore } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
-            this.app = initializeApp(firebaseConfig);
             this.auth = getAuth(this.app);
             this.db = getFirestore(this.app);
             onAuthStateChanged(this.auth, (user) => {
