@@ -227,9 +227,10 @@
                 <option value="notvisited" selected>Gezilmedi</option>
               </select>
               <label for="searchBox">Yeni Yer:</label>
-              <input id="searchBox" type="text" placeholder="Yeni yer adı..." style="min-width: 180px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;" />
+              <input id="searchBox" type="text" placeholder="Yeni yer adı..." style="min-width: 180px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;" autocomplete="off" />
               <button id="addPlaceBtn" style="padding: 6px 18px; border-radius: 6px; border: none; background: #206bc4; color: white; font-weight: 500; cursor: pointer;">Ekle</button>
             </div>
+            <div id="suggestions" style="position:relative; z-index:10; margin-top:0; margin-bottom:10px;"></div>
             
             <!-- Gezilecek Yerler Tablosu -->
             <div id="placesTableWrapper" class="table-responsive">
@@ -292,6 +293,8 @@
         const placesTableBody = document.querySelector('#placesTable tbody');
         const addPlaceBtn = document.getElementById('addPlaceBtn');
         const searchBox = document.getElementById('searchBox');
+        const suggestions = document.getElementById('suggestions');
+        let suggestionResults = [];
 
         // Show status message
         function showStatus(message, type = 'info') {
@@ -376,12 +379,78 @@
         // Event listeners
         googleSignInBtn.addEventListener('click', handleGoogleSignIn);
         logoutBtn.addEventListener('click', handleSignOut);
-        searchBox.addEventListener('input', () => {
-          // Arama kutusu doluysa ekle butonu devre dışı, boşsa aktif
-          addPlaceBtn.disabled = !!searchBox.value.trim();
-          const user = auth.currentUser;
-          if (user) loadPlacesTable(user);
+        const addPlaceBtn = document.getElementById('addPlaceBtn');
+        const searchBox = document.getElementById('searchBox');
+        const suggestions = document.getElementById('suggestions');
+        let suggestionResults = [];
+
+        // Textboxa yazıldıkça Wikipedia'dan öneri getir
+        searchBox.addEventListener('input', async () => {
+          const query = searchBox.value.trim();
+          suggestions.innerHTML = '';
+          suggestionResults = [];
+          addPlaceBtn.disabled = !query;
+          if (!query) return;
+          // Wikipedia API'den öneri al
+          try {
+            const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (data.query && data.query.search && data.query.search.length > 0) {
+              suggestionResults = data.query.search;
+              const list = document.createElement('ul');
+              list.style.background = '#fff';
+              list.style.border = '1px solid #ccc';
+              list.style.borderRadius = '6px';
+              list.style.margin = '4px 0 0 0';
+              list.style.padding = '0';
+              list.style.listStyle = 'none';
+              list.style.position = 'absolute';
+              list.style.width = '350px';
+              list.style.maxHeight = '220px';
+              list.style.overflowY = 'auto';
+              suggestionResults.forEach((item, idx) => {
+                const li = document.createElement('li');
+                li.style.padding = '8px 12px';
+                li.style.cursor = 'pointer';
+                li.style.borderBottom = '1px solid #eee';
+                li.innerHTML = `<b>${item.title}</b><br><span style='font-size:12px;color:#666;'>${item.snippet.replace(/<[^>]+>/g, '')}</span>`;
+                li.addEventListener('click', async () => {
+                  // Seçilen öneriyi ekle
+                  const user = auth.currentUser;
+                  if (!user) {
+                    showStatus('Giriş yapmadan yer ekleyemezsiniz.', 'error');
+                    return;
+                  }
+                  addPlaceBtn.disabled = true;
+                  try {
+                    await addDoc(collection(db, `users/${user.uid}/places`), {
+                      name: item.title,
+                      city: '',
+                      country: countryFilter.value || '',
+                      category: '',
+                      description: item.snippet.replace(/<[^>]+>/g, ''),
+                      visited: false
+                    });
+                    showStatus('Yeni yer eklendi!', 'success');
+                    searchBox.value = '';
+                    suggestions.innerHTML = '';
+                    addPlaceBtn.disabled = false;
+                    loadPlacesTable(user);
+                  } catch (err) {
+                    showStatus('Yer eklenirken hata: ' + err.message, 'error');
+                    addPlaceBtn.disabled = false;
+                  }
+                });
+                list.appendChild(li);
+              });
+              suggestions.appendChild(list);
+            }
+          } catch (err) {
+            // Hata durumunda öneri gösterme
+          }
         });
+        // Ekle butonu sadece textbox boşsa çalışacak
         addPlaceBtn.addEventListener('click', async () => {
           const user = auth.currentUser;
           if (!user) {
@@ -432,7 +501,7 @@
           // Filtre comboboxlarını hazırla
           const countryFilter = document.getElementById('countryFilter');
           const visitedFilter = document.getElementById('visitedFilter');
-          const searchBox = document.getElementById('searchBox');
+          // Arama kutusu sadece öneri için, filtreleme yok
 
           // Tüm ülkeleri topla ve sırala
           const places = [];
@@ -459,31 +528,22 @@
           // Varsayılan ziyaret filtresi: Gezilmedi
           visitedFilter.value = 'notvisited';
 
-          // Filtreye ve aramaya göre verileri süz
+          // Filtreye göre verileri süz
           let filtered = [];
-          const searchValue = searchBox.value.trim().toLowerCase();
-          if (searchValue) {
-            filtered = places.filter(p => (p.name || '').toLowerCase().startsWith(searchValue));
-          } else {
-            const selectedCountry = countryFilter.value;
-            const selectedVisited = visitedFilter.value;
-            filtered = places.filter(p => p.country === selectedCountry);
-            if (selectedVisited === 'visited') filtered = filtered.filter(p => p.visited);
-            else if (selectedVisited === 'notvisited') filtered = filtered.filter(p => !p.visited);
-          }
+          const selectedCountry = countryFilter.value;
+          const selectedVisited = visitedFilter.value;
+          filtered = places.filter(p => p.country === selectedCountry);
+          if (selectedVisited === 'visited') filtered = filtered.filter(p => p.visited);
+          else if (selectedVisited === 'notvisited') filtered = filtered.filter(p => !p.visited);
 
-          // Ülkeye göre grupla kaldırıldı, sadece seçili ülke veya arama sonucu gösterilecek
-          let currentCountry = null;
-          filtered.sort((a, b) => (a.country || '').localeCompare(b.country || ''));
+          // Ülke başlığı satırı ekle
+          const countryRow = document.createElement('tr');
+          countryRow.className = 'country-group-row';
+          countryRow.innerHTML = `<td colspan="6">${selectedCountry || 'Diğer'}</td>`;
+          placesTableBody.appendChild(countryRow);
+
+          filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
           filtered.forEach(data => {
-            if (data.country !== currentCountry) {
-              currentCountry = data.country;
-              // Ülke başlığı satırı ekle
-              const countryRow = document.createElement('tr');
-              countryRow.className = 'country-group-row';
-              countryRow.innerHTML = `<td colspan="6">${currentCountry || 'Diğer'}</td>`;
-              placesTableBody.appendChild(countryRow);
-            }
             const row = document.createElement('tr');
             const categoryHtml = (data.category || '').replace(/\s*\/\s*/g, '<br>');
             row.innerHTML = `
