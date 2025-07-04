@@ -2,6 +2,13 @@
 window.Utils = {
   logError: function(error, context) {
     console.error('[Utils]', context || '', error);
+  },
+  debounce: function (func, wait) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
   }
 };
 
