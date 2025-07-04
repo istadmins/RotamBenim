@@ -17,55 +17,25 @@ class FirebaseService {
      */
     async initialize() {
         try {
-            console.log('[FirebaseService] Initializing Firebase...');
-            
-            if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "YOUR_API_KEY") {
-                throw new Error('Firebase configuration is missing or invalid');
-            }
-
-            // Import Firebase modules
-            const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
-            const { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInWithCustomToken } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
-            const { getFirestore, collection, doc, addDoc, getDocs, deleteDoc, updateDoc, onSnapshot, query, orderBy, setDoc, getDoc, writeBatch } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-
-            // Store Firebase modules for later use
-            this.firebaseModules = {
-                GoogleAuthProvider,
-                signInWithPopup,
-                signOut,
-                signInWithCustomToken,
-                collection,
-                doc,
-                addDoc,
-                getDocs,
-                deleteDoc,
-                updateDoc,
-                onSnapshot,
-                query,
-                orderBy,
-                setDoc,
-                getDoc,
-                writeBatch
-            };
-
-            // Initialize Firebase app
+            if (!firebaseConfig.apiKey) throw new Error('Firebase config eksik!');
+            const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js');
+            const { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
+            const { getFirestore } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
             this.app = initializeApp(firebaseConfig);
             this.auth = getAuth(this.app);
             this.db = getFirestore(this.app);
-
-            // Set up auth state listener
             onAuthStateChanged(this.auth, (user) => {
-                this.handleAuthStateChange(user);
+                this.currentUser = user;
+                this.authStateListeners.forEach(fn => fn(user));
             });
-
+            this.GoogleAuthProvider = GoogleAuthProvider;
+            this.signInWithPopup = signInWithPopup;
+            this.signOutFunc = signOut;
             this.isInitialized = true;
-            console.log('[FirebaseService] Firebase initialized successfully');
             return true;
-
-        } catch (error) {
-            console.error('[FirebaseService] Firebase initialization failed:', error);
-            Utils.logError(error, { context: 'Firebase initialization' });
-            throw error;
+        } catch (e) {
+            Utils.logError(e, 'Firebase initialize');
+            throw e;
         }
     }
 
@@ -81,7 +51,7 @@ class FirebaseService {
                 console.log('[FirebaseService] User signed in:', user.uid);
                 
                 // Set up Firestore collection reference for the user
-                this.placesCollectionRef = this.firebaseModules.collection(
+                this.placesCollectionRef = this.GoogleAuthProvider.collection(
                     this.db, 
                     `artifacts/${APP_CONFIG.appId}/users/${user.uid}/places`
                 );
@@ -117,8 +87,8 @@ class FirebaseService {
      * Add auth state change listener
      * @param {Function} listener - Callback function
      */
-    onAuthStateChange(listener) {
-        this.authStateListeners.push(listener);
+    onAuthStateChange(fn) {
+        this.authStateListeners.push(fn);
     }
 
     /**
@@ -137,32 +107,12 @@ class FirebaseService {
      * @returns {Promise<Object>} User object
      */
     async signInWithGoogle() {
-        try {
-            if (!this.auth) {
-                throw new Error('Firebase Auth not initialized');
-            }
-
-            const provider = new this.firebaseModules.GoogleAuthProvider();
-            provider.addScope('profile');
-            provider.addScope('email');
-            
-            const result = await this.firebaseModules.signInWithPopup(this.auth, provider);
-            console.log('[FirebaseService] Google sign-in successful:', result.user.displayName);
-            
-            return result.user;
-
-        } catch (error) {
-            console.error('[FirebaseService] Google sign-in failed:', error);
-            
-            // Handle specific error codes
-            if (error.code === 'auth/popup-closed-by-user') {
-                throw new Error(MESSAGES.auth.signInCancelled);
-            } else if (error.code === 'auth/network-request-failed') {
-                throw new Error(MESSAGES.auth.networkError);
-            } else {
-                throw new Error(MESSAGES.auth.signInError + ': ' + error.message);
-            }
-        }
+        if (!this.auth) throw new Error('Firebase Auth yok!');
+        const provider = new this.GoogleAuthProvider();
+        provider.addScope('profile');
+        provider.addScope('email');
+        const result = await this.signInWithPopup(this.auth, provider);
+        return result.user;
     }
 
     /**
@@ -170,18 +120,8 @@ class FirebaseService {
      * @returns {Promise<void>}
      */
     async signOut() {
-        try {
-            if (!this.auth) {
-                throw new Error('Firebase Auth not initialized');
-            }
-
-            await this.firebaseModules.signOut(this.auth);
-            console.log('[FirebaseService] Sign-out successful');
-
-        } catch (error) {
-            console.error('[FirebaseService] Sign-out failed:', error);
-            throw new Error(MESSAGES.auth.signOutError + ': ' + error.message);
-        }
+        if (!this.auth) throw new Error('Firebase Auth yok!');
+        await this.signOutFunc(this.auth);
     }
 
     /**
@@ -196,22 +136,22 @@ class FirebaseService {
 
         try {
             const userId = this.currentUser.uid;
-            const flagDocRef = this.firebaseModules.doc(
+            const flagDocRef = this.GoogleAuthProvider.doc(
                 this.db, 
                 `artifacts/${APP_CONFIG.appId}/users/${userId}/appState`, 
                 `initialDataStatus_v${APP_CONFIG.currentDataVersion}`
             );
 
-            const docSnap = await this.firebaseModules.getDoc(flagDocRef);
+            const docSnap = await this.GoogleAuthProvider.getDoc(flagDocRef);
             
             if (!docSnap.exists() && INITIAL_PLACES_DATA.length > 0) {
                 console.log('[FirebaseService] Initializing user data...');
                 
-                const batch = this.firebaseModules.writeBatch(this.db);
+                const batch = this.GoogleAuthProvider.writeBatch(this.db);
                 
                 INITIAL_PLACES_DATA.forEach(place => {
-                    const newPlaceRef = this.firebaseModules.doc(
-                        this.firebaseModules.collection(this.db, `artifacts/${APP_CONFIG.appId}/users/${userId}/places`)
+                    const newPlaceRef = this.GoogleAuthProvider.doc(
+                        this.GoogleAuthProvider.collection(this.db, `artifacts/${APP_CONFIG.appId}/users/${userId}/places`)
                     );
                     batch.set(newPlaceRef, {
                         ...place,
@@ -221,7 +161,7 @@ class FirebaseService {
                 });
 
                 await batch.commit();
-                await this.firebaseModules.setDoc(flagDocRef, { 
+                await this.GoogleAuthProvider.setDoc(flagDocRef, { 
                     seeded: true, 
                     timestamp: new Date().toISOString(),
                     version: APP_CONFIG.currentDataVersion
@@ -250,13 +190,13 @@ class FirebaseService {
             // Stop existing listener if any
             this.stopPlacesListener();
 
-            const q = this.firebaseModules.query(
+            const q = this.GoogleAuthProvider.query(
                 this.placesCollectionRef, 
-                this.firebaseModules.orderBy("country"), 
-                this.firebaseModules.orderBy("name")
+                this.GoogleAuthProvider.orderBy("country"), 
+                this.GoogleAuthProvider.orderBy("name")
             );
 
-            this.unsubscribePlaces = this.firebaseModules.onSnapshot(q, 
+            this.unsubscribePlaces = this.GoogleAuthProvider.onSnapshot(q, 
                 (snapshot) => {
                     const places = snapshot.docs.map(doc => ({ 
                         id: doc.id, 
@@ -344,7 +284,7 @@ class FirebaseService {
                 selectedForRoute: false
             };
 
-            const docRef = await this.firebaseModules.addDoc(this.placesCollectionRef, newPlace);
+            const docRef = await this.GoogleAuthProvider.addDoc(this.placesCollectionRef, newPlace);
             console.log('[FirebaseService] Place added:', docRef.id);
             
             return docRef.id;
@@ -368,8 +308,8 @@ class FirebaseService {
         }
 
         try {
-            const placeDocRef = this.firebaseModules.doc(this.db, this.placesCollectionRef.path, placeId);
-            await this.firebaseModules.updateDoc(placeDocRef, {
+            const placeDocRef = this.GoogleAuthProvider.doc(this.db, this.placesCollectionRef.path, placeId);
+            await this.GoogleAuthProvider.updateDoc(placeDocRef, {
                 ...updates,
                 updatedAt: new Date().toISOString()
             });
@@ -394,8 +334,8 @@ class FirebaseService {
         }
 
         try {
-            const placeDocRef = this.firebaseModules.doc(this.db, this.placesCollectionRef.path, placeId);
-            await this.firebaseModules.deleteDoc(placeDocRef);
+            const placeDocRef = this.GoogleAuthProvider.doc(this.db, this.placesCollectionRef.path, placeId);
+            await this.GoogleAuthProvider.deleteDoc(placeDocRef);
             
             console.log('[FirebaseService] Place deleted:', placeId);
 

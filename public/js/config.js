@@ -4,35 +4,26 @@
 
 // Firebase Configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA", 
-    authDomain: "rotambenim.firebaseapp.com", 
-    projectId: "rotambenim", 
-    storageBucket: "rotambenim.appspot.com", 
-    messagingSenderId: "374285362920", 
-    appId: "1:374285362920:web:b4058cf4a93e7337168b5d", 
-    measurementId: "G-0QVZ4LDYPJ" 
+    apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA",
+    authDomain: "rotambenim.firebaseapp.com",
+    projectId: "rotambenim",
+    storageBucket: "rotambenim.appspot.com",
+    messagingSenderId: "374285362920",
+    appId: "1:374285362920:web:b4058cf4a93e7337168b5d",
+    measurementId: "G-0QVZ4LDYPJ"
 };
 
 // Application Configuration
 const APP_CONFIG = {
-    // Application settings
     appName: 'RotamBenim',
     version: '1.0.0',
-    
-    // API keys
     apiKeys: {
-        pexels: 'qLDLKWTXLouQCKT40OyIA982lb5kv0ftITaaLYbaOrx2FKNbGf5sZlYF', // Pexels API anahtarınızı buraya ekleyin
+        pexels: 'qLDLKWTXLouQCKT40OyIA982lb5kv0ftITaaLYbaOrx2FKNbGf5sZlYF',
     },
-    
-    // Application limits
     maxPlaceNameLength: 100,
     maxPlacesPerCountry: 20,
-    
-    // UI settings
     toastDuration: 3000,
     animationDuration: 300,
-    
-    // Feature flags
     features: {
         enableParallaxScrolling: true,
         enableDynamicBackgrounds: true,
