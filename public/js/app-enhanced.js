@@ -76,7 +76,7 @@ class EnhancedRotamBenimApp {
             this.updateAuthStatus('Enhanced application ready');
             
             // Show welcome message
-            this.modules.uiComponents.showToast(
+            window.showToast(
                 'Welcome to the enhanced RotamBenim! Experience smooth scrolling and dynamic backgrounds.',
                 'info',
                 5000
@@ -98,7 +98,9 @@ class EnhancedRotamBenimApp {
         this.modules.languageManager.initialize();
         
         // Initialize UI components
-        this.modules.uiComponents.initialize();
+        if (this.modules.uiComponents && typeof this.modules.uiComponents.initialize === 'function') {
+            this.modules.uiComponents.initialize();
+        }
         
         // Initialize Firebase service
         await this.modules.firebaseService.initialize();
@@ -354,7 +356,7 @@ class EnhancedRotamBenimApp {
             this.updateAuthStatus(`Welcome, ${user.displayName || 'User'}!`);
             
             // Show success toast
-            this.modules.uiComponents.showToast(
+            window.showToast(
                 `Hello ${user.displayName || 'User'}! Loading your places...`,
                 'success',
                 3000
@@ -384,7 +386,7 @@ class EnhancedRotamBenimApp {
         } catch (error) {
             console.error('[EnhancedRotamBenimApp] Google sign-in error:', error);
             this.updateAuthStatus(error.message || 'Sign-in failed');
-            this.modules.uiComponents.showToast(error.message || 'Sign-in failed', 'error');
+            window.showToast(error.message || 'Sign-in failed', 'error');
             
         } finally {
             this.googleSignInBtn.disabled = false;
@@ -400,12 +402,12 @@ class EnhancedRotamBenimApp {
             
             await this.modules.firebaseService.signOut();
             
-            this.modules.uiComponents.showToast('Signed out successfully', 'success', 2000);
+            window.showToast('Signed out successfully', 'success', 2000);
             
         } catch (error) {
             console.error('[EnhancedRotamBenimApp] Sign-out error:', error);
             this.updateAuthStatus(error.message || 'Sign-out failed');
-            this.modules.uiComponents.showToast(error.message || 'Sign-out failed', 'error');
+            window.showToast(error.message || 'Sign-out failed', 'error');
         }
     }
 
@@ -479,7 +481,7 @@ class EnhancedRotamBenimApp {
         }
         
         // Show error toast
-        this.modules.uiComponents.showToast(
+        window.showToast(
             'An error occurred while starting the enhanced application. Try refreshing the page.',
             'error',
             0 // Don't auto-hide
@@ -498,7 +500,7 @@ class EnhancedRotamBenimApp {
             console.error('[EnhancedRotamBenimApp] Unhandled promise rejection:', event.reason);
             
             // Show user-friendly error message
-            this.modules.uiComponents.showToast(
+            window.showToast(
                 'An unexpected error occurred. Please refresh the page.',
                 'error'
             );
@@ -511,7 +513,7 @@ class EnhancedRotamBenimApp {
 
         // Handle network errors
         window.addEventListener('offline', () => {
-            this.modules.uiComponents.showToast(
+            window.showToast(
                 'Internet connection lost. Some features may not work.',
                 'warning',
                 0
@@ -519,7 +521,7 @@ class EnhancedRotamBenimApp {
         });
 
         window.addEventListener('online', () => {
-            this.modules.uiComponents.showToast(
+            window.showToast(
                 'Internet connection restored.',
                 'success',
                 3000
@@ -610,11 +612,11 @@ class EnhancedRotamBenimApp {
             if (this.isFullPageEnabled) {
                 this.modules.enhancedFullPageManager.cleanup();
                 this.isFullPageEnabled = false;
-                this.modules.uiComponents.showToast('Fullpage mode disabled', 'info');
+                window.showToast('Fullpage mode disabled', 'info');
             } else {
                 this.modules.enhancedFullPageManager.initialize();
                 this.isFullPageEnabled = true;
-                this.modules.uiComponents.showToast('Fullpage mode enabled', 'info');
+                window.showToast('Fullpage mode enabled', 'info');
             }
         }
     }
@@ -626,7 +628,7 @@ class EnhancedRotamBenimApp {
         if (this.modules.enhancedBackgroundManager) {
             this.modules.enhancedBackgroundManager.clearCache();
             await this.modules.enhancedBackgroundManager.initialize();
-            this.modules.uiComponents.showToast('Backgrounds refreshed', 'success');
+            window.showToast('Backgrounds refreshed', 'success');
         }
     }
 
