@@ -1,4 +1,3 @@
-
 class FirebaseService {
     constructor() {
         this.app = null;
