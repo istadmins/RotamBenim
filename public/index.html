@@ -226,6 +226,8 @@
                 <option value="visited">Gezildi</option>
                 <option value="notvisited" selected>Gezilmedi</option>
               </select>
+              <label for="searchBox">Ara:</label>
+              <input id="searchBox" type="text" placeholder="Yer adı ile ara..." style="min-width: 180px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;" />
             </div>
             
             <!-- Gezilecek Yerler Tablosu -->
@@ -390,6 +392,7 @@
           // Filtre comboboxlarını hazırla
           const countryFilter = document.getElementById('countryFilter');
           const visitedFilter = document.getElementById('visitedFilter');
+          const searchBox = document.getElementById('searchBox');
 
           // Tüm ülkeleri topla ve sırala
           const places = [];
@@ -417,13 +420,19 @@
           visitedFilter.value = 'notvisited';
 
           // Filtreye göre verileri süz
-          const selectedCountry = countryFilter.value;
-          const selectedVisited = visitedFilter.value;
-          let filtered = places.filter(p => p.country === selectedCountry);
-          if (selectedVisited === 'visited') filtered = filtered.filter(p => p.visited);
-          else if (selectedVisited === 'notvisited') filtered = filtered.filter(p => !p.visited);
+          let filtered = [];
+          const searchValue = searchBox.value.trim().toLowerCase();
+          if (searchValue) {
+            filtered = places.filter(p => (p.name || '').toLowerCase().startsWith(searchValue));
+          } else {
+            const selectedCountry = countryFilter.value;
+            const selectedVisited = visitedFilter.value;
+            filtered = places.filter(p => p.country === selectedCountry);
+            if (selectedVisited === 'visited') filtered = filtered.filter(p => p.visited);
+            else if (selectedVisited === 'notvisited') filtered = filtered.filter(p => !p.visited);
+          }
 
-          // Ülkeye göre grupla kaldırıldı, sadece seçili ülke gösterilecek
+          // Ülkeye göre grupla kaldırıldı, sadece seçili ülke veya arama sonucu gösterilecek
           let currentCountry = null;
           filtered.sort((a, b) => (a.country || '').localeCompare(b.country || ''));
           filtered.forEach(data => {
@@ -472,12 +481,17 @@
         document.addEventListener('DOMContentLoaded', () => {
           const countryFilter = document.getElementById('countryFilter');
           const visitedFilter = document.getElementById('visitedFilter');
-          if (countryFilter && visitedFilter) {
+          const searchBox = document.getElementById('searchBox');
+          if (countryFilter && visitedFilter && searchBox) {
             countryFilter.addEventListener('change', () => {
               const user = auth.currentUser;
               if (user) loadPlacesTable(user);
             });
             visitedFilter.addEventListener('change', () => {
+              const user = auth.currentUser;
+              if (user) loadPlacesTable(user);
+            });
+            searchBox.addEventListener('input', () => {
               const user = auth.currentUser;
               if (user) loadPlacesTable(user);
             });
