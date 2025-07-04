@@ -243,6 +243,7 @@
                       <th>Kategori</th>
                       <th>Açıklama</th>
                       <th>Ziyaret Edildi mi?</th>
+                      <th>Sil</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -375,6 +376,12 @@
         // Event listeners
         googleSignInBtn.addEventListener('click', handleGoogleSignIn);
         logoutBtn.addEventListener('click', handleSignOut);
+        searchBox.addEventListener('input', () => {
+          // Arama kutusu doluysa ekle butonu devre dışı, boşsa aktif
+          addPlaceBtn.disabled = !!searchBox.value.trim();
+          const user = auth.currentUser;
+          if (user) loadPlacesTable(user);
+        });
         addPlaceBtn.addEventListener('click', async () => {
           const user = auth.currentUser;
           if (!user) {
@@ -398,10 +405,10 @@
             });
             showStatus('Yeni yer eklendi!', 'success');
             searchBox.value = '';
+            addPlaceBtn.disabled = false;
             loadPlacesTable(user);
           } catch (err) {
             showStatus('Yer eklenirken hata: ' + err.message, 'error');
-          } finally {
             addPlaceBtn.disabled = false;
           }
         });
@@ -425,6 +432,7 @@
           // Filtre comboboxlarını hazırla
           const countryFilter = document.getElementById('countryFilter');
           const visitedFilter = document.getElementById('visitedFilter');
+          const searchBox = document.getElementById('searchBox');
 
           // Tüm ülkeleri topla ve sırala
           const places = [];
@@ -451,13 +459,18 @@
           // Varsayılan ziyaret filtresi: Gezilmedi
           visitedFilter.value = 'notvisited';
 
-          // Filtreye göre verileri süz
+          // Filtreye ve aramaya göre verileri süz
           let filtered = [];
-          const selectedCountry = countryFilter.value;
-          const selectedVisited = visitedFilter.value;
-          filtered = places.filter(p => p.country === selectedCountry);
-          if (selectedVisited === 'visited') filtered = filtered.filter(p => p.visited);
-          else if (selectedVisited === 'notvisited') filtered = filtered.filter(p => !p.visited);
+          const searchValue = searchBox.value.trim().toLowerCase();
+          if (searchValue) {
+            filtered = places.filter(p => (p.name || '').toLowerCase().startsWith(searchValue));
+          } else {
+            const selectedCountry = countryFilter.value;
+            const selectedVisited = visitedFilter.value;
+            filtered = places.filter(p => p.country === selectedCountry);
+            if (selectedVisited === 'visited') filtered = filtered.filter(p => p.visited);
+            else if (selectedVisited === 'notvisited') filtered = filtered.filter(p => !p.visited);
+          }
 
           // Ülkeye göre grupla kaldırıldı, sadece seçili ülke veya arama sonucu gösterilecek
           let currentCountry = null;
@@ -468,7 +481,7 @@
               // Ülke başlığı satırı ekle
               const countryRow = document.createElement('tr');
               countryRow.className = 'country-group-row';
-              countryRow.innerHTML = `<td colspan="5">${currentCountry || 'Diğer'}</td>`;
+              countryRow.innerHTML = `<td colspan="6">${currentCountry || 'Diğer'}</td>`;
               placesTableBody.appendChild(countryRow);
             }
             const row = document.createElement('tr');
@@ -479,6 +492,7 @@
               <td>${categoryHtml}</td>
               <td class="description">${data.description || ''}</td>
               <td style="text-align:center;"><input type="checkbox" class="visited-checkbox" data-docid="${data._docId}" ${data.visited ? 'checked' : ''}></td>
+              <td style="text-align:center;"><button class="delete-place-btn" data-docid="${data._docId}" style="background:#dc3545;color:white;border:none;padding:4px 10px;border-radius:5px;cursor:pointer;">Sil</button></td>
             `;
             placesTableBody.appendChild(row);
           });
@@ -497,6 +511,23 @@
               } catch (err) {
                 alert('Güncelleme hatası: ' + err.message);
                 e.target.checked = !checked; // Hata olursa eski haline döndür
+              }
+            });
+          });
+
+          // Silme butonu event listener
+          document.querySelectorAll('.delete-place-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const docId = e.target.getAttribute('data-docid');
+              if (!confirm('Bu yeri silmek istediğinize emin misiniz?')) return;
+              try {
+                const { doc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+                const ref = doc(db, `users/${user.uid}/places`, docId);
+                await deleteDoc(ref);
+                showStatus('Yer silindi.', 'success');
+                loadPlacesTable(user);
+              } catch (err) {
+                showStatus('Silme hatası: ' + err.message, 'error');
               }
             });
           });
