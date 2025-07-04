@@ -244,7 +244,6 @@
                       <th>Kategori</th>
                       <th>Açıklama</th>
                       <th>Ziyaret Edildi mi?</th>
-                      <th>Sil</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -378,6 +377,7 @@
         // Event listeners
         googleSignInBtn.addEventListener('click', handleGoogleSignIn);
         logoutBtn.addEventListener('click', handleSignOut);
+<<<<<<< HEAD
         const addPlaceBtn = document.getElementById('addPlaceBtn');
         const searchBox = document.getElementById('searchBox');
         const suggestions = document.getElementById('suggestions');
@@ -447,6 +447,8 @@
           }
         });
         // Ekle butonu sadece textbox boşsa çalışacak
+=======
+>>>>>>> parent of 19abbd8 (Update index.html)
         addPlaceBtn.addEventListener('click', async () => {
           const user = auth.currentUser;
           if (!user) {
@@ -470,10 +472,10 @@
             });
             showStatus('Yeni yer eklendi!', 'success');
             searchBox.value = '';
-            addPlaceBtn.disabled = false;
             loadPlacesTable(user);
           } catch (err) {
             showStatus('Yer eklenirken hata: ' + err.message, 'error');
+          } finally {
             addPlaceBtn.disabled = false;
           }
         });
@@ -497,7 +499,10 @@
           // Filtre comboboxlarını hazırla
           const countryFilter = document.getElementById('countryFilter');
           const visitedFilter = document.getElementById('visitedFilter');
+<<<<<<< HEAD
           // Arama kutusu sadece öneri için, filtreleme yok
+=======
+>>>>>>> parent of 19abbd8 (Update index.html)
 
           // Tüm ülkeleri topla ve sırala
           const places = [];
@@ -540,6 +545,17 @@
 
           filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
           filtered.forEach(data => {
+<<<<<<< HEAD
+=======
+            if (data.country !== currentCountry) {
+              currentCountry = data.country;
+              // Ülke başlığı satırı ekle
+              const countryRow = document.createElement('tr');
+              countryRow.className = 'country-group-row';
+              countryRow.innerHTML = `<td colspan="5">${currentCountry || 'Diğer'}</td>`;
+              placesTableBody.appendChild(countryRow);
+            }
+>>>>>>> parent of 19abbd8 (Update index.html)
             const row = document.createElement('tr');
             const categoryHtml = (data.category || '').replace(/\s*\/\s*/g, '<br>');
             row.innerHTML = `
@@ -548,7 +564,6 @@
               <td>${categoryHtml}</td>
               <td class="description">${data.description || ''}</td>
               <td style="text-align:center;"><input type="checkbox" class="visited-checkbox" data-docid="${data._docId}" ${data.visited ? 'checked' : ''}></td>
-              <td style="text-align:center;"><button class="delete-place-btn" data-docid="${data._docId}" style="background:#dc3545;color:white;border:none;padding:4px 10px;border-radius:5px;cursor:pointer;">Sil</button></td>
             `;
             placesTableBody.appendChild(row);
           });
@@ -567,23 +582,6 @@
               } catch (err) {
                 alert('Güncelleme hatası: ' + err.message);
                 e.target.checked = !checked; // Hata olursa eski haline döndür
-              }
-            });
-          });
-
-          // Silme butonu event listener
-          document.querySelectorAll('.delete-place-btn').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-              const docId = e.target.getAttribute('data-docid');
-              if (!confirm('Bu yeri silmek istediğinize emin misiniz?')) return;
-              try {
-                const { doc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
-                const ref = doc(db, `users/${user.uid}/places`, docId);
-                await deleteDoc(ref);
-                showStatus('Yer silindi.', 'success');
-                loadPlacesTable(user);
-              } catch (err) {
-                showStatus('Silme hatası: ' + err.message, 'error');
               }
             });
           });
