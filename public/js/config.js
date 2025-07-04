@@ -2,31 +2,22 @@
  * Configuration for RotamBenim application
  */
 
-<<<<<<< HEAD
-=======
 // Firebase Configuration
-// TODO: Replace with your own Firebase project settings
 const firebaseConfig = {
     apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA", 
     authDomain: "rotambenim.firebaseapp.com", 
     projectId: "rotambenim", 
-    storageBucket: "rotambenim.firebasestorage.app", 
+    storageBucket: "rotambenim.appspot.com", 
     messagingSenderId: "374285362920", 
     appId: "1:374285362920:web:b4058cf4a93e7337168b5d", 
     measurementId: "G-0QVZ4LDYPJ" 
 };
 
 // Application Configuration
->>>>>>> parent of 8509642 (sum)
 const APP_CONFIG = {
     // Application settings
     appName: 'RotamBenim',
     version: '1.0.0',
-    
-    // Firebase configuration
-    firebaseConfig: {
-        // Your Firebase config here
-    },
     
     // API keys
     apiKeys: {
