@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotam Benim - Seyahat Planlayıcısı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: background-image 0.5s ease-in-out;
+        }
+        
+        .category-tag {
+            display: inline-block;
+            background-color: #e0e7ff;
+            color: #3730a3;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .place-item {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .place-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .country-header {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .country-header:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        }
+        
+        .tab-button {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .tab-button.active {
+            background-color: #2563eb;
+            color: white;
+        }
+        
+        .tab-button:not(.active) {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+        
+        .tab-button:not(.active):hover {
+            background-color: #d1d5db;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto max-w-7xl px-4 py-6">
+        <!-- Header -->
+        <header class="text-center mb-8 fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <div></div> <!-- Spacer -->
+                <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Rotam Benim
+                </h1>
+                <div class="flex items-center space-x-4">
+                    <!-- Language Selector -->
+                    <select id="languageSelector" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="tr">Türkçe</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+            </div>
+            
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Dünyanın harika yerlerini keşfedin, seyahat rotalarınızı oluşturun ve maceralarınızı takip edin!
+            </p>
+            
+            <!-- Authentication -->
+            <div id="authContainer" class="mt-6 flex justify-center items-center">
+                <button id="googleSignInBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path d="M12 5.38c1.63 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span>Google ile Giriş Yap</span>
+                </button>
+                
+                <div id="userDisplay" class="hidden items-center space-x-4">
+                    <img id="userPhoto" class="w-10 h-10 rounded-full border-2 border-blue-400" alt="User Photo">
+                    <span id="userName" class="text-gray-700 font-medium"></span>
+                    <button id="signOutBtn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md text-sm transition-colors duration-200">
+                        Çıkış Yap
+                    </button>
+                </div>
+            </div>
+            
+            <p id="authStatus" class="text-sm text-gray-500 mt-2"></p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Add Places/Countries -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6 fade-in">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Yeni Ekle</h2>
+                    
+                    <!-- Tab Buttons -->
+                    <div class="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
+                        <button id="addPlaceTab" class="tab-button active flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200">
+                            Yer Ekle
+                        </button>
+                        <button id="addCountryTab" class="tab-button flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200">
+                            Ülke Ekle
+                        </button>
+                    </div>
+                    
+                    <!-- Add Place Tab -->
+                    <div id="addPlaceContent">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="newPlaceNameInput" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Yer Adı
+                                </label>
+                                <input type="text" id="newPlaceNameInput" 
+                                       placeholder="örn: Paris, Eyfel Kulesi..."
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                            </div>
+                            <button id="addPlaceBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-colors duration-200 flex items-center justify-center space-x-2">
+                                <span>Yer Ekle</span>
+                                <div id="addPlaceLoader" class="loader hidden"></div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Add Country Tab -->
+                    <div id="addCountryContent" class="hidden">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="newCountryNameInput" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Ülke Adı
+                                </label>
+                                <input type="text" id="newCountryNameInput" 
+                                       placeholder="örn: Fransa, İtalya, İspanya..."
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                            </div>
+                            <div class="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+                                <p class="font-medium mb-1">💡 Bilgi:</p>
+                                <p>Ülke eklendiğinde, o ülkenin en popüler 10-30 turistik yeri otomatik olarak listenize eklenecektir.</p>
+                            </div>
+                            <button id="addCountryBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-colors duration-200 flex items-center justify-center space-x-2">
+                                <span>Ülke Ekle</span>
+                                <div id="addCountryLoader" class="loader hidden"></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Route Generation -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6 fade-in">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Rota Oluştur</h3>
+                    <button id="generateRouteBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Seçili Yerlerle Rota Oluştur
+                    </button>
+                    <div id="routeLinkContainer" class="mt-4"></div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Places List -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-lg p-6 fade-in">
+                    <!-- Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">Gidilecek Yerler</h2>
+                            <p class="text-sm text-gray-600">Rota oluşturmak için yerleri tıklayın</p>
+                        </div>
+                        
+                        <!-- Filters -->
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <div>
+                                <label for="filterCountry" class="block text-xs font-medium text-gray-700 mb-1">Ülke:</label>
+                                <select id="filterCountry" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="all">Tüm Ülkeler</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="filterVisited" class="block text-xs font-medium text-gray-700 mb-1">Durum:</label>
+                                <select id="filterVisited" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="all">Tümü</option>
+                                    <option value="notvisited" selected>Gezilmedi</option>
+                                    <option value="visited">Gezildi</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Places List -->
+                    <div id="placesList" class="space-y-3 max-h-[70vh] overflow-y-auto custom-scrollbar pr-2">
+                        <div class="text-center py-12 text-gray-500">
+                            <div class="text-6xl mb-4">🌍</div>
+                            <p class="text-lg font-medium mb-2">Henüz yer eklenmemiş</p>
+                            <p class="text-sm">Giriş yapın ve ilk yerinizi ekleyin!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="text-center mt-12 py-6 text-gray-500 text-sm">
+            <p>© 2024 Rotam Benim - Seyahat Planlayıcısı</p>
+            <p class="mt-1">Dünyayı keşfetmeye başlayın!</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/language-manager.js"></script>
+    <script src="js/pexels-service.js"></script>
+    <script src="js/country-place-service.js"></script>
+    <script src="js/app-complete.js"></script>
+</body>
+</html> 

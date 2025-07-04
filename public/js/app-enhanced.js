@@ -1,102 +1,145 @@
 /**
- * Enhanced Main application file for RotamBenim
- * Coordinates all modules including fullpage scrolling and dynamic backgrounds
+ * Enhanced Main Application for RotamBenim
+ * Advanced version with improved performance, error handling, and user experience
+ * @version 2.0.0
  */
 
 class EnhancedRotamBenimApp {
     constructor() {
         this.isInitialized = false;
-        this.modules = {
-            languageManager: window.languageManager,
-            firebaseService: window.firebaseService,
-            uiComponents: window.uiComponents,
-            placeSuggestions: window.placeSuggestions,
-            placeManager: window.placeManager,
-            routeManager: window.routeManager,
-            authAdapter: window.authAdapter,
-            enhancedBackgroundManager: window.enhancedBackgroundManager,
-            enhancedFullPageManager: window.enhancedFullPageManager
+        this.isDestroyed = false;
+        this.modules = new Map();
+        this.eventListeners = new Map();
+        this.performanceMetrics = {
+            startTime: Date.now(),
+            moduleLoadTimes: {},
+            errorCount: 0,
+            userInteractions: 0
         };
         
-        // DOM elements
-        this.authContainer = document.getElementById('authContainer');
-        this.googleSignInBtn = document.getElementById('googleSignInBtn');
-        this.userDisplay = document.getElementById('userDisplay');
-        this.userNameElement = document.getElementById('userName');
-        this.userPhotoElement = document.getElementById('userPhoto');
-        this.signOutBtn = document.getElementById('signOutBtn');
-        this.authStatusElement = document.getElementById('authStatus');
-        this.userIdDisplayElement = document.getElementById('userIdDisplay');
+        // Enhanced initialization order with dependency management
+        this.initializationOrder = [
+            { name: 'utils', critical: true },
+            { name: 'firebaseService', critical: true },
+            { name: 'uiComponents', critical: true },
+            { name: 'authAdapter', critical: true },
+            { name: 'languageManager', critical: false },
+            { name: 'routeManager', critical: false },
+            { name: 'placeSuggestions', critical: false },
+            { name: 'placeManager', critical: false },
+            { name: 'placeCard', critical: false },
+            { name: 'backgroundManager', critical: false },
+            { name: 'parallaxScrollManager', critical: false }
+        ];
         
-        // Enhanced features
-        this.currentCountry = null;
-        this.isFullPageEnabled = false;
+        // Enhanced application state with better structure
+        this.state = {
+            isAuthenticated: false,
+            currentUser: null,
+            isLoading: false,
+            hasError: false,
+            errorMessage: '',
+            lastActivity: Date.now(),
+            sessionStartTime: Date.now(),
+            features: {
+                offlineMode: false,
+                notifications: false,
+                analytics: true
+            }
+        };
+
+        // Performance monitoring
+        this.performanceObserver = null;
+        this.memoryUsage = [];
+        this.errorLog = [];
+        
+        // Auto-save functionality
+        this.autoSaveInterval = null;
+        this.autoSaveDelay = 30000; // 30 seconds
+        
+        // Offline support
+        this.offlineQueue = [];
+        this.isOnline = navigator.onLine;
     }
 
     /**
      * Initialize the enhanced application
      */
     async initialize() {
-        if (this.isInitialized) {
-            console.warn('[EnhancedRotamBenimApp] Application already initialized');
+        if (this.isInitialized || this.isDestroyed) {
+            console.warn('[EnhancedRotamBenimApp] Application already initialized or destroyed');
             return;
         }
 
         console.log('[EnhancedRotamBenimApp] Starting enhanced application initialization...');
         
         try {
-            // Show loading state
-            this.updateAuthStatus('Starting enhanced application...');
+            this.setState({ isLoading: true });
             
-            // Initialize core modules first
-            await this.initializeCoreModules();
+            // Setup performance monitoring first
+            this.setupPerformanceMonitoring();
             
-            // Initialize enhanced features
-            await this.initializeEnhancedFeatures();
+            // Setup offline detection
+            this.setupOfflineDetection();
             
-            // Setup authentication
-            this.setupAuthenticationUI();
+            // Initialize modules with enhanced error handling
+            await this.initializeModulesWithRetry();
             
             // Setup enhanced event listeners
             this.setupEnhancedEventListeners();
             
-            // Setup global error handling
-            this.setupErrorHandling();
-            
-            // Setup performance monitoring
-            this.setupPerformanceMonitoring();
+            // Setup auto-save functionality
+            this.setupAutoSave();
             
             // Setup accessibility features
             this.setupAccessibilityFeatures();
             
+            // Setup error boundary
+            this.setupErrorBoundary();
+            
+            // Setup memory management
+            this.setupMemoryManagement();
+            
             // Mark as initialized
             this.isInitialized = true;
+            this.setState({ isLoading: false });
             
-            console.log('[EnhancedRotamBenimApp] Enhanced application initialized successfully');
-            this.updateAuthStatus('Enhanced application ready');
+            console.log('[EnhancedRotamBenimApp] Application initialized successfully');
             
+<<<<<<< HEAD
             // Show welcome message
             window.showToast(
                 'Welcome to the enhanced RotamBenim! Experience smooth scrolling and dynamic backgrounds.',
                 'info',
                 5000
             );
+=======
+            // Track initialization performance
+            this.trackPerformance('appInitialization', Date.now() - this.performanceMetrics.startTime);
+            
+            // Show enhanced welcome message
+            this.showEnhancedWelcomeMessage();
+            
+            // Initialize analytics
+            this.initializeAnalytics();
+>>>>>>> parent of 19e146e (Initial commit)
             
         } catch (error) {
-            console.error('[EnhancedRotamBenimApp] Enhanced application initialization failed:', error);
+            console.error('[EnhancedRotamBenimApp] Application initialization failed:', error);
             this.handleInitializationError(error);
         }
     }
 
     /**
-     * Initialize core modules
+     * Initialize modules with retry mechanism and dependency management
      */
-    async initializeCoreModules() {
-        console.log('[EnhancedRotamBenimApp] Initializing core modules...');
+    async initializeModulesWithRetry() {
+        console.log('[EnhancedRotamBenimApp] Initializing modules with enhanced error handling...');
         
-        // Initialize language manager first
-        this.modules.languageManager.initialize();
+        const maxRetries = 3;
+        const retryDelay = 1000;
         
+<<<<<<< HEAD
         // Initialize UI components
         if (this.modules.uiComponents && typeof this.modules.uiComponents.initialize === 'function') {
             this.modules.uiComponents.initialize();
@@ -127,209 +170,91 @@ class EnhancedRotamBenimApp {
                 await this.modules.enhancedBackgroundManager.initialize();
                 console.log('[EnhancedRotamBenimApp] Enhanced background manager initialized');
             }
+=======
+        for (const moduleConfig of this.initializationOrder) {
+            const { name, critical } = moduleConfig;
+            let retryCount = 0;
+            let success = false;
+>>>>>>> parent of 19e146e (Initial commit)
             
-            // Initialize enhanced fullpage manager
-            if (this.modules.enhancedFullPageManager) {
-                this.modules.enhancedFullPageManager.initialize();
-                this.isFullPageEnabled = true;
-                console.log('[EnhancedRotamBenimApp] Enhanced fullpage manager initialized');
+            while (retryCount < maxRetries && !success) {
+                try {
+                    const moduleStartTime = Date.now();
+                    const module = window[name];
+                    
+                    if (!module) {
+                        throw new Error(`Module ${name} not found`);
+                    }
+                    
+                    if (typeof module.initialize !== 'function') {
+                        throw new Error(`Module ${name} does not have initialize method`);
+                    }
+                    
+                    console.log(`[EnhancedRotamBenimApp] Initializing ${name} (attempt ${retryCount + 1})...`);
+                    
+                    // Initialize module
+                    if (name === 'firebaseService') {
+                        await module.initialize();
+                    } else {
+                        module.initialize();
+                    }
+                    
+                    this.modules.set(name, module);
+                    this.performanceMetrics.moduleLoadTimes[name] = Date.now() - moduleStartTime;
+                    
+                    console.log(`[EnhancedRotamBenimApp] ${name} initialized successfully in ${this.performanceMetrics.moduleLoadTimes[name]}ms`);
+                    success = true;
+                    
+                } catch (error) {
+                    retryCount++;
+                    console.error(`[EnhancedRotamBenimApp] Error initializing ${name} (attempt ${retryCount}):`, error);
+                    
+                    if (retryCount >= maxRetries) {
+                        if (critical) {
+                            throw new Error(`Critical module ${name} failed to initialize after ${maxRetries} attempts: ${error.message}`);
+                        } else {
+                            console.warn(`[EnhancedRotamBenimApp] Non-critical module ${name} failed to initialize, continuing...`);
+                            break;
+                        }
+                    } else {
+                        await this.sleep(retryDelay * retryCount);
+                    }
+                }
             }
-            
-        } catch (error) {
-            console.error('[EnhancedRotamBenimApp] Error initializing enhanced features:', error);
-            // Continue without enhanced features
         }
+        
+        console.log('[EnhancedRotamBenimApp] All modules initialized');
     }
 
     /**
-     * Setup enhanced event listeners
+     * Setup enhanced event listeners with better error handling
      */
     setupEnhancedEventListeners() {
-        // Listen for place selection to update backgrounds
-        document.addEventListener('placeSelected', (e) => {
-            this.handlePlaceSelection(e.detail);
-        });
-        
-        // Listen for country filter changes
-        document.addEventListener('filterChanged', (e) => {
-            this.handleCountryFilterChange(e.detail);
-        });
-        
-        // Listen for section changes
-        document.addEventListener('sectionChanged', (e) => {
-            this.handleSectionChange(e.detail);
-        });
-        
-        // Listen for places list updates
-        document.addEventListener('placesListUpdated', (e) => {
-            this.handlePlacesListUpdate(e.detail);
-        });
-        
-        // Setup navigation link handlers
-        this.setupNavigationLinks();
-        
-        // Setup scroll indicator click
-        this.setupScrollIndicatorClick();
-    }
+        const events = [
+            { name: 'authStateChanged', handler: this.handleAuthStateChange.bind(this) },
+            { name: 'routeUpdated', handler: this.handleRouteUpdate.bind(this) },
+            { name: 'placesListUpdated', handler: this.handlePlacesListUpdate.bind(this) },
+            { name: 'appError', handler: this.handleAppError.bind(this) },
+            { name: 'userInteraction', handler: this.handleUserInteraction.bind(this) }
+        ];
 
-    /**
-     * Setup navigation links
-     */
-    setupNavigationLinks() {
-        const navLinks = document.querySelectorAll('a[href^="#"]');
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const anchor = link.getAttribute('href').substring(1);
-                
-                if (this.modules.enhancedFullPageManager) {
-                    this.modules.enhancedFullPageManager.moveToSectionByAnchor(anchor);
+        events.forEach(({ name, handler }) => {
+            const wrappedHandler = (e) => {
+                try {
+                    this.state.lastActivity = Date.now();
+                    this.state.userInteractions++;
+                    handler(e);
+                } catch (error) {
+                    console.error(`[EnhancedRotamBenimApp] Error in ${name} event handler:`, error);
+                    this.logError(error, { context: 'eventHandler', event: name });
                 }
-            });
-        });
-    }
-
-    /**
-     * Setup scroll indicator click
-     */
-    setupScrollIndicatorClick() {
-        const scrollIndicator = document.querySelector('.scroll-indicator');
-        if (scrollIndicator) {
-            scrollIndicator.addEventListener('click', (e) => {
-                const rect = scrollIndicator.getBoundingClientRect();
-                const clickPosition = (e.clientX - rect.left) / rect.width;
-                const targetSection = Math.floor(clickPosition * 5); // 5 sections
-                
-                if (this.modules.enhancedFullPageManager) {
-                    this.modules.enhancedFullPageManager.moveToSection(targetSection);
-                }
-            });
-        }
-    }
-
-    /**
-     * Handle place selection
-     * @param {Object} detail - Event detail
-     */
-    handlePlaceSelection(detail) {
-        if (detail && detail.place && detail.place.country) {
-            this.currentCountry = detail.place.country;
+            };
             
-            // Update background if background manager is available
-            if (this.modules.enhancedBackgroundManager) {
-                this.modules.enhancedBackgroundManager.updateBackgroundForCountry(detail.place.country);
-            }
-            
-            console.log(`[EnhancedRotamBenimApp] Place selected: ${detail.place.name} in ${detail.place.country}`);
-        }
-    }
-
-    /**
-     * Handle country filter change
-     * @param {Object} detail - Event detail
-     */
-    handleCountryFilterChange(detail) {
-        if (detail && detail.country) {
-            this.currentCountry = detail.country;
-            
-            // Update background if background manager is available
-            if (this.modules.enhancedBackgroundManager && detail.country !== 'all') {
-                this.modules.enhancedBackgroundManager.updateBackgroundForCountry(detail.country);
-            }
-            
-            console.log(`[EnhancedRotamBenimApp] Country filter changed: ${detail.country}`);
-        }
-    }
-
-    /**
-     * Handle section change
-     * @param {Object} detail - Event detail
-     */
-    handleSectionChange(detail) {
-        if (detail && detail.sectionAnchor) {
-            console.log(`[EnhancedRotamBenimApp] Section changed: ${detail.sectionAnchor}`);
-            
-            // Update page title
-            this.updatePageTitle(detail.sectionAnchor);
-            
-            // Track analytics if available
-            this.trackSectionView(detail.sectionAnchor);
-        }
-    }
-
-    /**
-     * Handle places list update
-     * @param {Object} detail - Event detail
-     */
-    handlePlacesListUpdate(detail) {
-        if (detail && detail.places) {
-            console.log(`[EnhancedRotamBenimApp] Places list updated: ${detail.places.length} places`);
-            
-            // Update background based on most common country
-            this.updateBackgroundFromPlacesList(detail.places);
-        }
-    }
-
-    /**
-     * Update background based on places list
-     * @param {Array} places - Array of places
-     */
-    updateBackgroundFromPlacesList(places) {
-        if (!places || places.length === 0) return;
-        
-        // Find most common country
-        const countryCount = {};
-        places.forEach(place => {
-            if (place.country) {
-                countryCount[place.country] = (countryCount[place.country] || 0) + 1;
-            }
-        });
-        
-        const mostCommonCountry = Object.keys(countryCount).reduce((a, b) => 
-            countryCount[a] > countryCount[b] ? a : b
-        );
-        
-        if (mostCommonCountry && this.modules.enhancedBackgroundManager) {
-            this.modules.enhancedBackgroundManager.updateBackgroundForCountry(mostCommonCountry);
-        }
-    }
-
-    /**
-     * Update page title based on section
-     * @param {string} sectionAnchor - Section anchor
-     */
-    updatePageTitle(sectionAnchor) {
-        const titles = {
-            'hero': 'RotamBenim - My Travel List',
-            'add-place': 'Add Places - RotamBenim',
-            'places-list': 'My Places - RotamBenim',
-            'map-view': 'Map View - RotamBenim',
-            'about': 'About - RotamBenim'
-        };
-        
-        const title = titles[sectionAnchor] || 'RotamBenim - My Travel List';
-        document.title = title;
-    }
-
-    /**
-     * Track section view for analytics
-     * @param {string} sectionAnchor - Section anchor
-     */
-    trackSectionView(sectionAnchor) {
-        // Implement analytics tracking here
-        // For example, Google Analytics, Firebase Analytics, etc.
-        console.log(`[EnhancedRotamBenimApp] Section view tracked: ${sectionAnchor}`);
-    }
-
-    /**
-     * Setup authentication UI
-     */
-    setupAuthenticationUI() {
-        // Setup Firebase auth state listener
-        this.modules.firebaseService.onAuthStateChange((user) => {
-            this.handleAuthStateChange(user);
+            document.addEventListener(name, wrappedHandler);
+            this.eventListeners.set(name, wrappedHandler);
         });
 
+<<<<<<< HEAD
         // Google Sign-In button
         if (this.googleSignInBtn) {
             this.googleSignInBtn.addEventListener('click', async () => {
@@ -504,13 +429,19 @@ class EnhancedRotamBenimApp {
                 'An unexpected error occurred. Please refresh the page.',
                 'error'
             );
+=======
+        // Page visibility changes
+        document.addEventListener('visibilitychange', () => {
+            this.handleVisibilityChange();
+>>>>>>> parent of 19e146e (Initial commit)
         });
 
-        // Handle JavaScript errors
-        window.addEventListener('error', (event) => {
-            console.error('[EnhancedRotamBenimApp] JavaScript error:', event.error);
-        });
+        // Window resize with enhanced throttling
+        window.addEventListener('resize', Utils.throttle(() => {
+            this.handleWindowResize();
+        }, 100));
 
+<<<<<<< HEAD
         // Handle network errors
         window.addEventListener('offline', () => {
             window.showToast(
@@ -527,86 +458,470 @@ class EnhancedRotamBenimApp {
                 3000
             );
         });
+=======
+        // Online/offline detection
+        window.addEventListener('online', () => this.handleOnlineStatusChange(true));
+        window.addEventListener('offline', () => this.handleOnlineStatusChange(false));
+
+        console.log('[EnhancedRotamBenimApp] Enhanced event listeners setup');
+>>>>>>> parent of 19e146e (Initial commit)
     }
 
     /**
      * Setup performance monitoring
      */
     setupPerformanceMonitoring() {
-        // Monitor page load performance
-        if ('performance' in window) {
-            window.addEventListener('load', () => {
-                setTimeout(() => {
-                    const perfData = performance.getEntriesByType('navigation')[0];
-                    if (perfData) {
-                        const loadTime = perfData.loadEventEnd - perfData.loadEventStart;
-                        console.log(`[EnhancedRotamBenimApp] Page load time: ${loadTime}ms`);
-                        
-                        // Log slow page loads
-                        if (loadTime > 3000) {
-                            console.warn('[EnhancedRotamBenimApp] Slow page load detected');
+        // Monitor memory usage
+        if ('memory' in performance) {
+            setInterval(() => {
+                this.memoryUsage.push({
+                    timestamp: Date.now(),
+                    used: performance.memory.usedJSHeapSize,
+                    total: performance.memory.totalJSHeapSize,
+                    limit: performance.memory.jsHeapSizeLimit
+                });
+                
+                // Keep only last 100 entries
+                if (this.memoryUsage.length > 100) {
+                    this.memoryUsage.shift();
+                }
+            }, 30000); // Every 30 seconds
+        }
+
+        // Monitor long tasks
+        if ('PerformanceObserver' in window) {
+            try {
+                this.performanceObserver = new PerformanceObserver((list) => {
+                    for (const entry of list.getEntries()) {
+                        if (entry.duration > 50) { // Tasks longer than 50ms
+                            console.warn('[EnhancedRotamBenimApp] Long task detected:', entry);
                         }
                     }
-                }, 0);
-            });
+                });
+                this.performanceObserver.observe({ entryTypes: ['longtask'] });
+            } catch (error) {
+                console.warn('[EnhancedRotamBenimApp] PerformanceObserver not supported');
+            }
         }
+    }
+
+    /**
+     * Setup offline detection and queue management
+     */
+    setupOfflineDetection() {
+        this.isOnline = navigator.onLine;
+        
+        // Process offline queue when coming back online
+        window.addEventListener('online', () => {
+            this.processOfflineQueue();
+        });
+    }
+
+    /**
+     * Setup auto-save functionality
+     */
+    setupAutoSave() {
+        this.autoSaveInterval = setInterval(() => {
+            if (this.state.isAuthenticated && !this.state.isLoading) {
+                this.autoSave();
+            }
+        }, this.autoSaveDelay);
     }
 
     /**
      * Setup accessibility features
      */
     setupAccessibilityFeatures() {
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            // Ctrl/Cmd + K: Focus search/filter
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                const searchInput = document.querySelector('input[type="text"]');
-                if (searchInput) {
-                    searchInput.focus();
-                }
-            }
-            
-            // Escape: Clear focus/close modals
-            if (e.key === 'Escape') {
-                document.activeElement?.blur();
-                this.modules.uiComponents.clearAllToasts();
-            }
-        });
+        // Add skip to main content link
+        const skipLink = document.createElement('a');
+        skipLink.href = '#main-content';
+        skipLink.textContent = 'Skip to main content';
+        skipLink.className = 'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded z-50';
+        document.body.insertBefore(skipLink, document.body.firstChild);
 
-        // Add focus indicators for better keyboard navigation
-        const style = document.createElement('style');
-        style.textContent = `
-            .focus-visible {
-                outline: 2px solid var(--primary-color);
-                outline-offset: 2px;
-            }
-        `;
-        document.head.appendChild(style);
+        // Add main content landmark
+        const mainContent = document.querySelector('.container');
+        if (mainContent) {
+            mainContent.id = 'main-content';
+            mainContent.setAttribute('role', 'main');
+        }
+
+        // Setup keyboard navigation
+        this.setupKeyboardNavigation();
     }
 
     /**
-     * Get enhanced application state
-     * @returns {Object} Enhanced application state
+     * Setup keyboard navigation
      */
-    getEnhancedApplicationState() {
+    setupKeyboardNavigation() {
+        document.addEventListener('keydown', (e) => {
+            // Escape key to close modals
+            if (e.key === 'Escape') {
+                this.closeAllModals();
+            }
+            
+            // Ctrl/Cmd + S for save
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                this.manualSave();
+            }
+        });
+    }
+
+    /**
+     * Setup error boundary
+     */
+    setupErrorBoundary() {
+        window.addEventListener('error', (e) => {
+            this.logError(e.error, { context: 'globalError', filename: e.filename, lineno: e.lineno });
+        });
+
+        window.addEventListener('unhandledrejection', (e) => {
+            this.logError(e.reason, { context: 'unhandledRejection' });
+        });
+    }
+
+    /**
+     * Setup memory management
+     */
+    setupMemoryManagement() {
+        // Cleanup unused resources periodically
+        setInterval(() => {
+            this.cleanupUnusedResources();
+        }, 60000); // Every minute
+    }
+
+    /**
+     * Handle authentication state changes with enhanced logging
+     */
+    handleAuthStateChange(detail) {
+        const previousAuth = this.state.isAuthenticated;
+        
+        this.setState({
+            isAuthenticated: detail.isAuthenticated,
+            currentUser: detail.user
+        });
+
+        console.log(`[EnhancedRotamBenimApp] Auth state changed: ${detail.isAuthenticated ? 'authenticated' : 'not authenticated'}`);
+
+        // Track auth state change
+        this.trackEvent('auth_state_change', {
+            from: previousAuth,
+            to: detail.isAuthenticated,
+            user: detail.user ? detail.user.uid : null
+        });
+
+        // Update UI based on auth state
+        this.updateUIForAuthState(detail.isAuthenticated);
+        
+        // Initialize user data if newly authenticated
+        if (detail.isAuthenticated && !previousAuth) {
+            this.initializeUserData();
+        }
+    }
+
+    /**
+     * Handle route updates with enhanced validation
+     */
+    handleRouteUpdate(detail) {
+        console.log(`[EnhancedRotamBenimApp] Route updated: ${detail.selectedCount} places selected`);
+        
+        // Validate route data
+        if (detail.selectedCount > 20) {
+            console.warn('[EnhancedRotamBenimApp] Large route detected:', detail.selectedCount, 'places');
+        }
+        
+        // Track route update
+        this.trackEvent('route_update', {
+            selectedCount: detail.selectedCount,
+            routeId: detail.routeId
+        });
+        
+        // Update route-dependent UI
+        this.updateRouteUI(detail);
+    }
+
+    /**
+     * Handle places list updates with enhanced processing
+     */
+    handlePlacesListUpdate(detail) {
+        console.log(`[EnhancedRotamBenimApp] Places list updated: ${detail.places?.length || 0} places`);
+        
+        // Validate places data
+        if (detail.places && detail.places.length > 1000) {
+            console.warn('[EnhancedRotamBenimApp] Large places list detected:', detail.places.length, 'places');
+        }
+        
+        // Track places update
+        this.trackEvent('places_update', {
+            count: detail.places?.length || 0,
+            source: detail.source
+        });
+        
+        // Update places-dependent UI
+        this.updatePlacesUI(detail);
+    }
+
+    /**
+     * Handle user interactions
+     */
+    handleUserInteraction(detail) {
+        this.state.userInteractions++;
+        this.state.lastActivity = Date.now();
+        
+        // Track interaction
+        this.trackEvent('user_interaction', {
+            type: detail.type,
+            target: detail.target
+        });
+    }
+
+    /**
+     * Handle online/offline status changes
+     */
+    handleOnlineStatusChange(isOnline) {
+        this.isOnline = isOnline;
+        
+        if (isOnline) {
+            this.processOfflineQueue();
+            this.showToast('You are back online', 'success');
+        } else {
+            this.showToast('You are offline. Changes will be saved when you reconnect.', 'warning');
+        }
+        
+        this.trackEvent('connection_change', { isOnline });
+    }
+
+    /**
+     * Process offline queue
+     */
+    async processOfflineQueue() {
+        if (this.offlineQueue.length === 0) return;
+        
+        console.log(`[EnhancedRotamBenimApp] Processing ${this.offlineQueue.length} offline operations`);
+        
+        const queue = [...this.offlineQueue];
+        this.offlineQueue = [];
+        
+        for (const operation of queue) {
+            try {
+                await this.executeOfflineOperation(operation);
+            } catch (error) {
+                console.error('[EnhancedRotamBenimApp] Failed to process offline operation:', error);
+                this.offlineQueue.push(operation); // Re-queue failed operations
+            }
+        }
+    }
+
+    /**
+     * Execute offline operation
+     */
+    async executeOfflineOperation(operation) {
+        const { type, data, timestamp } = operation;
+        
+        switch (type) {
+            case 'addPlace':
+                await this.modules.get('firebaseService')?.addPlace(data);
+                break;
+            case 'updatePlace':
+                await this.modules.get('firebaseService')?.updatePlace(data.id, data.updates);
+                break;
+            case 'deletePlace':
+                await this.modules.get('firebaseService')?.deletePlace(data.id);
+                break;
+            default:
+                console.warn('[EnhancedRotamBenimApp] Unknown offline operation type:', type);
+        }
+    }
+
+    /**
+     * Auto-save functionality
+     */
+    async autoSave() {
+        try {
+            // Save current state to localStorage as backup
+            const backupData = {
+                timestamp: Date.now(),
+                state: this.state,
+                performanceMetrics: this.performanceMetrics
+            };
+            
+            localStorage.setItem('rotambenim_backup', JSON.stringify(backupData));
+            
+            // Track auto-save
+            this.trackEvent('auto_save', { timestamp: Date.now() });
+            
+        } catch (error) {
+            console.error('[EnhancedRotamBenimApp] Auto-save failed:', error);
+            this.logError(error, { context: 'autoSave' });
+        }
+    }
+
+    /**
+     * Manual save functionality
+     */
+    async manualSave() {
+        try {
+            await this.autoSave();
+            this.showToast('Data saved successfully', 'success');
+        } catch (error) {
+            this.showToast('Save failed. Please try again.', 'error');
+        }
+    }
+
+    /**
+     * Show enhanced welcome message
+     */
+    showEnhancedWelcomeMessage() {
+        const welcomeMessages = [
+            'Welcome to RotamBenim! 🗺️',
+            'Ready to plan your next adventure? ✈️',
+            'Discover amazing places and create your perfect route! 🌍'
+        ];
+        
+        const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+        this.showToast(randomMessage, 'info', 3000);
+    }
+
+    /**
+     * Initialize analytics
+     */
+    initializeAnalytics() {
+        // Track app initialization
+        this.trackEvent('app_initialized', {
+            loadTime: Date.now() - this.performanceMetrics.startTime,
+            userAgent: navigator.userAgent,
+            screenResolution: `${screen.width}x${screen.height}`
+        });
+    }
+
+    /**
+     * Track performance metrics
+     */
+    trackPerformance(name, duration) {
+        this.performanceMetrics[name] = duration;
+        
+        if (duration > 1000) {
+            console.warn(`[EnhancedRotamBenimApp] Slow operation detected: ${name} took ${duration}ms`);
+        }
+    }
+
+    /**
+     * Track events for analytics
+     */
+    trackEvent(eventName, data = {}) {
+        // Simple event tracking - can be replaced with Google Analytics or similar
+        const event = {
+            name: eventName,
+            data,
+            timestamp: Date.now(),
+            sessionId: this.state.sessionStartTime
+        };
+        
+        console.log('[EnhancedRotamBenimApp] Event tracked:', event);
+        
+        // Store in localStorage for analytics
+        try {
+            const events = JSON.parse(localStorage.getItem('rotambenim_events') || '[]');
+            events.push(event);
+            
+            // Keep only last 100 events
+            if (events.length > 100) {
+                events.splice(0, events.length - 100);
+            }
+            
+            localStorage.setItem('rotambenim_events', JSON.stringify(events));
+        } catch (error) {
+            console.error('[EnhancedRotamBenimApp] Failed to store event:', error);
+        }
+    }
+
+    /**
+     * Log errors with enhanced context
+     */
+    logError(error, context = {}) {
+        const errorEntry = {
+            message: error.message,
+            stack: error.stack,
+            context,
+            timestamp: Date.now(),
+            userAgent: navigator.userAgent,
+            url: window.location.href
+        };
+        
+        this.errorLog.push(errorEntry);
+        this.performanceMetrics.errorCount++;
+        
+        // Keep only last 50 errors
+        if (this.errorLog.length > 50) {
+            this.errorLog.shift();
+        }
+        
+        console.error('[EnhancedRotamBenimApp] Error logged:', errorEntry);
+    }
+
+    /**
+     * Show toast notification
+     */
+    showToast(message, type = 'info', duration = 5000) {
+        const uiComponents = this.modules.get('uiComponents');
+        if (uiComponents && uiComponents.showToast) {
+            uiComponents.showToast(message, type, duration);
+        } else {
+            // Fallback toast
+            console.log(`[Toast] ${type.toUpperCase()}: ${message}`);
+        }
+    }
+
+    /**
+     * Close all modals
+     */
+    closeAllModals() {
+        const uiComponents = this.modules.get('uiComponents');
+        if (uiComponents && uiComponents.closeAllModals) {
+            uiComponents.closeAllModals();
+        }
+    }
+
+    /**
+     * Cleanup unused resources
+     */
+    cleanupUnusedResources() {
+        // Clear old performance data
+        const cutoff = Date.now() - (24 * 60 * 60 * 1000); // 24 hours
+        this.memoryUsage = this.memoryUsage.filter(entry => entry.timestamp > cutoff);
+        
+        // Clear old error log
+        this.errorLog = this.errorLog.filter(entry => entry.timestamp > cutoff);
+        
+        // Force garbage collection if available
+        if (window.gc) {
+            window.gc();
+        }
+    }
+
+    /**
+     * Get enhanced application status
+     */
+    getApplicationStatus() {
         return {
             isInitialized: this.isInitialized,
-            isAuthenticated: this.modules.firebaseService.isAuthenticated(),
-            currentUser: this.modules.firebaseService.getCurrentUser(),
-            placesCount: this.modules.placeManager.getPlaces().length,
-            selectedPlacesCount: this.modules.routeManager.getSelectedCount(),
-            currentCountry: this.currentCountry,
-            isFullPageEnabled: this.isFullPageEnabled,
-            currentSection: this.modules.enhancedFullPageManager?.getCurrentSection(),
-            backgroundStats: this.modules.enhancedBackgroundManager?.getCacheStats(),
-            timestamp: new Date().toISOString()
+            isDestroyed: this.isDestroyed,
+            isOnline: this.isOnline,
+            state: this.state,
+            performanceMetrics: this.performanceMetrics,
+            memoryUsage: this.memoryUsage.length > 0 ? this.memoryUsage[this.memoryUsage.length - 1] : null,
+            errorCount: this.performanceMetrics.errorCount,
+            userInteractions: this.state.userInteractions,
+            uptime: Date.now() - this.performanceMetrics.startTime,
+            offlineQueueLength: this.offlineQueue.length
         };
     }
 
     /**
-     * Toggle fullpage mode
+     * Get performance metrics
      */
+<<<<<<< HEAD
     toggleFullPageMode() {
         if (this.modules.enhancedFullPageManager) {
             if (this.isFullPageEnabled) {
@@ -618,12 +933,37 @@ class EnhancedRotamBenimApp {
                 this.isFullPageEnabled = true;
                 window.showToast('Fullpage mode enabled', 'info');
             }
+=======
+    getPerformanceMetrics() {
+        return {
+            ...this.performanceMetrics,
+            memoryUsage: this.memoryUsage,
+            errorLog: this.errorLog,
+            moduleLoadTimes: this.performanceMetrics.moduleLoadTimes
+        };
+    }
+
+    /**
+     * Restart application
+     */
+    async restart() {
+        console.log('[EnhancedRotamBenimApp] Restarting application...');
+        
+        try {
+            await this.cleanup();
+            await this.initialize();
+            console.log('[EnhancedRotamBenimApp] Application restarted successfully');
+        } catch (error) {
+            console.error('[EnhancedRotamBenimApp] Application restart failed:', error);
+            throw error;
+>>>>>>> parent of 19e146e (Initial commit)
         }
     }
 
     /**
-     * Refresh backgrounds
+     * Enhanced cleanup with better resource management
      */
+<<<<<<< HEAD
     async refreshBackgrounds() {
         if (this.modules.enhancedBackgroundManager) {
             this.modules.enhancedBackgroundManager.clearCache();
@@ -637,45 +977,90 @@ class EnhancedRotamBenimApp {
      */
     cleanup() {
         console.log('[EnhancedRotamBenimApp] Cleaning up enhanced application...');
+=======
+    async cleanup() {
+        if (this.isDestroyed) return;
+>>>>>>> parent of 19e146e (Initial commit)
         
-        // Clean up enhanced modules
-        if (this.modules.enhancedFullPageManager) {
-            this.modules.enhancedFullPageManager.cleanup();
+        console.log('[EnhancedRotamBenimApp] Cleaning up application...');
+        
+        // Clear intervals
+        if (this.autoSaveInterval) {
+            clearInterval(this.autoSaveInterval);
+            this.autoSaveInterval = null;
         }
         
-        if (this.modules.enhancedBackgroundManager) {
-            this.modules.enhancedBackgroundManager.cleanup();
+        // Disconnect performance observer
+        if (this.performanceObserver) {
+            this.performanceObserver.disconnect();
+            this.performanceObserver = null;
         }
         
-        // Clean up core modules
-        Object.values(this.modules).forEach(module => {
-            if (module && typeof module.cleanup === 'function') {
-                module.cleanup();
-            }
+        // Remove event listeners
+        this.eventListeners.forEach((handler, event) => {
+            document.removeEventListener(event, handler);
         });
+        this.eventListeners.clear();
+        
+        // Cleanup modules
+        for (const [name, module] of this.modules) {
+            if (module && typeof module.cleanup === 'function') {
+                try {
+                    await module.cleanup();
+                } catch (error) {
+                    console.error(`[EnhancedRotamBenimApp] Error cleaning up module ${name}:`, error);
+                }
+            }
+        }
+        this.modules.clear();
+        
+        // Clear data structures
+        this.memoryUsage = [];
+        this.errorLog = [];
+        this.offlineQueue = [];
+        
+        this.isInitialized = false;
+        this.isDestroyed = true;
+        
+        console.log('[EnhancedRotamBenimApp] Application cleaned up successfully');
+    }
+
+    /**
+     * Utility method for sleeping
+     */
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    /**
+     * Set application state
+     */
+    setState(newState) {
+        this.state = { ...this.state, ...newState };
+        
+        // Trigger state change event
+        document.dispatchEvent(new CustomEvent('appStateChanged', {
+            detail: { state: this.state }
+        }));
+    }
+
+    /**
+     * Get current state
+     */
+    getState() {
+        return { ...this.state };
     }
 }
 
 // Initialize enhanced application when DOM is ready
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('[EnhancedRotamBenimApp] DOM loaded, initializing enhanced application...');
-    
-    // Create global enhanced app instance
-    window.enhancedRotamBenimApp = new EnhancedRotamBenimApp();
-    
-    try {
-        await window.enhancedRotamBenimApp.initialize();
-    } catch (error) {
-        console.error('[EnhancedRotamBenimApp] Failed to initialize enhanced application:', error);
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    window.enhancedApp = new EnhancedRotamBenimApp();
+    window.enhancedApp.initialize().catch(error => {
+        console.error('[EnhancedRotamBenimApp] Failed to initialize:', error);
+    });
 });
 
-// Handle page unload
-window.addEventListener('beforeunload', () => {
-    if (window.enhancedRotamBenimApp) {
-        window.enhancedRotamBenimApp.cleanup();
-    }
-});
-
-// Export for debugging
-window.EnhancedRotamBenimApp = EnhancedRotamBenimApp;
+// Export for module usage
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = EnhancedRotamBenimApp;
+} 
