@@ -131,6 +131,39 @@
         .logout-btn:hover {
             background: #c82333;
         }
+        
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 30px;
+        }
+        .table {
+            width: 100%;
+            min-width: 600px;
+            font-size: 14px;
+            background: white;
+            border-radius: 8px;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .table th, .table td {
+            padding: 8px 12px;
+            white-space: nowrap;
+        }
+        .table th {
+            background: #f1f3f9;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .table td {
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 <body>
@@ -167,22 +200,24 @@
             <div id="statusMessage"></div>
             
             <!-- Gezilecek Yerler Tablosu -->
-            <div id="placesTableContainer" style="margin-top: 30px; display: none;">
-              <h3>Gezilecek Yerler</h3>
-              <table id="placesTable" class="table">
-                <thead>
-                  <tr>
-                    <th>Yer Adı</th>
-                    <th>Şehir</th>
-                    <th>Ülke</th>
-                    <th>Kategori</th>
-                    <th>Ziyaret Edildi mi?</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Satırlar buraya eklenecek -->
-                </tbody>
-              </table>
+            <div id="placesTableWrapper" class="table-responsive">
+              <div id="placesTableContainer" style="margin-top: 0; display: none;">
+                <h3>Gezilecek Yerler</h3>
+                <table id="placesTable" class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th>Yer Adı</th>
+                      <th>Şehir</th>
+                      <th>Ülke</th>
+                      <th>Kategori</th>
+                      <th>Ziyaret Edildi mi?</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Satırlar buraya eklenecek -->
+                  </tbody>
+                </table>
+              </div>
             </div>
         </div>
     </div>
