@@ -294,7 +294,6 @@
         const addPlaceBtn = document.getElementById('addPlaceBtn');
         const searchBox = document.getElementById('searchBox');
         const suggestions = document.getElementById('suggestions');
-        let suggestionResults = [];
 
         // Show status message
         function showStatus(message, type = 'info') {
@@ -382,13 +381,11 @@
         const addPlaceBtn = document.getElementById('addPlaceBtn');
         const searchBox = document.getElementById('searchBox');
         const suggestions = document.getElementById('suggestions');
-        let suggestionResults = [];
 
         // Textboxa yazıldıkça Wikipedia'dan öneri getir
         searchBox.addEventListener('input', async () => {
           const query = searchBox.value.trim();
           suggestions.innerHTML = '';
-          suggestionResults = [];
           addPlaceBtn.disabled = !query;
           if (!query) return;
           // Wikipedia API'den öneri al
@@ -397,7 +394,6 @@
             const resp = await fetch(url);
             const data = await resp.json();
             if (data.query && data.query.search && data.query.search.length > 0) {
-              suggestionResults = data.query.search;
               const list = document.createElement('ul');
               list.style.background = '#fff';
               list.style.border = '1px solid #ccc';
@@ -409,7 +405,7 @@
               list.style.width = '350px';
               list.style.maxHeight = '220px';
               list.style.overflowY = 'auto';
-              suggestionResults.forEach((item, idx) => {
+              data.query.search.forEach((item, idx) => {
                 const li = document.createElement('li');
                 li.style.padding = '8px 12px';
                 li.style.cursor = 'pointer';
