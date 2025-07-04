@@ -3,532 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-    <title>My Travel List - RotamBenim</title>
-    <meta name="description" content="Discover places to visit around the world, plan your routes and personalize your travel experience.">
+    <title>Rotam Benim - Basit Login Test</title>
     
     <!-- Tabler CSS -->
-    <link href="https://unpkg.com/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet">
-    <!-- Tabler Icons -->
-    <link href="https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Styles (Tabler öncelikli olacak) -->
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullpage.js@4.0.20/dist/fullpage.min.css"> -->
-    <!-- <link rel="stylesheet" href="styles-enhanced.css"> -->
-</head>
-<body>
-    <!-- Navigation (Tabler Navbar) -->
-    <header class="navbar navbar-expand-md navbar-dark bg-primary sticky-top">
-      <div class="container-xl">
-        <a href="#" class="navbar-brand">
-          <span class="navbar-brand-text">RotamBenim</span>
-        </a>
-        <div class="navbar-nav flex-row order-md-last ms-auto" id="authContainer">
-          <button id="googleSignInBtn" class="btn btn-primary d-flex align-items-center me-2">
-            <i class="ti ti-brand-google me-2"></i> Sign in
-          </button>
-          <div id="userDisplay" class="d-none align-items-center">
-            <img id="userPhoto" class="avatar avatar-sm me-2 border border-primary" alt="User Photo" loading="lazy">
-            <span id="userName" class="text-white fw-medium me-3"></span>
-            <button id="signOutBtn" class="btn btn-danger btn-sm">Sign Out</button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- FullPage Container kaldırıldı, klasik yapı başlıyor -->
-    <!-- Section 1: Hero (Tabler grid) -->
-    <section class="bg-primary-lt py-6">
-      <div class="container-xl">
-        <div class="row align-items-center min-vh-60">
-          <div class="col-lg-7 mx-auto text-center">
-            <h1 class="display-2 fw-bold text-primary mb-3 animate-on-scroll">My Travel List</h1>
-            <p class="lead text-secondary mb-4 animate-on-scroll delay-200">Discover and organize your dream destinations around the world. Create personalized travel routes and track your adventures.</p>
-            <div class="d-flex justify-content-center gap-3 animate-on-scroll delay-400">
-              <a href="#add-place" class="btn btn-primary">Add Places</a>
-              <a href="#places-list" class="btn btn-outline-primary">View My List</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 2: Add Place -->
-    <section id="add-place" class="py-6">
-      <div class="container-xl">
-        <div class="row justify-content-center">
-          <div class="col-lg-8">
-            <div class="card card-md shadow-sm mb-4">
-              <div class="card-body">
-                <h2 class="h3 mb-4">Add New Places</h2>
-                <!-- Tab Navigation -->
-                <div class="mb-3">
-                  <button id="addPlaceTab" class="btn btn-outline-dark me-2 active">Add Place</button>
-                  <button id="addCountryTab" class="btn btn-outline-dark">Add Country</button>
-                </div>
-                <!-- Add Place Tab Content -->
-                <div id="addPlaceContent">
-                  <div class="d-flex flex-column flex-sm-row gap-2 mb-3">
-                    <input type="text" id="newPlaceNameInput" placeholder="e.g., Eiffel Tower, Pamukkale" class="form-control" maxlength="100">
-                    <button id="addPlaceBtn" class="btn btn-success" disabled>
-                      <span id="addPlaceBtnText">Add Place</span>
-                      <div id="addPlaceLoader" class="loader d-none ms-2"></div>
-                    </button>
-                  </div>
-                  <div id="addPlaceMessage" class="text-sm mt-2"></div>
-                </div>
-                <!-- Add Country Tab Content -->
-                <div id="addCountryContent" class="d-none">
-                  <div class="text-center">
-                    <button id="openCountrySelectorBtn" class="btn btn-purple" disabled>
-                      <i class="ti ti-world me-2"></i>
-                      <span id="openCountrySelectorBtnText">Select Countries to Add</span>
-                    </button>
-                  </div>
-                  <div id="addCountryMessage" class="text-sm mt-3 text-center"></div>
-                  <p class="text-sm text-secondary mt-3 text-center">Select countries to automatically add popular tourist destinations.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 3: Places List -->
-    <section id="places-list" class="py-6">
-      <div class="container-xl">
-        <div class="row justify-content-center">
-          <div class="col-lg-10">
-            <div class="card card-md shadow-sm mb-4">
-              <div class="card-body">
-                <h2 class="h3 mb-4">Places to Visit</h2>
-                <!-- Filters -->
-                <div class="row mb-3">
-                  <div class="col-md-6 mb-2 mb-md-0">
-                    <label for="filterCountry" class="form-label">Country:</label>
-                    <select id="filterCountry" class="form-select">
-                      <option value="all">All Countries</option>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="filterVisited" class="form-label">Status:</label>
-                    <select id="filterVisited" class="form-select">
-                      <option value="all">All</option>
-                      <option value="notvisited" selected>Not Visited</option>
-                      <option value="visited">Visited</option>
-                    </select>
-                  </div>
-                </div>
-                <!-- Route Generation -->
-                <div class="mb-3 d-flex gap-2">
-                  <button id="generateRouteBtn" class="btn btn-primary" disabled>
-                    Create Route with Selected (<span id="selectedCount">0</span>)
-                  </button>
-                  <button id="clearSelectionBtn" class="btn btn-secondary d-none">
-                    Clear Selection
-                  </button>
-                </div>
-                <div id="routeLinkContainer" class="mb-3 text-sm"></div>
-                <!-- Places List -->
-                <div id="placesList" class="row g-2">
-                  <p id="placesListStatus" class="text-secondary fst-italic p-4 text-center">
-                    Please sign in with Google or wait for the places list to load...
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 4: Map View -->
-    <section id="map-view" class="py-6">
-      <div class="container-xl">
-        <div class="row justify-content-center">
-          <div class="col-lg-10">
-            <div class="card card-md shadow-sm mb-4">
-              <div class="card-body">
-                <h2 class="h3 mb-4">Interactive Map</h2>
-                <p id="mapLocationName" class="text-primary mb-3 h-6"></p>
-                <div class="ratio ratio-16x9 mb-3">
-                  <iframe id="mapFrame" class="w-100 h-100 border-0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?output=embed&q=World" title="Map view"></iframe>
-                </div>
-                <p class="text-sm text-secondary mt-3">
-                  Marking a place on the map shows its general location. The route creation feature sends selected places to Google Maps.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 5: About -->
-    <section id="about" class="py-6">
-      <div class="container-xl">
-        <div class="row justify-content-center">
-          <div class="col-lg-8">
-            <div class="card card-md shadow-sm mb-4">
-              <div class="card-body">
-                <h2 class="h3 mb-4">About RotamBenim</h2>
-                <div class="mb-4">RotamBenim helps you organize your travel plans and discover new destinations around the world.</div>
-                <div class="mb-4">Create personalized travel routes, track places you've visited, and find new adventures.</div>
-                <div class="mb-4">Your data is stored securely in Firebase and is accessible from any device.</div>
-                <div class="d-flex gap-3">
-                  <a href="#" class="text-primary"><i class="ti ti-brand-github icon-lg"></i></a>
-                  <a href="#" class="text-primary"><i class="ti ti-brand-twitter icon-lg"></i></a>
-                  <a href="#" class="text-primary"><i class="ti ti-brand-instagram icon-lg"></i></a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Country Selector Modal -->
-    <div id="countrySelectorModal" class="modal fade" tabindex="-1">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3 id="countrySelectorTitle" class="modal-title">Select Countries to Add</h3>
-            <button id="closeCountrySelectorBtn" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div class="row" id="countryGrid">
-              <!-- Countries will be populated here -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white p-6 rounded-lg shadow-xl flex items-center space-x-4">
-            <div class="loader"></div>
-            <span class="text-gray-700">Loading...</span>
-        </div>
-    </div>
-
-    <!-- Toast Notifications -->
-    <div id="toastContainer" class="fixed top-4 right-4 z-40 space-y-2"></div>
-
-    <!-- Scripts: config.js en üstte, ardından diğer yardımcılar, en sonda app-enhanced.js -->
-    <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/language-manager.js"></script>
-    <script src="js/firebase-service.js"></script>
-    <script src="js/place-suggestions.js"></script>
-    <script src="js/place-manager.js"></script>
-    <script src="js/place-card.js"></script>
-    <script src="js/enhanced-background-manager.js"></script>
-    <script src="js/auth-adapter.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // App-enhanced başlatıcı kodu burada çağrılacak
-        if (window.EnhancedRotamBenimApp && typeof window.EnhancedRotamBenimApp.initialize === 'function') {
-          window.EnhancedRotamBenimApp.initialize();
-        } else if (window.appEnhancedInit) {
-          window.appEnhancedInit();
-        }
-      });
-    </script>
-    <script src="js/app-enhanced.js"></script>
-
-    <div id="authStatusElement" style="display:none"></div>
-    <div id="userIdDisplayElement" style="display:none"></div>
-    <div id="userNameElement" style="display:none"></div>
-    <div id="mapLocationNameElement" style="display:none"></div>
-    <div id="placesListStatusElement" style="display:none"></div>
-    <div id="placesListElement" style="display:none"></div>
-    <div id="countryHeaderElement" style="display:none"></div>
-    <div id="addPlaceMessage" style="display:none"></div>
-=======
-    <title>Rotam Benim - Seyahat Planlayıcısı</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            transition: background-image 0.5s ease-in-out;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
         
-        .category-tag {
-            display: inline-block;
-            background-color: #e0e7ff;
-            color: #3730a3;
-            padding: 0.125rem 0.5rem;
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            margin-right: 0.25rem;
-            margin-bottom: 0.25rem;
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
         
-        .place-item {
-            transition: all 0.2s ease-in-out;
-        }
-        
-        .place-item:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .place-item.selected-for-route {
-            background-color: #dbeafe;
-            border-left: 4px solid #2563eb;
-        }
-        
-        .country-header {
-            position: relative;
-            cursor: pointer;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e5e7eb;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1e3a8a;
-        }
-        
-        .country-header:hover::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 400px;
             width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            text-align: center;
         }
         
-        .tab-button {
-            transition: all 0.2s ease-in-out;
+        .login-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #206bc4;
+            margin-bottom: 10px;
         }
         
-        .tab-button.active {
-            background-color: #2563eb;
+        .login-subtitle {
+            color: #626976;
+            margin-bottom: 30px;
+        }
+        
+        .google-btn {
+            background: #4285f4;
             color: white;
-        }
-        
-        .tab-button:not(.active) {
-            background-color: #e5e7eb;
-            color: #374151;
-        }
-        
-        .tab-button:not(.active):hover {
-            background-color: #d1d5db;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 3px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
-        }
-        
-        .loader {
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #3498db;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .delete-place-btn {
-            background-color: #fee2e2;
-            color: #b91c1c;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
             font-weight: 500;
-            transition: background-color 0.3s ease;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 20px;
         }
         
-        .delete-place-btn:hover {
-            background-color: #fecaca;
+        .google-btn:hover {
+            background: #3367d6;
+            transform: translateY(-2px);
+        }
+        
+        .google-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .user-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        
+        .status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .status-success {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-info {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background: #c82333;
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen">
-    <div class="container mx-auto max-w-6xl bg-white shadow-xl rounded-lg my-8 p-6">
-        <!-- Header -->
-        <header class="mb-8 text-center">
-            <div class="flex justify-between items-center mb-6">
-                <div></div> <!-- Spacer -->
-                <h1 class="text-3xl md:text-4xl font-bold text-sky-600 mb-2">Rotam Benim</h1>
-                <div class="flex items-center space-x-4">
-                    <!-- Language Selector -->
-                    <select id="languageSelector" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
-                        <option value="tr">Türkçe</option>
-                        <option value="en">English</option>
-                    </select>
-                </div>
-            </div>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-logo">🌍 Rotam Benim</div>
+            <div class="login-subtitle">Seyahat rotalarınızı planlayın</div>
             
-            <p class="text-gray-600 mb-6">Dünyanın harika yerlerini keşfedin, seyahat rotalarınızı oluşturun ve maceralarınızı takip edin!</p>
+            <!-- Login Button -->
+            <button id="googleSignInBtn" class="google-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Google ile Giriş Yap
+            </button>
             
-            <!-- Centered Authentication -->
-            <div id="authContainer" class="flex justify-center items-center mb-4">
-                <button id="googleSignInBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline flex items-center transition-colors duration-200">
-                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path d="M12 5.38c1.63 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    Google ile Giriş Yap
-                </button>
-                <div id="userDisplay" class="hidden items-center">
-                    <img id="userPhoto" class="w-8 h-8 rounded-full mr-3 border-2 border-blue-400" alt="User Photo">
-                    <span id="userName" class="text-gray-700 font-medium mr-4"></span>
-                    <button id="signOutBtn" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-md text-sm shadow-md transition-colors duration-200">
-                        Çıkış Yap
-                    </button>
-                </div>
-            </div>
-            <p id="authStatus" class="text-sm text-gray-500"></p>
-        </header>
-
-        <!-- Main Content -->
-        <div class="flex flex-col lg:flex-row gap-8">
-            <!-- Left Column - Places Management -->
-            <div class="flex-1">
-                <!-- Add New Place/Country Section -->
-                <div class="mb-6 p-4 border border-gray-200 rounded-lg bg-slate-50">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-3">Yeni Ekle</h3>
-                    
-                    <!-- Tab Buttons -->
-                    <div class="flex space-x-1 mb-4 bg-gray-200 p-1 rounded-lg">
-                        <button id="addPlaceTab" class="tab-button active flex-1 py-2 px-4 rounded-md text-sm font-medium">
-                            Yer Ekle
-                        </button>
-                        <button id="addCountryTab" class="tab-button flex-1 py-2 px-4 rounded-md text-sm font-medium">
-                            Ülke Ekle
-                        </button>
-                    </div>
-                    
-                    <!-- Add Place Tab -->
-                    <div id="addPlaceContent">
-                        <div class="relative">
-                            <div class="flex flex-col sm:flex-row gap-2">
-                                <div class="flex-grow relative">
-                                    <input type="text" id="newPlaceNameInput" placeholder="örn: Paris, Eyfel Kulesi..." 
-                                           class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none">
-                                </div>
-                                <button id="addPlaceBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 px-6 rounded-md shadow-md flex items-center justify-center transition-colors duration-200" disabled>
-                                    <span id="addPlaceBtnText">Yer Ekle</span>
-                                    <div id="addPlaceLoader" class="loader"></div>
-                                </button>
-                            </div>
-                            <div id="addPlaceMessage" class="text-sm mt-2"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Add Country Tab -->
-                    <div id="addCountryContent" class="hidden">
-                        <div class="relative">
-                            <div class="flex flex-col sm:flex-row gap-2">
-                                <div class="flex-grow relative">
-                                    <input type="text" id="newCountryNameInput" placeholder="örn: Fransa, İtalya, İspanya..." 
-                                           class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 focus:outline-none">
-                                </div>
-                                <button id="addCountryBtn" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-md shadow-md flex items-center justify-center transition-colors duration-200" disabled>
-                                    <span id="addCountryBtnText">Ülke Ekle</span>
-                                    <div id="addCountryLoader" class="loader"></div>
-                                </button>
-                            </div>
-                            <div id="addCountryMessage" class="text-sm mt-2"></div>
-                            <div class="text-xs text-gray-600 mt-2 bg-blue-50 p-2 rounded">
-                                💡 Ülke eklendiğinde, o ülkenin en popüler 10-30 turistik yeri otomatik olarak listenize eklenecektir.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Places List Header -->
-                <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <!-- User Info (hidden by default) -->
+            <div id="userInfo" class="user-info" style="display: none;">
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <img id="userAvatar" class="user-avatar" src="" alt="User Avatar">
                     <div>
-                        <h2 class="text-2xl font-semibold text-gray-700">Gidilecek Yerler</h2>
-                        <p class="text-sm text-gray-500">Rota oluşturmak için yerleri tıklayın</p>
-                    </div>
-                    <div class="filter-container">
-                        <div>
-                            <label for="filterCountry" class="mr-2 text-gray-600">Ülke:</label>
-                            <select id="filterCountry" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
-                                <option value="all">Tüm Ülkeler</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="filterVisited" class="mr-2 text-gray-600">Durum:</label>
-                            <select id="filterVisited" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500">
-                                <option value="all">Tümü</option>
-                                <option value="notvisited" selected>Gezilmedi</option>
-                                <option value="visited">Gezildi</option>
-                            </select>
-                        </div>
+                        <div id="userName" style="font-weight: 600; font-size: 16px;"></div>
+                        <div id="userEmail" style="color: #626976; font-size: 14px;"></div>
                     </div>
                 </div>
-
-                <!-- Route Generation -->
-                <div class="mb-4">
-                    <button id="generateRouteBtn" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-md shadow-md disabled:opacity-50 transition-colors duration-200" disabled>
-                        Seçili Yerlerle Rota Oluştur
-                    </button>
-                </div>
-                <div id="routeLinkContainer" class="mb-4 text-sm"></div>
-
-                <!-- Places List -->
-                <div id="placesList" class="space-y-2 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
-                    <p id="placesListStatus" class="text-gray-500 italic p-4 text-center">Yerleri görmek için lütfen giriş yapın...</p>
-                </div>
+                <div id="userId" style="font-size: 12px; color: #626976; margin-bottom: 15px;"></div>
+                <button id="logoutBtn" class="logout-btn">Çıkış Yap</button>
             </div>
+            
+            <!-- Status Messages -->
+            <div id="statusMessage"></div>
         </div>
     </div>
 
-    <!-- Toast Container -->
-    <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2 pointer-events-none"></div>
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Firebase imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-    <!-- Scripts -->
-    <script src="js/config.js"></script>
-    <script src="js/language-manager.js"></script>
-    <script src="js/pexels-service.js"></script>
-    <script src="js/country-place-service.js"></script>
-    <script src="js/app-complete.js"></script>
->>>>>>> parent of 19e146e (Initial commit)
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB6bIJOkooeRSKWtb09zdNmMIjHDbXCzYA",
+            authDomain: "rotambenim.firebaseapp.com",
+            projectId: "rotambenim",
+            storageBucket: "rotambenim.firebasestorage.app",
+            messagingSenderId: "374285362920",
+            appId: "1:374285362920:web:b4058cf4a93e7337168b5d",
+            measurementId: "G-0QVZ4LDYPJ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const analytics = getAnalytics(app);
+
+        // DOM elements
+        const googleSignInBtn = document.getElementById('googleSignInBtn');
+        const userInfo = document.getElementById('userInfo');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
+        const userId = document.getElementById('userId');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const statusMessage = document.getElementById('statusMessage');
+
+        // Show status message
+        function showStatus(message, type = 'info') {
+            statusMessage.innerHTML = `<div class="status-${type}">${message}</div>`;
+            setTimeout(() => {
+                statusMessage.innerHTML = '';
+            }, 5000);
+        }
+
+        // Handle Google Sign In
+        async function handleGoogleSignIn() {
+            try {
+                googleSignInBtn.disabled = true;
+                showStatus('Google ile giriş yapılıyor...', 'info');
+                
+                const provider = new GoogleAuthProvider();
+                const result = await signInWithPopup(auth, provider);
+                
+                console.log('Giriş başarılı:', result.user);
+                showStatus('Giriş başarılı!', 'success');
+                
+            } catch (error) {
+                console.error('Giriş hatası:', error);
+                
+                let errorMessage = 'Giriş yapılırken bir hata oluştu.';
+                if (error.code === 'auth/popup-closed-by-user') {
+                    errorMessage = 'Giriş iptal edildi.';
+                } else if (error.code === 'auth/network-request-failed') {
+                    errorMessage = 'Ağ hatası. İnternet bağlantınızı kontrol edin.';
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    errorMessage = 'Bu domain için giriş yetkisi yok. Firebase Console\'da domain\'i ekleyin.';
+                }
+                
+                showStatus(errorMessage, 'error');
+                googleSignInBtn.disabled = false;
+            }
+        }
+
+        // Handle Sign Out
+        async function handleSignOut() {
+            try {
+                await signOut(auth);
+                console.log('Çıkış başarılı');
+                showStatus('Çıkış yapıldı.', 'success');
+            } catch (error) {
+                console.error('Çıkış hatası:', error);
+                showStatus('Çıkış yapılırken hata oluştu.', 'error');
+            }
+        }
+
+        // Update UI based on auth state
+        function updateUI(user) {
+            if (user) {
+                // User is signed in
+                googleSignInBtn.style.display = 'none';
+                userInfo.style.display = 'block';
+                
+                userName.textContent = user.displayName || 'Kullanıcı';
+                userEmail.textContent = user.email || '';
+                userId.textContent = `ID: ${user.uid}`;
+                
+                if (user.photoURL) {
+                    userAvatar.src = user.photoURL;
+                } else {
+                    userAvatar.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjUiIGN5PSIyNSIgcj0iMjUiIGZpbGw9IiM2MjY5NzYiLz4KPHN2ZyB4PSIxMiIgeT0iMTIiIHdpZHRoPSIyNiIgaGVpZ2h0PSIyNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAxMmMyLjIxIDAgNC0xLjc5IDQtNHMtMS43OS00LTQtNC00IDEuNzktNCA0IDEuNzkgNCA0IDR6bTAgMmMtMi42NyAwLTggMS4zNC04IDR2MmgxNnYtMmMwLTIuNjYtNS4zMy00LTgtNHoiLz4KPC9zdmc+Cjwvc3ZnPgo=';
+                }
+                
+            } else {
+                // User is signed out
+                googleSignInBtn.style.display = 'flex';
+                userInfo.style.display = 'none';
+                googleSignInBtn.disabled = false;
+            }
+        }
+
+        // Auth state listener
+        onAuthStateChanged(auth, (user) => {
+            console.log('Auth state changed:', user ? 'User signed in' : 'User signed out');
+            updateUI(user);
+        });
+
+        // Event listeners
+        googleSignInBtn.addEventListener('click', handleGoogleSignIn);
+        logoutBtn.addEventListener('click', handleSignOut);
+
+        // Initialize
+        console.log('Firebase initialized successfully');
+        showStatus('Uygulama hazır. Giriş yapabilirsiniz.', 'info');
+    </script>
 </body>
-</html>
+</html> 
