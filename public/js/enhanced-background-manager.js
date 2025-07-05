@@ -321,21 +321,18 @@ class EnhancedBackgroundManager {
      */
     async updateBackgroundForCountry(country) {
         const normalizedCountry = this.normalizeCountryName(country);
-        
+
         if (this.currentCountry === normalizedCountry) return;
-        
+
         this.currentCountry = normalizedCountry;
-        
-        // Update current section background
-        const currentSection = document.querySelector('.section.active');
-        if (currentSection) {
-            const bgElement = currentSection.querySelector('.bg-overlay');
-            if (bgElement) {
-                if (this.backgrounds.has(normalizedCountry)) {
-                    this.setElementBackground(bgElement, this.backgrounds.get(normalizedCountry));
-                } else {
-                    await this.fetchBackgroundFromPexels(normalizedCountry);
-                }
+
+        // Tüm sayfa için arka planı uygula
+        const bgElement = document.querySelector('.bg-overlay');
+        if (bgElement) {
+            if (this.backgrounds.has(normalizedCountry)) {
+                this.setElementBackground(bgElement, this.backgrounds.get(normalizedCountry));
+            } else {
+                await this.fetchBackgroundFromPexels(normalizedCountry);
             }
         }
     }
