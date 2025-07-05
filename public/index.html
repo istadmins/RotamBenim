@@ -217,6 +217,10 @@
         .login-card, #filters {
             overflow: visible !important;
         }
+        .table td.name {
+            white-space: normal !important;
+            word-break: break-word;
+        }
     </style>
 </head>
 <body>
@@ -857,7 +861,7 @@
             const row = document.createElement('tr');
             const categoryHtml = (data.category || '').replace(/\s*\/\s*/g, '<br>');
             row.innerHTML = `
-              <td>${data.name || ''}</td>
+              <td class="name">${data.name || ''}</td>
               <td>${data.city || ''}</td>
               <td>${categoryHtml}</td>
               <td class="description">${data.description || ''}</td>
