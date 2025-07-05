@@ -438,13 +438,8 @@
           // Foursquare'den popüler mekanları çek
           let fsqResults = [];
           try {
-            const url = `https://api.foursquare.com/v3/places/search?query=${encodeURIComponent(query)}&limit=10&fields=fsq_id,name,location,categories,description`;
-            const resp = await fetch(url, {
-              headers: {
-                'Accept': 'application/json',
-                'Authorization': FOURSQUARE_API_KEY
-              }
-            });
+            const url = `https://us-central1-rotambenim.cloudfunctions.net/foursquare?query=${encodeURIComponent(query)}`;
+            const resp = await fetch(url);
             const data = await resp.json();
             if (data.results) {
               fsqResults = data.results.map(item => ({
