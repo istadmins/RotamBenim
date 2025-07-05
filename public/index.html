@@ -437,6 +437,7 @@
             const url = `https://us-central1-rotambenim.cloudfunctions.net/foursquare?query=${encodeURIComponent(query)}`;
             const resp = await fetch(url);
             const data = await resp.json();
+            console.log('Foursquare API yanıtı:', data); // Debug için eklendi
             if (data.results) {
               fsqResults = data.results.map(item => ({
                 label: item.name,
