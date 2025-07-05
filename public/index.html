@@ -11,6 +11,9 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Tabler Autocomplete JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/tabler.min.js"></script>
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -242,9 +245,8 @@
                 <option value="notvisited" selected>Gezilmedi</option>
               </select>
               <label for="searchBox">Yeni Yer:</label>
-              <input id="searchBox" type="text" placeholder="Yeni yer adı..." style="min-width: 180px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;" autocomplete="off" />
+              <input id="searchBox" class="form-control" type="text" placeholder="Yeni yer adı..." data-autocomplete="true" style="min-width: 180px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;" autocomplete="off" />
               <button id="addPlaceBtn" style="padding: 6px 18px; border-radius: 6px; border: none; background: #206bc4; color: white; font-weight: 500; cursor: pointer;">Ekle</button>
-              <div id="suggestions" style="position:absolute; left:0; top:100%; width:350px; z-index:9999; margin-top:0; margin-bottom:10px;"></div>
             </div>
             
             <!-- Gezilecek Yerler Tablosu -->
@@ -308,7 +310,6 @@
         const placesTableBody = document.querySelector('#placesTable tbody');
         const addPlaceBtn = document.getElementById('addPlaceBtn');
         const searchBox = document.getElementById('searchBox');
-        const suggestions = document.getElementById('suggestions');
         let suggestionResults = [];
         const GEONAMES_USERNAME = "b.alacam";
 
@@ -396,98 +397,79 @@
         googleSignInBtn.addEventListener('click', handleGoogleSignIn);
         logoutBtn.addEventListener('click', handleSignOut);
        
-        // Textboxa yazıldıkça Wikipedia'dan öneri getir
-        searchBox.addEventListener('input', async () => {
-          const query = searchBox.value.trim();
-          suggestions.innerHTML = '';
-          suggestionResults = [];
-          addPlaceBtn.disabled = !query;
-          if (!query) return;
-
-          // 1. Wikipedia'dan çek
-          let wikiResults = [];
+        // Tabler Autocomplete ile öneri getir
+        import Autocomplete from "https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/autocomplete.esm.js";
+        const autocomplete = new Autocomplete(searchBox, {
+          source: async (query) => {
+            if (!query) return [];
+            // 1. Wikipedia'dan çek
+            let wikiResults = [];
+            try {
+              const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
+              const resp = await fetch(url);
+              const data = await resp.json();
+              if (data.query && data.query.search) {
+                wikiResults = data.query.search.map(item => ({
+                  label: item.title,
+                  value: item.title,
+                  description: item.snippet.replace(/<[^>]+>/g, ''),
+                  source: 'wikipedia'
+                }));
+              }
+            } catch {}
+            // 2. Geonames'den çek
+            let geoResults = [];
+            try {
+              const geoUrl = `https://secure.geonames.org/searchJSON?q=${encodeURIComponent(query)}&maxRows=10&username=${GEONAMES_USERNAME}`;
+              const geoResp = await fetch(geoUrl);
+              const geoData = await geoResp.json();
+              if (geoData.geonames) {
+                geoResults = geoData.geonames.map(g => ({
+                  label: g.name,
+                  value: g.name,
+                  description: `${g.countryName || ''} ${g.fcodeName || ''}`,
+                  source: 'geonames'
+                }));
+              }
+            } catch {}
+            // Sonuçları birleştir, tekrarları ayıkla
+            const allResults = [...wikiResults, ...geoResults].filter((v, i, a) =>
+              a.findIndex(t => t.value === v.value) === i
+            );
+            return allResults;
+          },
+          render: (item) => {
+            return `<div><b>${item.label}</b><br><span style='font-size:12px;color:#666;'>${item.description || ''}</span></div>`;
+          },
+        });
+        // Seçim veya enter ile ekle
+        searchBox.addEventListener('autocomplete.select', async (e) => {
+          const user = auth.currentUser;
+          if (!user) {
+            showStatus('Giriş yapmadan yer ekleyemezsiniz.', 'error');
+            return;
+          }
+          const item = e.detail;
+          addPlaceBtn.disabled = true;
           try {
-            const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
-            const resp = await fetch(url);
-            const data = await resp.json();
-            if (data.query && data.query.search) {
-              // Filtreyi kaldırdık, tüm sonuçları gösteriyoruz
-              wikiResults = data.query.search;
-            }
-          } catch {}
-
-          // 2. Geonames'den çek
-          let geoResults = [];
-          try {
-            const geoUrl = `https://secure.geonames.org/searchJSON?q=${encodeURIComponent(query)}&maxRows=10&username=${GEONAMES_USERNAME}`;
-            const geoResp = await fetch(geoUrl);
-            const geoData = await geoResp.json();
-            if (geoData.geonames) {
-              geoResults = geoData.geonames.map(g => ({
-                title: g.name,
-                snippet: `${g.countryName || ''} ${g.fcodeName || ''}`,
-              }));
-            }
-          } catch {}
-
-          // 3. Sonuçları birleştir, tekrarları ayıkla
-          const allResults = [...wikiResults, ...geoResults].filter((v, i, a) =>
-            a.findIndex(t => t.title === v.title) === i
-          );
-          console.log('allResults:', allResults); // Debug için eklendi
-
-          // 4. Listele
-          if (allResults.length > 0) {
-            const list = document.createElement('ul');
-            list.style.background = '#fff';
-            list.style.border = '1px solid #ccc';
-            list.style.borderRadius = '6px';
-            list.style.margin = '4px 0 0 0';
-            list.style.padding = '0';
-            list.style.listStyle = 'none';
-            list.style.position = 'absolute';
-            list.style.width = searchBox.offsetWidth + 'px';
-            list.style.maxHeight = '220px';
-            list.style.overflowY = 'auto';
-            allResults.forEach(item => {
-              const li = document.createElement('li');
-              li.style.padding = '8px 12px';
-              li.style.cursor = 'pointer';
-              li.style.borderBottom = '1px solid #eee';
-              li.innerHTML = `<b>${item.title}</b><br><span style='font-size:12px;color:#666;'>${item.snippet.replace(/<[^>]+>/g, '')}</span>`;
-              li.addEventListener('click', async () => {
-                // Seçilen öneriyi ekle
-                const user = auth.currentUser;
-                if (!user) {
-                  showStatus('Giriş yapmadan yer ekleyemezsiniz.', 'error');
-                  return;
-                }
-                addPlaceBtn.disabled = true;
-                try {
-                  await addDoc(collection(db, `users/${user.uid}/places`), {
-                    name: item.title,
-                    city: '',
-                    country: countryFilter.value || '',
-                    category: '',
-                    description: item.snippet.replace(/<[^>]+>/g, ''),
-                    visited: false
-                  });
-                  showStatus('Yeni yer eklendi!', 'success');
-                  searchBox.value = '';
-                  suggestions.innerHTML = '';
-                  addPlaceBtn.disabled = false;
-                  loadPlacesTable(user);
-                } catch (err) {
-                  showStatus('Yer eklenirken hata: ' + err.message, 'error');
-                  addPlaceBtn.disabled = false;
-                }
-              });
-              list.appendChild(li);
+            await addDoc(collection(db, `users/${user.uid}/places`), {
+              name: item.value,
+              city: '',
+              country: countryFilter.value || '',
+              category: '',
+              description: item.description || '',
+              visited: false
             });
-            suggestions.appendChild(list);
+            showStatus('Yeni yer eklendi!', 'success');
+            searchBox.value = '';
+            addPlaceBtn.disabled = false;
+            loadPlacesTable(user);
+          } catch (err) {
+            showStatus('Yer eklenirken hata: ' + err.message, 'error');
+            addPlaceBtn.disabled = false;
           }
         });
-        // Ekle butonu sadece textbox boşsa çalışacak
+        // Serbest yazıp Ekle butonuna basınca ekle
         addPlaceBtn.addEventListener('click', async () => {
           const user = auth.currentUser;
           if (!user) {
