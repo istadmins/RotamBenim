@@ -298,6 +298,7 @@ class EnhancedBackgroundManager {
      * @param {string} imageUrl - Image URL
      */
     setElementBackground(element, imageUrl) {
+        console.log('[setElementBackground] element:', element, 'imageUrl:', imageUrl);
         if (!element) return;
 
         // Create a new image element to ensure it's loaded
@@ -321,17 +322,17 @@ class EnhancedBackgroundManager {
      */
     async updateBackgroundForCountry(country) {
         const normalizedCountry = this.normalizeCountryName(country);
-
+        console.log('[updateBackgroundForCountry] country:', country, 'normalized:', normalizedCountry);
         if (this.currentCountry === normalizedCountry) return;
-
         this.currentCountry = normalizedCountry;
-
-        // Tüm sayfa için arka planı uygula
         const bgElement = document.querySelector('.bg-overlay');
+        console.log('[updateBackgroundForCountry] bgElement:', bgElement);
         if (bgElement) {
             if (this.backgrounds.has(normalizedCountry)) {
+                console.log('[updateBackgroundForCountry] Using cached background:', this.backgrounds.get(normalizedCountry));
                 this.setElementBackground(bgElement, this.backgrounds.get(normalizedCountry));
             } else {
+                console.log('[updateBackgroundForCountry] Fetching new background for:', normalizedCountry);
                 await this.fetchBackgroundFromPexels(normalizedCountry);
             }
         }
