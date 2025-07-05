@@ -245,6 +245,10 @@
                         <div id="userEmail" style="color: #626976; font-size: 14px;"></div>
                     </div>
                 </div>
+                <div style="margin-bottom: 15px;">
+                    <button id="loadPopularBtn" class="btn btn-primary btn-sm" style="margin-right: 10px;">Popüler Yerleri Yükle</button>
+                    <button id="fillDescriptionsBtn" class="btn btn-secondary btn-sm">Açıklamaları Doldur</button>
+                </div>
                 <button id="logoutBtn" class="logout-btn">Çıkış Yap</button>
             </div>
             
@@ -404,15 +408,64 @@
         }
 
         // Auth state listener
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             console.log('Auth state changed:', user ? 'User signed in' : 'User signed out');
             updateUI(user);
+            
+            if (user) {
+                // Kullanıcının yerlerini kontrol et
+                const userPlacesRef = collection(db, `users/${user.uid}/places`);
+                const snapshot = await getDocs(userPlacesRef);
+                
+                if (snapshot.empty) {
+                    // Yeni kullanıcı - popüler yerleri yükle
+                    showStatus('Yeni kullanıcı için popüler yerler yükleniyor...', 'info');
+                    await loadPopularPlacesForNewUser(user);
+                } else {
+                    // Mevcut kullanıcı - eksik açıklamaları doldur
+                    showStatus('Eksik açıklamalar kontrol ediliyor...', 'info');
+                    await fillMissingDescriptions(user);
+                }
+            }
+            
             loadPlacesTable(user);
         });
 
         // Event listeners
         googleSignInBtn.addEventListener('click', handleGoogleSignIn);
         logoutBtn.addEventListener('click', handleSignOut);
+        
+        // Manuel butonlar için event listener'lar
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadPopularBtn = document.getElementById('loadPopularBtn');
+            const fillDescriptionsBtn = document.getElementById('fillDescriptionsBtn');
+            
+            if (loadPopularBtn) {
+                loadPopularBtn.addEventListener('click', async () => {
+                    const user = auth.currentUser;
+                    if (!user) {
+                        showStatus('Önce giriş yapmalısınız.', 'error');
+                        return;
+                    }
+                    showStatus('Popüler yerler yükleniyor...', 'info');
+                    await loadPopularPlacesForNewUser(user);
+                    loadPlacesTable(user);
+                });
+            }
+            
+            if (fillDescriptionsBtn) {
+                fillDescriptionsBtn.addEventListener('click', async () => {
+                    const user = auth.currentUser;
+                    if (!user) {
+                        showStatus('Önce giriş yapmalısınız.', 'error');
+                        return;
+                    }
+                    showStatus('Açıklamalar dolduruluyor...', 'info');
+                    await fillMissingDescriptions(user);
+                    loadPlacesTable(user);
+                });
+            }
+        });
        
         // Awesomplete ile öneri getir
         const awesomplete = new Awesomplete(searchBox, {
@@ -518,6 +571,105 @@
         // Initialize
         console.log('Firebase initialized successfully');
         showStatus('Uygulama hazır. Giriş yapabilirsiniz.', 'info');
+
+        // Popüler yerler JSON'ını yükle ve işle
+        async function loadPopularPlaces() {
+          try {
+            const response = await fetch('/popular-places.json');
+            const popularPlaces = await response.json();
+            return popularPlaces;
+          } catch (error) {
+            console.error('Popüler yerler yüklenemedi:', error);
+            return [];
+          }
+        }
+
+        // Yeni kullanıcı için popüler yerleri yükle
+        async function loadPopularPlacesForNewUser(user) {
+          try {
+            const popularPlaces = await loadPopularPlaces();
+            const userPlacesRef = collection(db, `users/${user.uid}/places`);
+            
+            // Kullanıcının mevcut yerlerini kontrol et
+            const existingSnapshot = await getDocs(userPlacesRef);
+            const existingPlaces = new Set();
+            existingSnapshot.forEach(doc => {
+              const data = doc.data();
+              existingPlaces.add(`${data.name}-${data.country}`);
+            });
+
+            // Popüler yerleri ekle (eğer yoksa)
+            let addedCount = 0;
+            for (const place of popularPlaces) {
+              const placeKey = `${place.name_tr}-${place.country_tr}`;
+              if (!existingPlaces.has(placeKey)) {
+                await addDoc(userPlacesRef, {
+                  name: place.name_tr,
+                  city: place.city_tr,
+                  country: place.country_tr,
+                  category: place.category_tr,
+                  description: place.description_tr,
+                  visited: false,
+                  name_en: place.name_en,
+                  city_en: place.city_en,
+                  country_en: place.country_en,
+                  category_en: place.category_en,
+                  description_en: place.description_en
+                });
+                addedCount++;
+              }
+            }
+            
+            if (addedCount > 0) {
+              showStatus(`${addedCount} popüler yer eklendi!`, 'success');
+            }
+          } catch (error) {
+            console.error('Popüler yerler yüklenirken hata:', error);
+            showStatus('Popüler yerler yüklenirken hata oluştu.', 'error');
+          }
+        }
+
+        // Mevcut kullanıcı için eksik açıklamaları doldur
+        async function fillMissingDescriptions(user) {
+          try {
+            const popularPlaces = await loadPopularPlaces();
+            const userPlacesRef = collection(db, `users/${user.uid}/places`);
+            const snapshot = await getDocs(userPlacesRef);
+            
+            let updatedCount = 0;
+            const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+            
+            snapshot.forEach(async (docSnapshot) => {
+              const data = docSnapshot.data();
+              // Açıklama eksikse popüler yerlerden bul
+              if (!data.description || data.description.trim() === '') {
+                const matchingPlace = popularPlaces.find(place => 
+                  place.name_tr === data.name && place.country_tr === data.country
+                );
+                
+                if (matchingPlace) {
+                  const docRef = doc(db, `users/${user.uid}/places`, docSnapshot.id);
+                  await updateDoc(docRef, {
+                    description: matchingPlace.description_tr,
+                    name_en: matchingPlace.name_en,
+                    city_en: matchingPlace.city_en,
+                    country_en: matchingPlace.country_en,
+                    category_en: matchingPlace.category_en,
+                    description_en: matchingPlace.description_en
+                  });
+                  updatedCount++;
+                }
+              }
+            });
+            
+            if (updatedCount > 0) {
+              showStatus(`${updatedCount} yerin açıklaması güncellendi!`, 'success');
+            }
+          } catch (error) {
+            console.error('Açıklamalar doldurulurken hata:', error);
+            showStatus('Açıklamalar doldurulurken hata oluştu.', 'error');
+          }
+        }
 
         async function loadPlacesTable(user) {
           if (!user) {
