@@ -245,10 +245,6 @@
                         <div id="userEmail" style="color: #626976; font-size: 14px;"></div>
                     </div>
                 </div>
-                <div style="margin-bottom: 15px;">
-                    <button id="loadPopularBtn" class="btn btn-primary btn-sm" style="margin-right: 10px;">Popüler Yerleri Yükle</button>
-                    <button id="fillDescriptionsBtn" class="btn btn-secondary btn-sm">Ülkeleri Birleştir & Açıklamaları Doldur</button>
-                </div>
                 <button id="logoutBtn" class="logout-btn">Çıkış Yap</button>
             </div>
             
@@ -476,38 +472,6 @@
         googleSignInBtn.addEventListener('click', handleGoogleSignIn);
         logoutBtn.addEventListener('click', handleSignOut);
         
-        // Manuel butonlar için event listener'lar
-        document.addEventListener('DOMContentLoaded', () => {
-            const loadPopularBtn = document.getElementById('loadPopularBtn');
-            const fillDescriptionsBtn = document.getElementById('fillDescriptionsBtn');
-            
-            if (loadPopularBtn) {
-                loadPopularBtn.addEventListener('click', async () => {
-                    const user = auth.currentUser;
-                    if (!user) {
-                        showStatus('Önce giriş yapmalısınız.', 'error');
-                        return;
-                    }
-                    showStatus('Popüler yerler yükleniyor...', 'info');
-                    await loadPopularPlacesForNewUser(user);
-                    loadPlacesTable(user);
-                });
-            }
-            
-            if (fillDescriptionsBtn) {
-                fillDescriptionsBtn.addEventListener('click', async () => {
-                    const user = auth.currentUser;
-                    if (!user) {
-                        showStatus('Önce giriş yapmalısınız.', 'error');
-                        return;
-                    }
-                    showStatus('Açıklamalar dolduruluyor...', 'info');
-                    await mergeCountriesAndAddMissingPlaces(user);
-                    loadPlacesTable(user);
-                });
-            }
-        });
-       
         // Awesomplete ile öneri getir
         const awesomplete = new Awesomplete(searchBox, {
           minChars: 2,
@@ -872,7 +836,7 @@
           // Varsayılan ülke: ALMANYA
           if (!countryFilter.value) countryFilter.value = 'ALMANYA';
           // Varsayılan ziyaret filtresi: Gezilmedi
-          visitedFilter.value = 'notvisited';
+          if (!visitedFilter.value) visitedFilter.value = 'notvisited';
 
           // Filtreye göre verileri süz
           let filtered = [];
