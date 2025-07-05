@@ -413,19 +413,60 @@
             updateUI(user);
             
             if (user) {
-                // Kullanıcının yerlerini kontrol et
+                // Tüm popüler yerleri ve ülkeleri topla
+                const allPopularPlaces = await getAllPopularPlaces();
+                const allCountryCodes = await getAllPopularCountryCodes();
+                // Kullanıcının mevcut yerlerini çek
                 const userPlacesRef = collection(db, `users/${user.uid}/places`);
                 const snapshot = await getDocs(userPlacesRef);
-                
-                if (snapshot.empty) {
-                    // Yeni kullanıcı - popüler yerleri yükle
-                    showStatus('Yeni kullanıcı için popüler yerler yükleniyor...', 'info');
-                    await loadPopularPlacesForNewUser(user);
-                } else {
-                    // Mevcut kullanıcı - eksik açıklamaları doldur
-                    showStatus('Eksik açıklamalar kontrol ediliyor...', 'info');
-                    await mergeCountriesAndAddMissingPlaces(user);
+                const existingPlaces = new Map();
+                snapshot.forEach(doc => {
+                    const d = doc.data();
+                    const key = `${(d.country || '').toUpperCase()}|||${(d.name || '').trim()}`;
+                    existingPlaces.set(key, { ...d, docId: doc.id });
+                });
+                // Eksik popüler yerleri ekle
+                let addedCount = 0;
+                for (const p of allPopularPlaces) {
+                    const country = (p.country_tr || p.country_en || '').toUpperCase();
+                    const name = p.name_tr;
+                    const key = `${country}|||${name}`;
+                    if (!existingPlaces.has(key)) {
+                        await addDoc(userPlacesRef, filterUndefinedFields({
+                            name: p.name_tr,
+                            city: p.city_tr,
+                            country: p.country_tr ? p.country_tr.toUpperCase() : undefined,
+                            category: p.category_tr,
+                            description: p.description_tr,
+                            visited: false,
+                            name_en: p.name_en,
+                            city_en: p.city_en,
+                            country_en: p.country_en ? p.country_en.toUpperCase() : undefined,
+                            category_en: p.category_en,
+                            description_en: p.description_en
+                        }));
+                        addedCount++;
+                    } else {
+                        // Açıklama eksikse güncelle
+                        const place = existingPlaces.get(key);
+                        if (!place.description || place.description.trim() === '') {
+                            const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+                            const docRef = doc(db, `users/${user.uid}/places`, place.docId);
+                            await updateDoc(docRef, filterUndefinedFields({
+                                description: p.description_tr,
+                                name_en: p.name_en,
+                                city_en: p.city_en,
+                                country_en: p.country_en ? p.country_en.toUpperCase() : undefined,
+                                category_en: p.category_en,
+                                description_en: p.description_en
+                            }));
+                        }
+                    }
                 }
+                if (addedCount > 0) showStatus(`${addedCount} yeni popüler yer otomatik eklendi!`, 'success');
+                else showStatus('Tüm popüler yerler zaten mevcut.', 'info');
+                // Ülke dropdown'ını güncelle
+                await updateCountryDropdown(user, allCountryCodes);
             }
             
             loadPlacesTable(user);
@@ -915,6 +956,65 @@
             });
           }
         });
+
+        // Tüm popüler ülke JSON dosyalarını otomatik bul ve oku
+        async function getAllPopularCountryFiles() {
+          // public/json/popular-*.json dosyalarını bulmak için bir endpoint veya sabit liste gerekir
+          // Burada sabit bir listeyle ilerliyoruz (daha sonra dinamik yapılabilir)
+          const countryFiles = [
+            'popular-germany.json', 'popular-france.json', 'popular-italy.json', 'popular-spain.json', 'popular-netherlands.json',
+            'popular-switzerland.json', 'popular-belgium.json', 'popular-austria.json', 'popular-poland.json', 'popular-czech-republic.json',
+            'popular-hungary.json', 'popular-romania.json', 'popular-greece.json', 'popular-portugal.json', 'popular-croatia.json',
+            'popular-slovenia.json', 'popular-bulgaria.json', 'popular-slovakia.json', 'popular-estonia.json', 'popular-latvia.json',
+            'popular-lithuania.json', 'popular-south-korea.json', 'popular-japan.json', 'popular-turkey.json', 'popular-uk.json', 'popular-ireland.json'
+          ];
+          const base = '/json/';
+          const all = [];
+          for (const file of countryFiles) {
+            try {
+              const resp = await fetch(base + file);
+              if (resp.ok) {
+                const arr = await resp.json();
+                all.push({ file, arr });
+              }
+            } catch {}
+          }
+          return all;
+        }
+
+        // Tüm ülkelerin kodlarını ve isimlerini döndür
+        async function getAllPopularCountryCodes() {
+          const all = await getAllPopularCountryFiles();
+          const codes = new Set();
+          all.forEach(({ arr }) => {
+            arr.forEach(p => {
+              if (p.country_tr) codes.add(p.country_tr.toUpperCase());
+              if (p.country_en) codes.add(p.country_en.toUpperCase());
+            });
+          });
+          return Array.from(codes).sort();
+        }
+
+        // Tüm popüler yerleri tek dizi olarak döndür
+        async function getAllPopularPlaces() {
+          const all = await getAllPopularCountryFiles();
+          return all.flatMap(({ arr }) => arr);
+        }
+
+        // Ülke dropdown'ını tüm popüler ülkelerle güncelle
+        async function updateCountryDropdown(user, allCountryCodes) {
+          const countryFilter = document.getElementById('countryFilter');
+          if (!countryFilter) return;
+          countryFilter.innerHTML = '';
+          allCountryCodes.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c;
+            opt.textContent = c;
+            countryFilter.appendChild(opt);
+          });
+          // Kullanıcının mevcut ülkesini koru
+          if (!countryFilter.value) countryFilter.value = 'ALMANYA';
+        }
     </script>
 </body>
 
