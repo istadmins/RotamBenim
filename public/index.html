@@ -224,6 +224,7 @@
     </style>
 </head>
 <body>
+    <div class="bg-overlay" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;pointer-events:none;opacity:0.35;background-size:cover;background-position:center;transition:opacity 0.5s;"></div>
     <div class="login-container">
         <div class="login-card">
             <div class="login-logo">🌍 Rotam Benim</div>
@@ -917,6 +918,10 @@
             countryFilter.addEventListener('change', () => {
               const user = auth.currentUser;
               if (user) loadPlacesTable(user);
+              // Yeni: Arka planı güncelle
+              if (window.enhancedBackgroundManager) {
+                window.enhancedBackgroundManager.updateBackgroundForCountry(countryFilter.value);
+              }
             });
             visitedFilter.addEventListener('change', () => {
               const user = auth.currentUser;
