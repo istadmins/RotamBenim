@@ -34,6 +34,17 @@ setGlobalOptions({ maxInstances: 10 });
 const FOURSQUARE_API_KEY = "3Q3OWNWCV1AKBHZGFPZVO0HPMFHHXJTWBAHFY2IYBGOWWKB5";
 
 exports.foursquare = functions.https.onRequest(async (req, res) => {
+  // CORS header ekle
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Preflight (OPTIONS) isteğine hemen cevap ver
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    return;
+  }
+
   const query = req.query.query;
   if (!query) return res.status(400).json({ error: "query param required" });
   try {
