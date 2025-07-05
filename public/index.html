@@ -247,7 +247,7 @@
                 </div>
                 <div style="margin-bottom: 15px;">
                     <button id="loadPopularBtn" class="btn btn-primary btn-sm" style="margin-right: 10px;">Popüler Yerleri Yükle</button>
-                    <button id="fillDescriptionsBtn" class="btn btn-secondary btn-sm">Açıklamaları Doldur</button>
+                    <button id="fillDescriptionsBtn" class="btn btn-secondary btn-sm">Ülkeleri Birleştir & Açıklamaları Doldur</button>
                 </div>
                 <button id="logoutBtn" class="logout-btn">Çıkış Yap</button>
             </div>
@@ -424,7 +424,7 @@
                 } else {
                     // Mevcut kullanıcı - eksik açıklamaları doldur
                     showStatus('Eksik açıklamalar kontrol ediliyor...', 'info');
-                    await fillMissingDescriptions(user);
+                    await mergeCountriesAndAddMissingPlaces(user);
                 }
             }
             
@@ -461,7 +461,7 @@
                         return;
                     }
                     showStatus('Açıklamalar dolduruluyor...', 'info');
-                    await fillMissingDescriptions(user);
+                    await mergeCountriesAndAddMissingPlaces(user);
                     loadPlacesTable(user);
                 });
             }
@@ -553,7 +553,7 @@
             await addDoc(collection(db, `users/${user.uid}/places`), {
               name: item.value,
               city: '',
-              country: countryFilter.value || '',
+              country: (countryFilter.value || '').toUpperCase(),
               category: '',
               description: item.description || '',
               visited: false
@@ -595,24 +595,30 @@
             const existingPlaces = new Set();
             existingSnapshot.forEach(doc => {
               const data = doc.data();
+              // Hem Türkçe hem İngilizce isimleri kontrol et
               existingPlaces.add(`${data.name}-${data.country}`);
+              if (data.name_en) {
+                existingPlaces.add(`${data.name_en}-${data.country_en || data.country}`);
+              }
             });
 
             // Popüler yerleri ekle (eğer yoksa)
             let addedCount = 0;
             for (const place of popularPlaces) {
-              const placeKey = `${place.name_tr}-${place.country_tr}`;
-              if (!existingPlaces.has(placeKey)) {
+              const placeKeyTr = `${place.name_tr}-${place.country_tr.toUpperCase()}`;
+              const placeKeyEn = `${place.name_en}-${place.country_en.toUpperCase()}`;
+              
+              if (!existingPlaces.has(placeKeyTr) && !existingPlaces.has(placeKeyEn)) {
                 await addDoc(userPlacesRef, {
                   name: place.name_tr,
                   city: place.city_tr,
-                  country: place.country_tr,
+                  country: place.country_tr.toUpperCase(),
                   category: place.category_tr,
                   description: place.description_tr,
                   visited: false,
                   name_en: place.name_en,
                   city_en: place.city_en,
-                  country_en: place.country_en,
+                  country_en: place.country_en.toUpperCase(),
                   category_en: place.category_en,
                   description_en: place.description_en
                 });
@@ -622,10 +628,12 @@
             
             if (addedCount > 0) {
               showStatus(`${addedCount} popüler yer eklendi!`, 'success');
+            } else {
+              showStatus('Tüm popüler yerler zaten mevcut.', 'info');
             }
           } catch (error) {
             console.error('Popüler yerler yüklenirken hata:', error);
-            showStatus('Popüler yerler yüklenirken hata oluştu.', 'error');
+            showStatus('Popüler yerler yüklenirken hata oluştu: ' + error.message, 'error');
           }
         }
 
@@ -639,13 +647,22 @@
             let updatedCount = 0;
             const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
             
-            snapshot.forEach(async (docSnapshot) => {
+            for (const docSnapshot of snapshot.docs) {
               const data = docSnapshot.data();
               // Açıklama eksikse popüler yerlerden bul
               if (!data.description || data.description.trim() === '') {
-                const matchingPlace = popularPlaces.find(place => 
-                  place.name_tr === data.name && place.country_tr === data.country
+                // Hem Türkçe hem İngilizce isimlerle eşleştir
+                let matchingPlace = popularPlaces.find(place => 
+                  (place.name_tr === data.name && place.country_tr.toUpperCase() === data.country) ||
+                  (place.name_en === data.name && place.country_en.toUpperCase() === data.country)
                 );
+                
+                // Eğer bulunamazsa, sadece isimle eşleştir
+                if (!matchingPlace) {
+                  matchingPlace = popularPlaces.find(place => 
+                    place.name_tr === data.name || place.name_en === data.name
+                  );
+                }
                 
                 if (matchingPlace) {
                   const docRef = doc(db, `users/${user.uid}/places`, docSnapshot.id);
@@ -653,21 +670,170 @@
                     description: matchingPlace.description_tr,
                     name_en: matchingPlace.name_en,
                     city_en: matchingPlace.city_en,
-                    country_en: matchingPlace.country_en,
+                    country_en: matchingPlace.country_en.toUpperCase(),
                     category_en: matchingPlace.category_en,
                     description_en: matchingPlace.description_en
                   });
                   updatedCount++;
                 }
               }
-            });
+            }
             
             if (updatedCount > 0) {
               showStatus(`${updatedCount} yerin açıklaması güncellendi!`, 'success');
+            } else {
+              showStatus('Güncellenecek açıklama bulunamadı.', 'info');
             }
           } catch (error) {
             console.error('Açıklamalar doldurulurken hata:', error);
-            showStatus('Açıklamalar doldurulurken hata oluştu.', 'error');
+            showStatus('Açıklamalar doldurulurken hata oluştu: ' + error.message, 'error');
+          }
+        }
+
+        // Ülke kayıtlarını birleştir ve eksik yerleri ekle
+        async function mergeCountriesAndAddMissingPlaces(user) {
+          try {
+            const popularPlaces = await loadPopularPlaces();
+            const userPlacesRef = collection(db, `users/${user.uid}/places`);
+            const snapshot = await getDocs(userPlacesRef);
+            const { doc, updateDoc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+            
+            // Tüm yerleri ülkeye göre grupla
+            const placesByCountry = {};
+            const placesToDelete = [];
+            
+            snapshot.forEach(docSnapshot => {
+              const data = docSnapshot.data();
+              const country = data.country || 'BİLİNMEYEN';
+              
+              if (!placesByCountry[country]) {
+                placesByCountry[country] = [];
+              }
+              placesByCountry[country].push({ ...data, docId: docSnapshot.id });
+            });
+            
+            let mergedCount = 0;
+            let addedCount = 0;
+            let updatedCount = 0;
+            
+            // Her ülke için işlem yap
+            for (const [country, places] of Object.entries(placesByCountry)) {
+              if (places.length > 1) {
+                // Aynı ülke için birden fazla kayıt var - birleştir
+                const mainPlace = places[0]; // İlk kaydı ana kayıt yap
+                const otherPlaces = places.slice(1);
+                
+                // Diğer kayıtları sil
+                for (const place of otherPlaces) {
+                  placesToDelete.push(place.docId);
+                }
+                
+                // Ana kaydı güncelle - eksik bilgileri doldur
+                const popularPlacesForCountry = popularPlaces.filter(p => 
+                  p.country_tr.toUpperCase() === country || p.country_en.toUpperCase() === country
+                );
+                
+                // Eksik açıklamaları doldur
+                if (!mainPlace.description || mainPlace.description.trim() === '') {
+                  const matchingPlace = popularPlacesForCountry.find(p => 
+                    p.name_tr === mainPlace.name || p.name_en === mainPlace.name
+                  );
+                  
+                  if (matchingPlace) {
+                    const docRef = doc(db, `users/${user.uid}/places`, mainPlace.docId);
+                    await updateDoc(docRef, {
+                      description: matchingPlace.description_tr,
+                      name_en: matchingPlace.name_en,
+                      city_en: matchingPlace.city_en,
+                      country_en: matchingPlace.country_en.toUpperCase(),
+                      category_en: matchingPlace.category_en,
+                      description_en: matchingPlace.description_en
+                    });
+                    updatedCount++;
+                  }
+                }
+                
+                mergedCount++;
+              } else {
+                // Tek kayıt var - sadece açıklama kontrolü yap
+                const place = places[0];
+                if (!place.description || place.description.trim() === '') {
+                  const popularPlacesForCountry = popularPlaces.filter(p => 
+                    p.country_tr.toUpperCase() === country || p.country_en.toUpperCase() === country
+                  );
+                  
+                  const matchingPlace = popularPlacesForCountry.find(p => 
+                    p.name_tr === place.name || p.name_en === place.name
+                  );
+                  
+                  if (matchingPlace) {
+                    const docRef = doc(db, `users/${user.uid}/places`, place.docId);
+                    await updateDoc(docRef, {
+                      description: matchingPlace.description_tr,
+                      name_en: matchingPlace.name_en,
+                      city_en: matchingPlace.city_en,
+                      country_en: matchingPlace.country_en.toUpperCase(),
+                      category_en: matchingPlace.category_en,
+                      description_en: matchingPlace.description_en
+                    });
+                    updatedCount++;
+                  }
+                }
+              }
+              
+              // Bu ülke için eksik popüler yerleri ekle
+              const popularPlacesForCountry = popularPlaces.filter(p => 
+                p.country_tr.toUpperCase() === country || p.country_en.toUpperCase() === country
+              );
+              
+              const existingPlaceNames = places.map(p => p.name);
+              const existingPlaceNamesEn = places.map(p => p.name_en).filter(Boolean);
+              
+              for (const popularPlace of popularPlacesForCountry) {
+                const isAlreadyExists = existingPlaceNames.includes(popularPlace.name_tr) || 
+                                      existingPlaceNamesEn.includes(popularPlace.name_en);
+                
+                if (!isAlreadyExists) {
+                  await addDoc(userPlacesRef, {
+                    name: popularPlace.name_tr,
+                    city: popularPlace.city_tr,
+                    country: popularPlace.country_tr.toUpperCase(),
+                    category: popularPlace.category_tr,
+                    description: popularPlace.description_tr,
+                    visited: false,
+                    name_en: popularPlace.name_en,
+                    city_en: popularPlace.city_en,
+                    country_en: popularPlace.country_en.toUpperCase(),
+                    category_en: popularPlace.category_en,
+                    description_en: popularPlace.description_en
+                  });
+                  addedCount++;
+                }
+              }
+            }
+            
+            // Silinecek kayıtları sil
+            for (const docId of placesToDelete) {
+              const docRef = doc(db, `users/${user.uid}/places`, docId);
+              await deleteDoc(docRef);
+            }
+            
+            // Sonuç mesajı
+            let message = '';
+            if (mergedCount > 0) message += `${mergedCount} ülke birleştirildi. `;
+            if (addedCount > 0) message += `${addedCount} yeni yer eklendi. `;
+            if (updatedCount > 0) message += `${updatedCount} açıklama güncellendi. `;
+            if (placesToDelete.length > 0) message += `${placesToDelete.length} tekrar eden kayıt silindi. `;
+            
+            if (message) {
+              showStatus(message, 'success');
+            } else {
+              showStatus('Herhangi bir değişiklik yapılmadı.', 'info');
+            }
+            
+          } catch (error) {
+            console.error('Ülke birleştirme hatası:', error);
+            showStatus('Ülke birleştirme hatası: ' + error.message, 'error');
           }
         }
 
