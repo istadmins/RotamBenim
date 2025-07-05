@@ -206,6 +206,12 @@
             box-shadow: 0 4px 16px rgba(0,0,0,0.08);
             min-height: 0;
         }
+        .awesomplete {
+            z-index: 9999 !important;
+        }
+        .awesomplete > ul {
+            z-index: 9999 !important;
+        }
     </style>
 </head>
 <body>
@@ -435,7 +441,14 @@
             const resp = await fetch(url);
             const data = await resp.json();
             if (data.query && data.query.search) {
-              wikiResults = data.query.search.map(item => ({
+              // Sadece gezilecek yer anahtar kelimeleriyle filtrele
+              const keywords = [
+                "city", "town", "village", "park", "mountain", "lake", "museum", "site", "ruins", "castle", "beach", "island", "national park", "tourist attraction", "region", "province", "area", "district", "valley", "canyon", "bay", "forest", "desert", "archaeological", "ancient", "historic", "landmark"
+              ];
+              wikiResults = data.query.search.filter(item => {
+                const text = (item.title + ' ' + item.snippet).toLowerCase();
+                return keywords.some(kw => text.includes(kw));
+              }).map(item => ({
                 label: item.title,
                 value: item.title,
                 description: item.snippet.replace(/<[^>]+>/g, ''),
