@@ -431,27 +431,49 @@
             lastSuggestions = [];
             return;
           }
-          // Sadece Foursquare proxy fonksiyonunu kullan
-          let fsqResults = [];
+          // Wikipedia'dan çek
+          let wikiResults = [];
           try {
-            const url = `https://us-central1-rotambenim.cloudfunctions.net/foursquare?query=${encodeURIComponent(query)}`;
+            const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
             const resp = await fetch(url);
             const data = await resp.json();
-            console.log('Foursquare API yanıtı:', data); // Debug için eklendi
-            if (data.results) {
-              fsqResults = data.results.map(item => ({
-                label: item.name,
-                value: item.name,
-                description: (item.categories && item.categories.length > 0 ? item.categories[0].name + ' - ' : '') +
-                             (item.location && item.location.country ? item.location.country : '') +
-                             (item.description ? (' - ' + item.description) : ''),
-                country: item.location && item.location.country ? item.location.country : '',
-                source: 'foursquare'
+            if (data.query && data.query.search) {
+              // Sıkı filtre: sadece gezilecek yer anahtar kelimeleriyle filtrele
+              const keywords = [
+                "city", "town", "village", "park", "mountain", "lake", "museum", "site", "ruins", "castle", "beach", "island", "national park", "tourist attraction", "region", "province", "area", "district", "valley", "canyon", "bay", "forest", "desert", "archaeological", "ancient", "historic", "landmark", "monument", "temple", "cathedral", "mosque", "church", "palace", "bazaar", "market", "bridge", "tower", "garden", "zoo", "aquarium", "harbor", "canal", "square", "plaza", "avenue", "boulevard", "road", "street", "avenue", "hill", "peninsula", "cape", "fjord", "waterfall", "thermal", "spa", "resort", "cave", "gorge", "cliff", "archipelago", "reef", "lagoon", "reserve", "parkway", "route", "trail", "sanctuary", "shrine", "abbey", "fortress", "citadel", "basilica", "synagogue", "pagoda", "pagoda", "shrine", "observatory", "planetarium", "amphitheater", "arena", "stadium", "arena", "theater", "opera", "gallery", "exhibition", "museum", "library", "university", "college", "campus", "cemetery", "mausoleum", "tomb", "crypt", "memorial", "obelisk", "column", "statue", "sculpture", "fountain", "spring", "lake", "pond", "reservoir", "dam", "canal", "lock", "aqueduct", "viaduct", "causeway", "embankment", "jetty", "pier", "dock", "marina", "port", "wharf", "quay", "shipyard", "boatyard", "lighthouse", "windmill", "mill", "factory", "brewery", "winery", "distillery", "vineyard", "orchard", "farm", "ranch", "plantation", "garden", "arboretum", "botanical", "zoo", "aquarium", "aviary", "menagerie", "safari", "park", "reserve", "sanctuary", "refuge", "conservancy", "wilderness", "wildlife", "nature", "natural", "scenic", "viewpoint", "overlook", "panorama", "vista", "lookout", "observation", "deck", "platform", "tower", "hill", "mount", "mountain", "peak", "summit", "ridge", "range", "plateau", "mesa", "butte", "knob", "dome", "crag", "pinnacle", "spires", "needle", "spire", "rock", "boulder", "cliff", "bluff", "escarpment", "gorge", "ravine", "gulch", "canyon", "valley", "dale", "dell", "glen", "hollow", "notch", "pass", "gap", "col", "saddle", "divide", "watershed", "basin", "plain", "prairie", "steppe", "savanna", "meadow", "field", "pasture", "heath", "moor", "fen", "bog", "swamp", "marsh", "wetland", "delta", "estuary", "bayou", "inlet", "cove", "bight", "gulf", "bay", "sound", "strait", "channel", "passage", "fjord", "sea", "ocean", "coast", "shore", "beach", "bank", "bar", "reef", "atoll", "island", "isle", "islet", "key", "cay", "archipelago", "peninsula", "cape", "point", "head", "headland", "promontory", "spit", "hook", "tongue", "neck", "land", "landmark"
+              ];
+              wikiResults = data.query.search.filter(item => {
+                const text = (item.title + ' ' + item.snippet).toLowerCase();
+                return keywords.some(kw => text.includes(kw));
+              }).map(item => ({
+                label: item.title,
+                value: item.title,
+                description: item.snippet.replace(/<[^>]+>/g, ''),
+                source: 'wikipedia'
               }));
             }
           } catch {}
-          awesomplete.list = fsqResults;
-          lastSuggestions = fsqResults;
+          // Geonames'den çek
+          let geoResults = [];
+          try {
+            const geoUrl = `https://secure.geonames.org/searchJSON?q=${encodeURIComponent(query)}&maxRows=10&username=${GEONAMES_USERNAME}`;
+            const geoResp = await fetch(geoUrl);
+            const geoData = await geoResp.json();
+            if (geoData.geonames) {
+              geoResults = geoData.geonames.map(g => ({
+                label: g.name,
+                value: g.name,
+                description: `${g.countryName || ''} ${g.fcodeName || ''}`,
+                source: 'geonames'
+              }));
+            }
+          } catch {}
+          // Sonuçları birleştir, tekrarları ayıkla
+          const allResults = [...wikiResults, ...geoResults].filter((v, i, a) =>
+            a.findIndex(t => t.value === v.value) === i
+          );
+          awesomplete.list = allResults;
+          lastSuggestions = allResults;
         });
         // Seçim veya enter ile ekle
         searchBox.addEventListener('awesomplete-selectcomplete', async (e) => {
