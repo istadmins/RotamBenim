@@ -408,7 +408,17 @@
           minChars: 2,
           maxItems: 10,
           autoFirst: true,
-          list: []
+          list: [],
+          item: function(suggestion, input) {
+            // suggestion: { label, value, description }
+            const html = `<div><strong>${suggestion.label}</strong><div style='font-size:12px;color:#888;'>${suggestion.description || ''}</div></div>`;
+            const li = document.createElement('li');
+            li.innerHTML = html;
+            return li;
+          },
+          replace: function(suggestion) {
+            this.input.value = suggestion.label;
+          }
         });
         let lastSuggestions = [];
         searchBox.addEventListener('input', async () => {
@@ -452,7 +462,7 @@
           const allResults = [...wikiResults, ...geoResults].filter((v, i, a) =>
             a.findIndex(t => t.value === v.value) === i
           );
-          awesomplete.list = allResults.map(item => item.label);
+          awesomplete.list = allResults;
           lastSuggestions = allResults;
         });
         // Seçim veya enter ile ekle
