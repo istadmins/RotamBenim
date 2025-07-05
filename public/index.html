@@ -398,8 +398,7 @@
         logoutBtn.addEventListener('click', handleSignOut);
        
         // Tabler Autocomplete ile öneri getir
-        import Autocomplete from "https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/autocomplete.esm.js";
-        const autocomplete = new Autocomplete(searchBox, {
+        const autocomplete = new window.Tabler.Autocomplete(searchBox, {
           source: async (query) => {
             if (!query) return [];
             // 1. Wikipedia'dan çek
