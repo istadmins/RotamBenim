@@ -25,6 +25,7 @@ class EnhancedBackgroundManager {
             'china': ['China landmarks', 'Great Wall of China', 'Beijing', 'Chinese architecture'],
             'usa': ['USA landmarks', 'New York skyline', 'Grand Canyon', 'American landmarks'],
             'uk': ['UK landmarks', 'London Big Ben', 'British countryside', 'English castles'],
+            'bulgaria': ['Bulgaria landmarks', 'Sofia', 'Rila Monastery', 'Plovdiv', 'Bulgarian nature'],
             'default': ['World landmarks', 'Travel destinations', 'Beautiful landscapes', 'Adventure travel']
         };
         
@@ -50,6 +51,7 @@ class EnhancedBackgroundManager {
             'china': 'https://images.pexels.com/photos/2412603/pexels-photo-2412603.jpeg?auto=compress&cs=tinysrgb&w=1920',
             'usa': 'https://images.pexels.com/photos/1486222/pexels-photo-1486222.jpeg?auto=compress&cs=tinysrgb&w=1920',
             'uk': 'https://images.pexels.com/photos/1796715/pexels-photo-1796715.jpeg?auto=compress&cs=tinysrgb&w=1920',
+            'bulgaria': 'https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg?auto=compress&cs=tinysrgb&w=1920',
             'default': 'https://images.pexels.com/photos/1591373/pexels-photo-1591373.jpeg?auto=compress&cs=tinysrgb&w=1920'
         };
     }
@@ -327,7 +329,8 @@ class EnhancedBackgroundManager {
             'united states': 'usa',
             'birleşik krallık': 'uk',
             'uk': 'uk',
-            'united kingdom': 'uk'
+            'united kingdom': 'uk',
+            'bulgaria': 'bulgaria'
         };
 
         return countryMap[country.toLowerCase()] || 'default';
