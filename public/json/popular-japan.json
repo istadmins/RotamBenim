@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Japonya",
+    "country_en": "Japan",
+    "city_tr": "Tokyo",
+    "city_en": "Tokyo",
+    "name_tr": "Tokyo Skytree",
+    "name_en": "Tokyo Skytree",
+    "category_tr": "Kule",
+    "category_en": "Tower",
+    "description_tr": "Tokyo Skytree, Tokyo'nun simgesi olan, dünyanın en yüksek televizyon kulesi ve şehrin panoramik manzarasını sunan bir yapıdır.",
+    "description_en": "Tokyo Skytree is the symbol of Tokyo, the world's tallest television tower, offering panoramic views of the city."
+  },
+  {
+    "country_tr": "Japonya",
+    "country_en": "Japan",
+    "city_tr": "Tokyo",
+    "city_en": "Tokyo",
+    "name_tr": "Senso-ji Tapınağı",
+    "name_en": "Senso-ji Temple",
+    "category_tr": "Tapınak",
+    "category_en": "Temple",
+    "description_tr": "Senso-ji Tapınağı, Tokyo'nun en eski tapınağı olup, Asakusa bölgesinde yer alan popüler bir turistik noktadır.",
+    "description_en": "Senso-ji Temple is Tokyo's oldest temple and a popular tourist spot located in the Asakusa district."
+  },
+  {
+    "country_tr": "Japonya",
+    "country_en": "Japan",
+    "city_tr": "Tokyo",
+    "city_en": "Tokyo",
+    "name_tr": "Shibuya Geçidi",
+    "name_en": "Shibuya Crossing",
+    "category_tr": "Meydan",
+    "category_en": "Square",
+    "description_tr": "Shibuya Geçidi, dünyanın en yoğun yaya geçitlerinden biri olup, Tokyo'nun modern yaşamının simgesidir.",
+    "description_en": "Shibuya Crossing is one of the world's busiest pedestrian crossings and a symbol of Tokyo's modern life."
+  },
+  {
+    "country_tr": "Japonya",
+    "country_en": "Japan",
+    "city_tr": "Kyoto",
+    "city_en": "Kyoto",
+    "name_tr": "Kinkaku-ji (Altın Köşk)",
+    "name_en": "Kinkaku-ji (Golden Pavilion)",
+    "category_tr": "Tapınak",
+    "category_en": "Temple",
+    "description_tr": "Kinkaku-ji, UNESCO Dünya Mirası Listesi'nde yer alan, altın yapraklarla kaplı etkileyici bir Zen tapınağıdır.",
+    "description_en": "Kinkaku-ji is an impressive Zen temple covered in gold leaf, listed as a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Japonya",
+    "country_en": "Japan",
+    "city_tr": "Kyoto",
+    "city_en": "Kyoto",
+    "name_tr": "Fushimi Inari Tapınağı",
+    "name_en": "Fushimi Inari Shrine",
+    "category_tr": "Tapınak",
+    "category_en": "Shrine",
+    "description_tr": "Fushimi Inari Tapınağı, binlerce kırmızı torii kapısıyla ünlü, Japonya'nın en önemli Şinto tapınaklarından biridir.",
+    "description_en": "Fushimi Inari Shrine is one of Japan's most important Shinto shrines, famous for its thousands of red torii gates."
+  },
+  {
+    "country_tr": "Japonya",
+    "country_en": "Japan",
+    "city_tr": "Osaka",
+    "city_en": "Osaka",
+    "name_tr": "Osaka Kalesi",
+    "name_en": "Osaka Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Osaka Kalesi, Japonya'nın en ünlü kalelerinden biri olup, şehrin merkezinde yer alan tarihi bir yapıdır.",
+    "description_en": "Osaka Castle is one of Japan's most famous castles, a historic structure located in the center of the city."
+  },
+  {
+    "country_tr": "Japonya",
+    "country_en": "Japan",
+    "city_tr": "Hiroshima",
+    "city_en": "Hiroshima",
+    "name_tr": "Hiroshima Barış Anıtı",
+    "name_en": "Hiroshima Peace Memorial",
+    "category_tr": "Anıt",
+    "category_en": "Memorial",
+    "description_tr": "Hiroshima Barış Anıtı, UNESCO Dünya Mirası Listesi'nde yer alan, atom bombası kurbanlarını anan önemli bir anıttır.",
+    "description_en": "Hiroshima Peace Memorial is an important memorial honoring atomic bomb victims, listed as a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Japonya",
+    "country_en": "Japan",
+    "city_tr": "Nara",
+    "city_en": "Nara",
+    "name_tr": "Todai-ji Tapınağı",
+    "name_en": "Todai-ji Temple",
+    "category_tr": "Tapınak",
+    "category_en": "Temple",
+    "description_tr": "Todai-ji Tapınağı, UNESCO Dünya Mirası Listesi'nde yer alan, dünyanın en büyük bronz Buda heykeline ev sahipliği yapar.",
+    "description_en": "Todai-ji Temple is listed as a UNESCO World Heritage Site and houses the world's largest bronze Buddha statue."
+  },
+  {
+    "country_tr": "Japonya",
+    "country_en": "Japan",
+    "city_tr": "Fuji",
+    "city_en": "Fuji",
+    "name_tr": "Fuji Dağı",
+    "name_en": "Mount Fuji",
+    "category_tr": "Dağ",
+    "category_en": "Mountain",
+    "description_tr": "Fuji Dağı, Japonya'nın en yüksek dağı ve simgesi olup, UNESCO Dünya Mirası Listesi'nde yer alır.",
+    "description_en": "Mount Fuji is Japan's highest mountain and symbol, listed as a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Japonya",
+    "country_en": "Japan",
+    "city_tr": "Miyajima",
+    "city_en": "Miyajima",
+    "name_tr": "Itsukushima Tapınağı",
+    "name_en": "Itsukushima Shrine",
+    "category_tr": "Tapınak",
+    "category_en": "Shrine",
+    "description_tr": "Itsukushima Tapınağı, UNESCO Dünya Mirası Listesi'nde yer alan, su üzerinde yüzen kapısıyla ünlü bir tapınaktır.",
+    "description_en": "Itsukushima Shrine is listed as a UNESCO World Heritage Site, famous for its floating gate over water."
+  }
+] 

@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Polonya",
+    "country_en": "Poland",
+    "city_tr": "Krakow",
+    "city_en": "Krakow",
+    "name_tr": "Wawel Kalesi",
+    "name_en": "Wawel Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Wawel Kalesi, Polonya krallarının ikametgahı olan ve Krakow'un simgesi olan tarihi bir kaledir. UNESCO Dünya Mirası Listesi'ndedir.",
+    "description_en": "Wawel Castle is a historic castle that was the residence of Polish kings and is the symbol of Krakow. It is a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Polonya",
+    "country_en": "Poland",
+    "city_tr": "Krakow",
+    "city_en": "Krakow",
+    "name_tr": "Krakow Eski Şehir",
+    "name_en": "Krakow Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Krakow Eski Şehir, Ortaçağ'dan kalma meydanı, kiliseleri ve tarihi atmosferiyle UNESCO Dünya Mirası Listesi'nde yer alır.",
+    "description_en": "Krakow Old Town is listed as a UNESCO World Heritage Site for its medieval square, churches, and historic atmosphere."
+  },
+  {
+    "country_tr": "Polonya",
+    "country_en": "Poland",
+    "city_tr": "Varşova",
+    "city_en": "Warsaw",
+    "name_tr": "Varşova Eski Şehir",
+    "name_en": "Warsaw Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Varşova Eski Şehir, II. Dünya Savaşı'ndan sonra yeniden inşa edilmiş ve UNESCO Dünya Mirası Listesi'ne dahil edilmiştir.",
+    "description_en": "Warsaw Old Town was rebuilt after World War II and is included in the UNESCO World Heritage List."
+  },
+  {
+    "country_tr": "Polonya",
+    "country_en": "Poland",
+    "city_tr": "Auschwitz",
+    "city_en": "Auschwitz",
+    "name_tr": "Auschwitz-Birkenau",
+    "name_en": "Auschwitz-Birkenau",
+    "category_tr": "Tarihi Alan",
+    "category_en": "Historic Site",
+    "description_tr": "Auschwitz-Birkenau, II. Dünya Savaşı sırasında Nazi toplama kampı olarak kullanılan ve bugün anıt müze olan tarihi bir alandır.",
+    "description_en": "Auschwitz-Birkenau is a historic site that was used as a Nazi concentration camp during World War II and is now a memorial museum."
+  },
+  {
+    "country_tr": "Polonya",
+    "country_en": "Poland",
+    "city_tr": "Gdansk",
+    "city_en": "Gdansk",
+    "name_tr": "Gdansk Eski Şehir",
+    "name_en": "Gdansk Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Gdansk Eski Şehir, Baltık Denizi kıyısında yer alan, tarihi liman şehri ve renkli evleriyle ünlüdür.",
+    "description_en": "Gdansk Old Town is located on the Baltic Sea coast, famous for its historic port city and colorful houses."
+  },
+  {
+    "country_tr": "Polonya",
+    "country_en": "Poland",
+    "city_tr": "Wroclaw",
+    "city_en": "Wroclaw",
+    "name_tr": "Wroclaw Eski Şehir",
+    "name_en": "Wroclaw Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Wroclaw Eski Şehir, çok sayıda adası ve köprüsüyle 'Polonya'nın Venedik'i' olarak bilinir.",
+    "description_en": "Wroclaw Old Town is known as the 'Venice of Poland' for its numerous islands and bridges."
+  },
+  {
+    "country_tr": "Polonya",
+    "country_en": "Poland",
+    "city_tr": "Zakopane",
+    "city_en": "Zakopane",
+    "name_tr": "Tatra Dağları",
+    "name_en": "Tatra Mountains",
+    "category_tr": "Dağ",
+    "category_en": "Mountain",
+    "description_tr": "Tatra Dağları, Polonya'nın en yüksek dağ sırası olup, kayak ve doğa sporları için popüler bir destinasyondur.",
+    "description_en": "The Tatra Mountains are Poland's highest mountain range and a popular destination for skiing and outdoor sports."
+  },
+  {
+    "country_tr": "Polonya",
+    "country_en": "Poland",
+    "city_tr": "Malbork",
+    "city_en": "Malbork",
+    "name_tr": "Malbork Kalesi",
+    "name_en": "Malbork Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Malbork Kalesi, dünyanın en büyük tuğla kalesi olup, UNESCO Dünya Mirası Listesi'nde yer alır.",
+    "description_en": "Malbork Castle is the world's largest brick castle and is listed as a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Polonya",
+    "country_en": "Poland",
+    "city_tr": "Lublin",
+    "city_en": "Lublin",
+    "name_tr": "Lublin Eski Şehir",
+    "name_en": "Lublin Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Lublin Eski Şehir, Ortaçağ'dan kalma sokakları ve tarihi yapılarıyla ünlü bir şehirdir.",
+    "description_en": "Lublin Old Town is a city famous for its medieval streets and historic buildings."
+  },
+  {
+    "country_tr": "Polonya",
+    "country_en": "Poland",
+    "city_tr": "Poznan",
+    "city_en": "Poznan",
+    "name_tr": "Poznan Eski Şehir",
+    "name_en": "Poznan Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Poznan Eski Şehir, tarihi meydanı ve renkli evleriyle ünlü bir şehirdir.",
+    "description_en": "Poznan Old Town is a city famous for its historic square and colorful houses."
+  }
+] 

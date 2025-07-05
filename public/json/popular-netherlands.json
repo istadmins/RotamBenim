@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Hollanda",
+    "country_en": "Netherlands",
+    "city_tr": "Amsterdam",
+    "city_en": "Amsterdam",
+    "name_tr": "Rijksmuseum",
+    "name_en": "Rijksmuseum",
+    "category_tr": "Müze",
+    "category_en": "Museum",
+    "description_tr": "Rijksmuseum, Hollanda'nın en büyük sanat müzesi olup, Rembrandt ve Vermeer'in başyapıtlarını barındırır.",
+    "description_en": "The Rijksmuseum is the largest art museum in the Netherlands, housing masterpieces by Rembrandt and Vermeer."
+  },
+  {
+    "country_tr": "Hollanda",
+    "country_en": "Netherlands",
+    "city_tr": "Amsterdam",
+    "city_en": "Amsterdam",
+    "name_tr": "Van Gogh Müzesi",
+    "name_en": "Van Gogh Museum",
+    "category_tr": "Müze",
+    "category_en": "Museum",
+    "description_tr": "Van Gogh Müzesi, sanatçının en büyük eser koleksiyonuna ev sahipliği yapar.",
+    "description_en": "The Van Gogh Museum houses the largest collection of works by the artist."
+  },
+  {
+    "country_tr": "Hollanda",
+    "country_en": "Netherlands",
+    "city_tr": "Amsterdam",
+    "city_en": "Amsterdam",
+    "name_tr": "Anne Frank Evi",
+    "name_en": "Anne Frank House",
+    "category_tr": "Tarihi Ev",
+    "category_en": "Historic House",
+    "description_tr": "Anne Frank Evi, II. Dünya Savaşı sırasında Anne Frank ve ailesinin saklandığı yerdir. Bugün bir müze olarak ziyaretçilere açıktır.",
+    "description_en": "The Anne Frank House is where Anne Frank and her family hid during World War II. Today, it is open to visitors as a museum."
+  },
+  {
+    "country_tr": "Hollanda",
+    "country_en": "Netherlands",
+    "city_tr": "Lisse",
+    "city_en": "Lisse",
+    "name_tr": "Keukenhof Bahçeleri",
+    "name_en": "Keukenhof Gardens",
+    "category_tr": "Bahçe",
+    "category_en": "Garden",
+    "description_tr": "Keukenhof Bahçeleri, milyonlarca lale ve çiçekle ünlü, dünyanın en büyük çiçek bahçelerinden biridir.",
+    "description_en": "Keukenhof Gardens is one of the world's largest flower gardens, famous for its millions of tulips and flowers."
+  },
+  {
+    "country_tr": "Hollanda",
+    "country_en": "Netherlands",
+    "city_tr": "Rotterdam",
+    "city_en": "Rotterdam",
+    "name_tr": "Erasmus Köprüsü",
+    "name_en": "Erasmus Bridge",
+    "category_tr": "Köprü",
+    "category_en": "Bridge",
+    "description_tr": "Erasmus Köprüsü, Rotterdam'ın modern simgelerinden biridir ve şehrin siluetine karakteristik bir görünüm kazandırır.",
+    "description_en": "The Erasmus Bridge is one of Rotterdam's modern landmarks and gives the city skyline its characteristic look."
+  },
+  {
+    "country_tr": "Hollanda",
+    "country_en": "Netherlands",
+    "city_tr": "Kinderdijk",
+    "city_en": "Kinderdijk",
+    "name_tr": "Kinderdijk Yel Değirmenleri",
+    "name_en": "Kinderdijk Windmills",
+    "category_tr": "Tarihi Alan",
+    "category_en": "Historic Site",
+    "description_tr": "Kinderdijk Yel Değirmenleri, UNESCO Dünya Mirası Listesi'nde yer alan ve Hollanda'nın su yönetimi tarihini simgeleyen bir alandır.",
+    "description_en": "The Kinderdijk Windmills are a UNESCO World Heritage Site and symbolize the history of water management in the Netherlands."
+  },
+  {
+    "country_tr": "Hollanda",
+    "country_en": "Netherlands",
+    "city_tr": "Utrecht",
+    "city_en": "Utrecht",
+    "name_tr": "Dom Kulesi",
+    "name_en": "Dom Tower",
+    "category_tr": "Kule",
+    "category_en": "Tower",
+    "description_tr": "Dom Kulesi, Hollanda'nın en yüksek kilise kulesidir ve Utrecht'in simgesidir.",
+    "description_en": "The Dom Tower is the tallest church tower in the Netherlands and is the symbol of Utrecht."
+  },
+  {
+    "country_tr": "Hollanda",
+    "country_en": "Netherlands",
+    "city_tr": "Giethoorn",
+    "city_en": "Giethoorn",
+    "name_tr": "Giethoorn Köyü",
+    "name_en": "Giethoorn Village",
+    "category_tr": "Köy",
+    "category_en": "Village",
+    "description_tr": "Giethoorn, kanalları ve köprüleriyle ünlü, 'Hollanda'nın Venedik'i' olarak bilinen bir köydür.",
+    "description_en": "Giethoorn is a village known for its canals and bridges, often called the 'Venice of the Netherlands'."
+  },
+  {
+    "country_tr": "Hollanda",
+    "country_en": "Netherlands",
+    "city_tr": "Lahey",
+    "city_en": "The Hague",
+    "name_tr": "Barış Sarayı",
+    "name_en": "Peace Palace",
+    "category_tr": "Saray",
+    "category_en": "Palace",
+    "description_tr": "Barış Sarayı, Uluslararası Adalet Divanı'na ev sahipliği yapar ve uluslararası barışın simgesidir.",
+    "description_en": "The Peace Palace houses the International Court of Justice and is a symbol of international peace."
+  },
+  {
+    "country_tr": "Hollanda",
+    "country_en": "Netherlands",
+    "city_tr": "Amsterdam",
+    "city_en": "Amsterdam",
+    "name_tr": "Dam Meydanı",
+    "name_en": "Dam Square",
+    "category_tr": "Meydan",
+    "category_en": "Square",
+    "description_tr": "Dam Meydanı, Amsterdam'ın tarihi ve sosyal merkezi olup, Kraliyet Sarayı ve Ulusal Anıt'a ev sahipliği yapar.",
+    "description_en": "Dam Square is the historical and social center of Amsterdam, home to the Royal Palace and the National Monument."
+  }
+] 

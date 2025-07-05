@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Belçika",
+    "country_en": "Belgium",
+    "city_tr": "Brüksel",
+    "city_en": "Brussels",
+    "name_tr": "Atomium",
+    "name_en": "Atomium",
+    "category_tr": "Anıt",
+    "category_en": "Monument",
+    "description_tr": "Atomium, 1958 Dünya Fuarı için inşa edilmiş, demir kristal yapısını temsil eden devasa bir anıttır. Brüksel'in modern simgelerinden biridir.",
+    "description_en": "The Atomium is a giant monument representing an iron crystal structure, built for the 1958 World's Fair. It is one of Brussels' modern landmarks."
+  },
+  {
+    "country_tr": "Belçika",
+    "country_en": "Belgium",
+    "city_tr": "Brüksel",
+    "city_en": "Brussels",
+    "name_tr": "Grand Place",
+    "name_en": "Grand Place",
+    "category_tr": "Meydan",
+    "category_en": "Square",
+    "description_tr": "Grand Place, UNESCO Dünya Mirası Listesi'nde yer alan, etkileyici gotik ve barok mimarisiyle ünlü tarihi bir meydandır.",
+    "description_en": "Grand Place is a historic square listed as a UNESCO World Heritage Site, famous for its impressive Gothic and Baroque architecture."
+  },
+  {
+    "country_tr": "Belçika",
+    "country_en": "Belgium",
+    "city_tr": "Brugge",
+    "city_en": "Bruges",
+    "name_tr": "Brugge Eski Şehir",
+    "name_en": "Bruges Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Brugge Eski Şehir, Ortaçağ'dan kalma kanalları, gotik mimarisi ve tarihi atmosferiyle 'Kuzey'in Venedik'i' olarak bilinir.",
+    "description_en": "Bruges Old Town is known as the 'Venice of the North' for its medieval canals, Gothic architecture, and historic atmosphere."
+  },
+  {
+    "country_tr": "Belçika",
+    "country_en": "Belgium",
+    "city_tr": "Anvers",
+    "city_en": "Antwerp",
+    "name_tr": "Anvers Katedrali",
+    "name_en": "Antwerp Cathedral",
+    "category_tr": "Katedral",
+    "category_en": "Cathedral",
+    "description_tr": "Anvers Katedrali, Belçika'nın en büyük gotik katedrali olup, Rubens'in başyapıtlarına ev sahipliği yapar.",
+    "description_en": "Antwerp Cathedral is Belgium's largest Gothic cathedral and houses masterpieces by Rubens."
+  },
+  {
+    "country_tr": "Belçika",
+    "country_en": "Belgium",
+    "city_tr": "Gent",
+    "city_en": "Ghent",
+    "name_tr": "Gent Kalesi",
+    "name_en": "Gravensteen Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Gent Kalesi, Ortaçağ'dan kalma etkileyici bir kale olup, şehrin tarihi merkezinde yer alır.",
+    "description_en": "Gravensteen Castle is an impressive medieval castle located in the historic center of the city."
+  },
+  {
+    "country_tr": "Belçika",
+    "country_en": "Belgium",
+    "city_tr": "Brüksel",
+    "city_en": "Brussels",
+    "name_tr": "Manneken Pis",
+    "name_en": "Manneken Pis",
+    "category_tr": "Heykel",
+    "category_en": "Statue",
+    "description_tr": "Manneken Pis, Brüksel'in en ünlü simgelerinden biri olan küçük bir çocuk heykelidir.",
+    "description_en": "Manneken Pis is a small statue of a child, one of Brussels' most famous symbols."
+  },
+  {
+    "country_tr": "Belçika",
+    "country_en": "Belgium",
+    "city_tr": "Liège",
+    "city_en": "Liège",
+    "name_tr": "Liège Merdivenleri",
+    "name_en": "Liège Stairs",
+    "category_tr": "Merdiven",
+    "category_en": "Stairs",
+    "description_tr": "Liège Merdivenleri, şehrin tepelerini birbirine bağlayan ünlü merdivenlerdir.",
+    "description_en": "The Liège Stairs are famous stairs connecting the city's hills."
+  },
+  {
+    "country_tr": "Belçika",
+    "country_en": "Belgium",
+    "city_tr": "Brugge",
+    "city_en": "Bruges",
+    "name_tr": "Belfort Kulesi",
+    "name_en": "Belfort Tower",
+    "category_tr": "Kule",
+    "category_en": "Tower",
+    "description_tr": "Belfort Kulesi, Brugge'nin simgesi olan ve şehrin en yüksek noktasından manzara sunan tarihi bir kuledir.",
+    "description_en": "The Belfort Tower is a historic tower and symbol of Bruges, offering views from the city's highest point."
+  },
+  {
+    "country_tr": "Belçika",
+    "country_en": "Belgium",
+    "city_tr": "Namur",
+    "city_en": "Namur",
+    "name_tr": "Namur Kalesi",
+    "name_en": "Namur Citadel",
+    "category_tr": "Kale",
+    "category_en": "Citadel",
+    "description_tr": "Namur Kalesi, Meuse Nehri üzerinde yer alan etkileyici bir kaledir.",
+    "description_en": "Namur Citadel is an impressive fortress located on the Meuse River."
+  },
+  {
+    "country_tr": "Belçika",
+    "country_en": "Belgium",
+    "city_tr": "Dinant",
+    "city_en": "Dinant",
+    "name_tr": "Dinant Kalesi",
+    "name_en": "Dinant Citadel",
+    "category_tr": "Kale",
+    "category_en": "Citadel",
+    "description_tr": "Dinant Kalesi, Meuse Nehri üzerinde yer alan ve şehrin panoramik manzarasını sunan bir kaledir.",
+    "description_en": "Dinant Citadel is a fortress located on the Meuse River, offering panoramic views of the city."
+  }
+] 

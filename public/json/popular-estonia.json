@@ -1,0 +1,123 @@
+[
+  {
+    "country_tr": "Estonya",
+    "country_en": "Estonia",
+    "city_tr": "Tallinn",
+    "city_en": "Tallinn",
+    "name_tr": "Tallinn Eski Şehir",
+    "name_en": "Tallinn Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Tallinn Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Ortaçağ'dan kalma surları ve sokaklarıyla ünlüdür.",
+    "description_en": "Tallinn Old Town is listed as a UNESCO World Heritage Site, famous for its medieval walls and streets."
+  },
+  {
+    "country_tr": "Estonya",
+    "country_en": "Estonia",
+    "city_tr": "Tallinn",
+    "city_en": "Tallinn",
+    "name_tr": "Toompea Kalesi",
+    "name_en": "Toompea Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Toompea Kalesi, Estonya Parlamentosu'na ev sahipliği yapan, şehrin en yüksek noktasında yer alan bir kaledir.",
+    "description_en": "Toompea Castle houses the Estonian Parliament and is located at the highest point of the city."
+  },
+  {
+    "country_tr": "Estonya",
+    "country_en": "Estonia",
+    "city_tr": "Tallinn",
+    "city_en": "Tallinn",
+    "name_tr": "Alexander Nevsky Katedrali",
+    "name_en": "Alexander Nevsky Cathedral",
+    "category_tr": "Katedral",
+    "category_en": "Cathedral",
+    "description_tr": "Alexander Nevsky Katedrali, Tallinn'in simgesi olan, Rus Ortodoks mimarisinin en güzel örneklerinden biridir.",
+    "description_en": "Alexander Nevsky Cathedral is the symbol of Tallinn and one of the finest examples of Russian Orthodox architecture."
+  },
+  {
+    "country_tr": "Estonya",
+    "country_en": "Estonia",
+    "city_tr": "Tartu",
+    "city_en": "Tartu",
+    "name_tr": "Tartu Eski Şehir",
+    "name_en": "Tartu Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Tartu Eski Şehir, Estonya'nın ikinci büyük şehri olup, üniversitesi ve tarihi yapılarıyla ünlüdür.",
+    "description_en": "Tartu Old Town is Estonia's second-largest city, famous for its university and historic buildings."
+  },
+  {
+    "country_tr": "Estonya",
+    "country_en": "Estonia",
+    "city_tr": "Parnu",
+    "city_en": "Parnu",
+    "name_tr": "Parnu Sahili",
+    "name_en": "Parnu Beach",
+    "category_tr": "Sahil",
+    "category_en": "Beach",
+    "description_tr": "Parnu Sahili, Estonya'nın yaz başkenti olarak bilinen, Baltık Denizi kıyısında yer alan popüler bir sahil şehridir.",
+    "description_en": "Parnu Beach is a popular beach city on the Baltic Sea coast, known as Estonia's summer capital."
+  },
+  {
+    "country_tr": "Estonya",
+    "country_en": "Estonia",
+    "city_tr": "Saaremaa",
+    "city_en": "Saaremaa",
+    "name_tr": "Kuressaare Kalesi",
+    "name_en": "Kuressaare Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "category_en": "Castle",
+    "description_tr": "Kuressaare Kalesi, Saaremaa Adası'nda yer alan, Baltık bölgesinin en iyi korunmuş Ortaçağ kalesidir.",
+    "description_en": "Kuressaare Castle is located on Saaremaa Island and is the best-preserved medieval castle in the Baltic region."
+  },
+  {
+    "country_tr": "Estonya",
+    "country_en": "Estonia",
+    "city_tr": "Hiiumaa",
+    "city_en": "Hiiumaa",
+    "name_tr": "Kopu Deniz Feneri",
+    "name_en": "Kopu Lighthouse",
+    "category_tr": "Deniz Feneri",
+    "category_en": "Lighthouse",
+    "description_tr": "Kopu Deniz Feneri, Baltık Denizi'nde yer alan, dünyanın en eski deniz fenerlerinden biridir.",
+    "description_en": "Kopu Lighthouse is located on the Baltic Sea and is one of the oldest lighthouses in the world."
+  },
+  {
+    "country_tr": "Estonya",
+    "country_en": "Estonia",
+    "city_tr": "Narva",
+    "city_en": "Narva",
+    "name_tr": "Narva Kalesi",
+    "name_en": "Narva Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Narva Kalesi, Rusya sınırında yer alan, Estonya'nın en doğusundaki tarihi bir kaledir.",
+    "description_en": "Narva Castle is a historic castle located on the Russian border, the easternmost castle in Estonia."
+  },
+  {
+    "country_tr": "Estonya",
+    "country_en": "Estonia",
+    "city_tr": "Viljandi",
+    "city_en": "Viljandi",
+    "name_tr": "Viljandi Kalesi",
+    "name_en": "Viljandi Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Viljandi Kalesi, Ortaçağ'dan kalma kalıntılarıyla ünlü, göl kenarında yer alan bir kaledir.",
+    "description_en": "Viljandi Castle is located by a lake, famous for its medieval ruins."
+  },
+  {
+    "country_tr": "Estonya",
+    "country_en": "Estonia",
+    "city_tr": "Rakvere",
+    "city_en": "Rakvere",
+    "name_tr": "Rakvere Kalesi",
+    "name_en": "Rakvere Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Rakvere Kalesi, kuzey Estonya'da yer alan, Ortaçağ'dan kalma etkileyici bir kale kompleksidir.",
+    "description_en": "Rakvere Castle is an impressive medieval castle complex located in northern Estonia."
+  }
+] 

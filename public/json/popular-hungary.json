@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Macaristan",
+    "country_en": "Hungary",
+    "city_tr": "Budapeşte",
+    "city_en": "Budapest",
+    "name_tr": "Parlamento Binası",
+    "name_en": "Parliament Building",
+    "category_tr": "Parlamento",
+    "category_en": "Parliament",
+    "description_tr": "Budapeşte Parlamento Binası, Tuna Nehri kıyısında yer alan, neo-gotik mimarisiyle ünlü etkileyici bir yapıdır.",
+    "description_en": "Budapest Parliament Building is an impressive structure with neo-Gothic architecture, located on the banks of the Danube River."
+  },
+  {
+    "country_tr": "Macaristan",
+    "country_en": "Hungary",
+    "city_tr": "Budapeşte",
+    "city_en": "Budapest",
+    "name_tr": "Buda Kalesi",
+    "name_en": "Buda Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Buda Kalesi, UNESCO Dünya Mirası Listesi'nde yer alan, Budapeşte'nin simgesi olan tarihi bir kaledir.",
+    "description_en": "Buda Castle is a historic castle and symbol of Budapest, listed as a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Macaristan",
+    "country_en": "Hungary",
+    "city_tr": "Budapeşte",
+    "city_en": "Budapest",
+    "name_tr": "Széchenyi Kaplıcası",
+    "name_en": "Széchenyi Baths",
+    "category_tr": "Kaplıca",
+    "category_en": "Bath",
+    "description_tr": "Széchenyi Kaplıcası, Avrupa'nın en büyük termal kaplıca komplekslerinden biridir.",
+    "description_en": "Széchenyi Baths is one of Europe's largest thermal bath complexes."
+  },
+  {
+    "country_tr": "Macaristan",
+    "country_en": "Hungary",
+    "city_tr": "Budapeşte",
+    "city_en": "Budapest",
+    "name_tr": "Aziz Stephen Bazilikası",
+    "name_en": "St. Stephen's Basilica",
+    "category_tr": "Bazilika",
+    "category_en": "Basilica",
+    "description_tr": "Aziz Stephen Bazilikası, Macaristan'ın en büyük kilisesi olup, neo-klasik mimarisiyle ünlüdür.",
+    "description_en": "St. Stephen's Basilica is Hungary's largest church, famous for its neo-classical architecture."
+  },
+  {
+    "country_tr": "Macaristan",
+    "country_en": "Hungary",
+    "city_tr": "Budapeşte",
+    "city_en": "Budapest",
+    "name_tr": "Zincirli Köprü",
+    "name_en": "Chain Bridge",
+    "category_tr": "Köprü",
+    "category_en": "Bridge",
+    "description_tr": "Zincirli Köprü, Buda ve Peşte'yi birleştiren, Tuna Nehri üzerindeki ilk kalıcı köprüdür.",
+    "description_en": "Chain Bridge is the first permanent bridge over the Danube River, connecting Buda and Pest."
+  },
+  {
+    "country_tr": "Macaristan",
+    "country_en": "Hungary",
+    "city_tr": "Budapeşte",
+    "city_en": "Budapest",
+    "name_tr": "Heroes Meydanı",
+    "name_en": "Heroes' Square",
+    "category_tr": "Meydan",
+    "category_en": "Square",
+    "description_tr": "Heroes Meydanı, Macaristan'ın önemli tarihi figürlerinin heykelleriyle süslenmiş büyük bir meydandır.",
+    "description_en": "Heroes' Square is a large square decorated with statues of important historical figures of Hungary."
+  },
+  {
+    "country_tr": "Macaristan",
+    "country_en": "Hungary",
+    "city_tr": "Eger",
+    "city_en": "Eger",
+    "name_tr": "Eger Kalesi",
+    "name_en": "Eger Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Eger Kalesi, Osmanlı saldırılarına karşı direnişiyle ünlü tarihi bir kaledir.",
+    "description_en": "Eger Castle is a historic fortress famous for its resistance against Ottoman attacks."
+  },
+  {
+    "country_tr": "Macaristan",
+    "country_en": "Hungary",
+    "city_tr": "Szentendre",
+    "city_en": "Szentendre",
+    "name_tr": "Szentendre Eski Şehir",
+    "name_en": "Szentendre Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Szentendre Eski Şehir, sanatçıların yaşadığı, renkli evleri ve dar sokaklarıyla ünlü bir şehirdir.",
+    "description_en": "Szentendre Old Town is a city where artists live, famous for its colorful houses and narrow streets."
+  },
+  {
+    "country_tr": "Macaristan",
+    "country_en": "Hungary",
+    "city_tr": "Pécs",
+    "city_en": "Pécs",
+    "name_tr": "Pécs Katedrali",
+    "name_en": "Pécs Cathedral",
+    "category_tr": "Katedral",
+    "category_en": "Cathedral",
+    "description_tr": "Pécs Katedrali, 11. yüzyıldan kalma, Romanesk ve gotik mimarisiyle ünlü bir katedraldir.",
+    "description_en": "Pécs Cathedral is a cathedral from the 11th century, famous for its Romanesque and Gothic architecture."
+  },
+  {
+    "country_tr": "Macaristan",
+    "country_en": "Hungary",
+    "city_tr": "Hollókő",
+    "city_en": "Hollókő",
+    "name_tr": "Hollókő Köyü",
+    "name_en": "Hollókő Village",
+    "category_tr": "Köy",
+    "category_en": "Village",
+    "description_tr": "Hollókő Köyü, UNESCO Dünya Mirası Listesi'nde yer alan, geleneksel Palóc mimarisiyle ünlü bir köydür.",
+    "description_en": "Hollókő Village is a village listed as a UNESCO World Heritage Site, famous for its traditional Palóc architecture."
+  }
+] 

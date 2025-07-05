@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Letonya",
+    "country_en": "Latvia",
+    "city_tr": "Riga",
+    "city_en": "Riga",
+    "name_tr": "Riga Eski Şehir",
+    "name_en": "Riga Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Riga Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Art Nouveau mimarisi ve Ortaçağ yapılarıyla ünlüdür.",
+    "description_en": "Riga Old Town is listed as a UNESCO World Heritage Site, famous for its Art Nouveau architecture and medieval buildings."
+  },
+  {
+    "country_tr": "Letonya",
+    "country_en": "Latvia",
+    "city_tr": "Riga",
+    "city_en": "Riga",
+    "name_tr": "Riga Katedrali",
+    "name_en": "Riga Cathedral",
+    "category_tr": "Katedral",
+    "category_en": "Cathedral",
+    "description_tr": "Riga Katedrali, Baltık bölgesinin en büyük Ortaçağ kilisesi olup, Romanesk ve gotik mimarisiyle ünlüdür.",
+    "description_en": "Riga Cathedral is the largest medieval church in the Baltic region, famous for its Romanesque and Gothic architecture."
+  },
+  {
+    "country_tr": "Letonya",
+    "country_en": "Latvia",
+    "city_tr": "Riga",
+    "city_en": "Riga",
+    "name_tr": "Özgürlük Anıtı",
+    "name_en": "Freedom Monument",
+    "category_tr": "Anıt",
+    "category_en": "Monument",
+    "description_tr": "Özgürlük Anıtı, Letonya'nın bağımsızlığının simgesi olan, şehrin merkezinde yer alan bir anıttır.",
+    "description_en": "The Freedom Monument is a monument symbolizing Latvia's independence, located in the center of the city."
+  },
+  {
+    "country_tr": "Letonya",
+    "country_en": "Latvia",
+    "city_tr": "Sigulda",
+    "city_en": "Sigulda",
+    "name_tr": "Sigulda Kalesi",
+    "name_en": "Sigulda Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Sigulda Kalesi, Gauja Vadisi'nde yer alan, Ortaçağ'dan kalma etkileyici bir kaledir.",
+    "description_en": "Sigulda Castle is an impressive medieval castle located in the Gauja Valley."
+  },
+  {
+    "country_tr": "Letonya",
+    "country_en": "Latvia",
+    "city_tr": "Jurmala",
+    "city_en": "Jurmala",
+    "name_tr": "Jurmala Sahili",
+    "name_en": "Jurmala Beach",
+    "category_tr": "Sahil",
+    "category_en": "Beach",
+    "description_tr": "Jurmala Sahili, Baltık Denizi kıyısında yer alan, Letonya'nın en popüler sahil şehridir.",
+    "description_en": "Jurmala Beach is located on the Baltic Sea coast and is Latvia's most popular beach city."
+  },
+  {
+    "country_tr": "Letonya",
+    "country_en": "Latvia",
+    "city_tr": "Liepaja",
+    "city_en": "Liepaja",
+    "name_tr": "Liepaja Eski Şehir",
+    "name_en": "Liepaja Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Liepaja Eski Şehir, Letonya'nın batı kıyısında yer alan, tarihi yapıları ve sahiliyle ünlüdür.",
+    "description_en": "Liepaja Old Town is located on Latvia's western coast, famous for its historic buildings and beach."
+  },
+  {
+    "country_tr": "Letonya",
+    "country_en": "Latvia",
+    "city_tr": "Daugavpils",
+    "city_en": "Daugavpils",
+    "name_tr": "Daugavpils Kalesi",
+    "name_en": "Daugavpils Fortress",
+    "category_tr": "Kale",
+    "category_en": "Fortress",
+    "description_tr": "Daugavpils Kalesi, Letonya'nın ikinci büyük şehri olup, 19. yüzyıldan kalma etkileyici bir kaledir.",
+    "description_en": "Daugavpils Fortress is Latvia's second-largest city, an impressive fortress from the 19th century."
+  },
+  {
+    "country_tr": "Letonya",
+    "country_en": "Latvia",
+    "city_tr": "Kuldiga",
+    "city_en": "Kuldiga",
+    "name_tr": "Kuldiga Eski Şehir",
+    "name_en": "Kuldiga Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Kuldiga Eski Şehir, Ortaçağ'dan kalma sokakları ve şelalesiyle ünlü bir şehirdir.",
+    "description_en": "Kuldiga Old Town is a city famous for its medieval streets and waterfall."
+  },
+  {
+    "country_tr": "Letonya",
+    "country_en": "Latvia",
+    "city_tr": "Cesis",
+    "city_en": "Cesis",
+    "name_tr": "Cesis Kalesi",
+    "name_en": "Cesis Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Cesis Kalesi, Ortaçağ'dan kalma etkileyici bir kale olup, şehrin tarihi merkezinde yer alır.",
+    "description_en": "Cesis Castle is an impressive medieval castle located in the historic center of the city."
+  },
+  {
+    "country_tr": "Letonya",
+    "country_en": "Latvia",
+    "city_tr": "Ventspils",
+    "city_en": "Ventspils",
+    "name_tr": "Ventspils Sahili",
+    "name_en": "Ventspils Beach",
+    "category_tr": "Sahil",
+    "category_en": "Beach",
+    "description_tr": "Ventspils Sahili, Baltık Denizi kıyısında yer alan, mavi bayraklı plajlarıyla ünlü bir sahil şehridir.",
+    "description_en": "Ventspils Beach is a beach city on the Baltic Sea coast, famous for its blue flag beaches."
+  }
+] 

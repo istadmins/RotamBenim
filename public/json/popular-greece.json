@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Yunanistan",
+    "country_en": "Greece",
+    "city_tr": "Atina",
+    "city_en": "Athens",
+    "name_tr": "Akropolis",
+    "name_en": "Acropolis",
+    "category_tr": "Tarihi Alan",
+    "category_en": "Historic Site",
+    "description_tr": "Akropolis, UNESCO Dünya Mirası Listesi'nde yer alan, antik Yunan uygarlığının en önemli simgesidir.",
+    "description_en": "The Acropolis is the most important symbol of ancient Greek civilization, listed as a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Yunanistan",
+    "country_en": "Greece",
+    "city_tr": "Atina",
+    "city_en": "Athens",
+    "name_tr": "Parthenon",
+    "name_en": "Parthenon",
+    "category_tr": "Tapınak",
+    "category_en": "Temple",
+    "description_tr": "Parthenon, Akropolis'te yer alan, antik Yunan mimarisinin en mükemmel örneği olan tapınaktır.",
+    "description_en": "The Parthenon is a temple located on the Acropolis, the most perfect example of ancient Greek architecture."
+  },
+  {
+    "country_tr": "Yunanistan",
+    "country_en": "Greece",
+    "city_tr": "Santorini",
+    "city_en": "Santorini",
+    "name_tr": "Oia Köyü",
+    "name_en": "Oia Village",
+    "category_tr": "Köy",
+    "category_en": "Village",
+    "description_tr": "Oia Köyü, beyaz evleri ve mavi kubbeleriyle ünlü, dünyanın en güzel gün batımı manzaralarından birine sahiptir.",
+    "description_en": "Oia Village is famous for its white houses and blue domes, with one of the most beautiful sunset views in the world."
+  },
+  {
+    "country_tr": "Yunanistan",
+    "country_en": "Greece",
+    "city_tr": "Mikonos",
+    "city_en": "Mykonos",
+    "name_tr": "Mikonos Eski Şehir",
+    "name_en": "Mykonos Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Mikonos Eski Şehir, dar sokakları, beyaz evleri ve rüzgar değirmenleriyle ünlü bir şehirdir.",
+    "description_en": "Mykonos Old Town is a city famous for its narrow streets, white houses, and windmills."
+  },
+  {
+    "country_tr": "Yunanistan",
+    "country_en": "Greece",
+    "city_tr": "Delfi",
+    "city_en": "Delphi",
+    "name_tr": "Delfi Antik Kenti",
+    "name_en": "Ancient Delphi",
+    "category_tr": "Antik Kent",
+    "category_en": "Ancient City",
+    "description_tr": "Delfi Antik Kenti, antik dünyanın en önemli kehanet merkezi olup, UNESCO Dünya Mirası Listesi'ndedir.",
+    "description_en": "Ancient Delphi was the most important oracle center of the ancient world and is a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Yunanistan",
+    "country_en": "Greece",
+    "city_tr": "Selanik",
+    "city_en": "Thessaloniki",
+    "name_tr": "Beyaz Kule",
+    "name_en": "White Tower",
+    "category_tr": "Kule",
+    "category_en": "Tower",
+    "description_tr": "Beyaz Kule, Selanik'in simgesi olan, 15. yüzyıldan kalma tarihi bir kuledir.",
+    "description_en": "The White Tower is a historic tower from the 15th century and the symbol of Thessaloniki."
+  },
+  {
+    "country_tr": "Yunanistan",
+    "country_en": "Greece",
+    "city_tr": "Rodos",
+    "city_en": "Rhodes",
+    "name_tr": "Rodos Eski Şehir",
+    "name_en": "Rhodes Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Rodos Eski Şehir, Ortaçağ'dan kalma surları ve sokaklarıyla UNESCO Dünya Mirası Listesi'ndedir.",
+    "description_en": "Rhodes Old Town is listed as a UNESCO World Heritage Site for its medieval walls and streets."
+  },
+  {
+    "country_tr": "Yunanistan",
+    "country_en": "Greece",
+    "city_tr": "Korfu",
+    "city_en": "Corfu",
+    "name_tr": "Korfu Eski Şehir",
+    "name_en": "Corfu Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Korfu Eski Şehir, Venedik mimarisi ve tarihi yapılarıyla UNESCO Dünya Mirası Listesi'ndedir.",
+    "description_en": "Corfu Old Town is listed as a UNESCO World Heritage Site for its Venetian architecture and historic buildings."
+  },
+  {
+    "country_tr": "Yunanistan",
+    "country_en": "Greece",
+    "city_tr": "Meteora",
+    "city_en": "Meteora",
+    "name_tr": "Meteora Manastırları",
+    "name_en": "Meteora Monasteries",
+    "category_tr": "Manastır",
+    "category_en": "Monastery",
+    "description_tr": "Meteora Manastırları, kayalıkların üzerine inşa edilmiş, UNESCO Dünya Mirası Listesi'nde yer alan manastırlardır.",
+    "description_en": "Meteora Monasteries are monasteries built on top of rocks, listed as a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Yunanistan",
+    "country_en": "Greece",
+    "city_tr": "Olympia",
+    "city_en": "Olympia",
+    "name_tr": "Antik Olympia",
+    "name_en": "Ancient Olympia",
+    "category_tr": "Antik Kent",
+    "category_en": "Ancient City",
+    "description_tr": "Antik Olympia, Olimpiyat Oyunlarının doğduğu yer olup, UNESCO Dünya Mirası Listesi'ndedir.",
+    "description_en": "Ancient Olympia is where the Olympic Games were born and is a UNESCO World Heritage Site."
+  }
+] 

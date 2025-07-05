@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Avusturya",
+    "country_en": "Austria",
+    "city_tr": "Viyana",
+    "city_en": "Vienna",
+    "name_tr": "Schönbrunn Sarayı",
+    "name_en": "Schönbrunn Palace",
+    "category_tr": "Saray",
+    "category_en": "Palace",
+    "description_tr": "Schönbrunn Sarayı, Habsburg hanedanının yazlık sarayı olup, UNESCO Dünya Mirası Listesi'nde yer alır. Muhteşem bahçeleri ve tarihi odalarıyla ünlüdür.",
+    "description_en": "Schönbrunn Palace was the summer residence of the Habsburg dynasty and is a UNESCO World Heritage Site. It is famous for its magnificent gardens and historic rooms."
+  },
+  {
+    "country_tr": "Avusturya",
+    "country_en": "Austria",
+    "city_tr": "Viyana",
+    "city_en": "Vienna",
+    "name_tr": "Stephansdom",
+    "name_en": "St. Stephen's Cathedral",
+    "category_tr": "Katedral",
+    "category_en": "Cathedral",
+    "description_tr": "Stephansdom, Viyana'nın simgesi olan gotik katedraldir ve şehrin merkezinde yer alır.",
+    "description_en": "St. Stephen's Cathedral is the Gothic cathedral and symbol of Vienna, located in the center of the city."
+  },
+  {
+    "country_tr": "Avusturya",
+    "country_en": "Austria",
+    "city_tr": "Salzburg",
+    "city_en": "Salzburg",
+    "name_tr": "Hohensalzburg Kalesi",
+    "name_en": "Hohensalzburg Fortress",
+    "category_tr": "Kale",
+    "category_en": "Fortress",
+    "description_tr": "Hohensalzburg Kalesi, Ortaçağ'dan kalma etkileyici bir kale olup, Salzburg'un en yüksek noktasından manzara sunar.",
+    "description_en": "Hohensalzburg Fortress is an impressive medieval fortress offering views from Salzburg's highest point."
+  },
+  {
+    "country_tr": "Avusturya",
+    "country_en": "Austria",
+    "city_tr": "Salzburg",
+    "city_en": "Salzburg",
+    "name_tr": "Salzburg Eski Şehir",
+    "name_en": "Salzburg Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Salzburg Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Mozart'ın doğduğu yer olarak bilinen tarihi bir şehirdir.",
+    "description_en": "Salzburg Old Town is a historic city listed as a UNESCO World Heritage Site, known as Mozart's birthplace."
+  },
+  {
+    "country_tr": "Avusturya",
+    "country_en": "Austria",
+    "city_tr": "Innsbruck",
+    "city_en": "Innsbruck",
+    "name_tr": "Altstadt",
+    "name_en": "Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Innsbruck Altstadt, Alp dağları arasında yer alan, renkli evleri ve tarihi atmosferiyle ünlü bir şehirdir.",
+    "description_en": "Innsbruck Old Town is a city located among the Alpine mountains, famous for its colorful houses and historic atmosphere."
+  },
+  {
+    "country_tr": "Avusturya",
+    "country_en": "Austria",
+    "city_tr": "Viyana",
+    "city_en": "Vienna",
+    "name_tr": "Belvedere Sarayı",
+    "name_en": "Belvedere Palace",
+    "category_tr": "Saray",
+    "category_en": "Palace",
+    "description_tr": "Belvedere Sarayı, barok mimarisi ve Klimt'in 'Öpücük' tablosuna ev sahipliği yapan sanat müzesi olarak ünlüdür.",
+    "description_en": "Belvedere Palace is famous for its Baroque architecture and houses Klimt's 'The Kiss' painting as an art museum."
+  },
+  {
+    "country_tr": "Avusturya",
+    "country_en": "Austria",
+    "city_tr": "Viyana",
+    "city_en": "Vienna",
+    "name_tr": "Hofburg Sarayı",
+    "name_en": "Hofburg Palace",
+    "category_tr": "Saray",
+    "category_en": "Palace",
+    "description_tr": "Hofburg Sarayı, Habsburg hanedanının kışlık sarayı olup, bugün cumhurbaşkanlığı ofisi ve müzeler olarak kullanılır.",
+    "description_en": "Hofburg Palace was the winter residence of the Habsburg dynasty and today serves as the presidential office and museums."
+  },
+  {
+    "country_tr": "Avusturya",
+    "country_en": "Austria",
+    "city_tr": "Graz",
+    "city_en": "Graz",
+    "name_tr": "Graz Eski Şehir",
+    "name_en": "Graz Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Graz Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Ortaçağ'dan kalma sokakları ve tarihi yapılarıyla ünlüdür.",
+    "description_en": "Graz Old Town is a UNESCO World Heritage Site, famous for its medieval streets and historic buildings."
+  },
+  {
+    "country_tr": "Avusturya",
+    "country_en": "Austria",
+    "city_tr": "Hallstatt",
+    "city_en": "Hallstatt",
+    "name_tr": "Hallstatt Köyü",
+    "name_en": "Hallstatt Village",
+    "category_tr": "Köy",
+    "category_en": "Village",
+    "description_tr": "Hallstatt, Alp dağları arasında yer alan, göl kenarındaki evleri ve doğal güzelliğiyle ünlü bir köydür.",
+    "description_en": "Hallstatt is a village located among the Alpine mountains, famous for its lakeside houses and natural beauty."
+  },
+  {
+    "country_tr": "Avusturya",
+    "country_en": "Austria",
+    "city_tr": "Viyana",
+    "city_en": "Vienna",
+    "name_tr": "Prater",
+    "name_en": "Prater",
+    "category_tr": "Eğlence Parkı",
+    "category_en": "Amusement Park",
+    "description_tr": "Prater, Viyana'nın en eski eğlence parkı olup, ünlü Riesenrad dönme dolabına ev sahipliği yapar.",
+    "description_en": "Prater is Vienna's oldest amusement park and home to the famous Riesenrad Ferris wheel."
+  }
+] 

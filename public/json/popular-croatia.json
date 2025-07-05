@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Hırvatistan",
+    "country_en": "Croatia",
+    "city_tr": "Dubrovnik",
+    "city_en": "Dubrovnik",
+    "name_tr": "Dubrovnik Eski Şehir",
+    "name_en": "Dubrovnik Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Dubrovnik Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Ortaçağ'dan kalma surları ve tarihi yapılarıyla ünlüdür.",
+    "description_en": "Dubrovnik Old Town is listed as a UNESCO World Heritage Site, famous for its medieval walls and historic buildings."
+  },
+  {
+    "country_tr": "Hırvatistan",
+    "country_en": "Croatia",
+    "city_tr": "Split",
+    "city_en": "Split",
+    "name_tr": "Diocletian Sarayı",
+    "name_en": "Diocletian's Palace",
+    "category_tr": "Saray",
+    "category_en": "Palace",
+    "description_tr": "Diocletian Sarayı, UNESCO Dünya Mirası Listesi'nde yer alan, Roma İmparatoru Diocletian'ın emeklilik sarayıdır.",
+    "description_en": "Diocletian's Palace is listed as a UNESCO World Heritage Site, the retirement palace of Roman Emperor Diocletian."
+  },
+  {
+    "country_tr": "Hırvatistan",
+    "country_en": "Croatia",
+    "city_tr": "Zagreb",
+    "city_en": "Zagreb",
+    "name_tr": "Zagreb Eski Şehir",
+    "name_en": "Zagreb Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Zagreb Eski Şehir, Hırvatistan'ın başkenti olup, tarihi meydanı ve katedraliyle ünlüdür.",
+    "description_en": "Zagreb Old Town is the capital of Croatia, famous for its historic square and cathedral."
+  },
+  {
+    "country_tr": "Hırvatistan",
+    "country_en": "Croatia",
+    "city_tr": "Plitvice",
+    "city_en": "Plitvice",
+    "name_tr": "Plitvice Gölleri",
+    "name_en": "Plitvice Lakes",
+    "category_tr": "Milli Park",
+    "category_en": "National Park",
+    "description_tr": "Plitvice Gölleri, UNESCO Dünya Mirası Listesi'nde yer alan, şelaleleri ve gölleriyle ünlü bir milli parktır.",
+    "description_en": "Plitvice Lakes is a national park listed as a UNESCO World Heritage Site, famous for its waterfalls and lakes."
+  },
+  {
+    "country_tr": "Hırvatistan",
+    "country_en": "Croatia",
+    "city_tr": "Hvar",
+    "city_en": "Hvar",
+    "name_tr": "Hvar Eski Şehir",
+    "name_en": "Hvar Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Hvar Eski Şehir, Adriyatik Denizi'nde yer alan, lüks yatları ve gece hayatıyla ünlü bir ada şehridir.",
+    "description_en": "Hvar Old Town is an island city in the Adriatic Sea, famous for its luxury yachts and nightlife."
+  },
+  {
+    "country_tr": "Hırvatistan",
+    "country_en": "Croatia",
+    "city_tr": "Rovinj",
+    "city_en": "Rovinj",
+    "name_tr": "Rovinj Eski Şehir",
+    "name_en": "Rovinj Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Rovinj Eski Şehir, İstria Yarımadası'nda yer alan, Venedik mimarisi ve renkli evleriyle ünlü bir şehirdir.",
+    "description_en": "Rovinj Old Town is located on the Istrian Peninsula, famous for its Venetian architecture and colorful houses."
+  },
+  {
+    "country_tr": "Hırvatistan",
+    "country_en": "Croatia",
+    "city_tr": "Zadar",
+    "city_en": "Zadar",
+    "name_tr": "Zadar Eski Şehir",
+    "name_en": "Zadar Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Zadar Eski Şehir, Roma ve Ortaçağ'dan kalma yapılarıyla ünlü, Adriyatik kıyısında yer alan bir şehirdir.",
+    "description_en": "Zadar Old Town is a city on the Adriatic coast, famous for its Roman and medieval buildings."
+  },
+  {
+    "country_tr": "Hırvatistan",
+    "country_en": "Croatia",
+    "city_tr": "Trogir",
+    "city_en": "Trogir",
+    "name_tr": "Trogir Eski Şehir",
+    "name_en": "Trogir Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Trogir Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Ortaçağ'dan kalma sokaklarıyla ünlüdür.",
+    "description_en": "Trogir Old Town is listed as a UNESCO World Heritage Site, famous for its medieval streets."
+  },
+  {
+    "country_tr": "Hırvatistan",
+    "country_en": "Croatia",
+    "city_tr": "Korcula",
+    "city_en": "Korcula",
+    "name_tr": "Korcula Eski Şehir",
+    "name_en": "Korcula Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Korcula Eski Şehir, Marco Polo'nun doğduğu yer olarak bilinen, Ortaçağ'dan kalma surlarıyla ünlü bir şehirdir.",
+    "description_en": "Korcula Old Town is known as Marco Polo's birthplace, famous for its medieval walls."
+  },
+  {
+    "country_tr": "Hırvatistan",
+    "country_en": "Croatia",
+    "city_tr": "Pula",
+    "city_en": "Pula",
+    "name_tr": "Pula Arena",
+    "name_en": "Pula Arena",
+    "category_tr": "Amfitiyatro",
+    "category_en": "Amphitheater",
+    "description_tr": "Pula Arena, Roma döneminden kalma, dünyanın en iyi korunmuş amfitiyatrolarından biridir.",
+    "description_en": "Pula Arena is one of the best-preserved amphitheaters in the world from the Roman era."
+  }
+] 

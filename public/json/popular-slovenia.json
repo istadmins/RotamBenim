@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Slovenya",
+    "country_en": "Slovenia",
+    "city_tr": "Ljubljana",
+    "city_en": "Ljubljana",
+    "name_tr": "Ljubljana Kalesi",
+    "name_en": "Ljubljana Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Ljubljana Kalesi, şehrin simgesi olan ve panoramik manzara sunan tarihi bir kaledir.",
+    "description_en": "Ljubljana Castle is a historic castle and symbol of the city, offering panoramic views."
+  },
+  {
+    "country_tr": "Slovenya",
+    "country_en": "Slovenia",
+    "city_tr": "Ljubljana",
+    "city_en": "Ljubljana",
+    "name_tr": "Ljubljana Eski Şehir",
+    "name_en": "Ljubljana Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Ljubljana Eski Şehir, Ljubljanica Nehri kıyısında yer alan, tarihi köprüleri ve mimarisiyle ünlüdür.",
+    "description_en": "Ljubljana Old Town is located on the banks of the Ljubljanica River, famous for its historic bridges and architecture."
+  },
+  {
+    "country_tr": "Slovenya",
+    "country_en": "Slovenia",
+    "city_tr": "Bled",
+    "city_en": "Bled",
+    "name_tr": "Bled Gölü",
+    "name_en": "Lake Bled",
+    "category_tr": "Göl",
+    "category_en": "Lake",
+    "description_tr": "Bled Gölü, Julian Alpleri'nde yer alan, adasındaki kilisesi ve kalesiyle ünlü bir göldür.",
+    "description_en": "Lake Bled is located in the Julian Alps, famous for its island church and castle."
+  },
+  {
+    "country_tr": "Slovenya",
+    "country_en": "Slovenia",
+    "city_tr": "Bled",
+    "city_en": "Bled",
+    "name_tr": "Bled Kalesi",
+    "name_en": "Bled Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Bled Kalesi, gölün üzerinde yer alan, Ortaçağ'dan kalma etkileyici bir kaledir.",
+    "description_en": "Bled Castle is an impressive medieval castle located above the lake."
+  },
+  {
+    "country_tr": "Slovenya",
+    "country_en": "Slovenia",
+    "city_tr": "Postojna",
+    "city_en": "Postojna",
+    "name_tr": "Postojna Mağarası",
+    "name_en": "Postojna Cave",
+    "category_tr": "Mağara",
+    "category_en": "Cave",
+    "description_tr": "Postojna Mağarası, Avrupa'nın en büyük mağara sistemlerinden biri olup, sarkıt ve dikitleriyle ünlüdür.",
+    "description_en": "Postojna Cave is one of Europe's largest cave systems, famous for its stalactites and stalagmites."
+  },
+  {
+    "country_tr": "Slovenya",
+    "country_en": "Slovenia",
+    "city_tr": "Predjama",
+    "city_en": "Predjama",
+    "name_tr": "Predjama Kalesi",
+    "name_en": "Predjama Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Predjama Kalesi, mağaranın içine inşa edilmiş, dünyanın en büyük mağara kalesidir.",
+    "description_en": "Predjama Castle is built inside a cave and is the largest cave castle in the world."
+  },
+  {
+    "country_tr": "Slovenya",
+    "country_en": "Slovenia",
+    "city_tr": "Piran",
+    "city_en": "Piran",
+    "name_tr": "Piran Eski Şehir",
+    "name_en": "Piran Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Piran Eski Şehir, Adriyatik Denizi kıyısında yer alan, Venedik mimarisi ve dar sokaklarıyla ünlüdür.",
+    "description_en": "Piran Old Town is located on the Adriatic coast, famous for its Venetian architecture and narrow streets."
+  },
+  {
+    "country_tr": "Slovenya",
+    "country_en": "Slovenia",
+    "city_tr": "Maribor",
+    "city_en": "Maribor",
+    "name_tr": "Maribor Eski Şehir",
+    "name_en": "Maribor Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Maribor Eski Şehir, Slovenya'nın ikinci büyük şehri olup, tarihi meydanı ve katedraliyle ünlüdür.",
+    "description_en": "Maribor Old Town is Slovenia's second-largest city, famous for its historic square and cathedral."
+  },
+  {
+    "country_tr": "Slovenya",
+    "country_en": "Slovenia",
+    "city_tr": "Škocjan",
+    "city_en": "Škocjan",
+    "name_tr": "Škocjan Mağaraları",
+    "name_en": "Škocjan Caves",
+    "category_tr": "Mağara",
+    "category_en": "Cave",
+    "description_tr": "Škocjan Mağaraları, UNESCO Dünya Mirası Listesi'nde yer alan, etkileyici yeraltı nehir sistemiyle ünlüdür.",
+    "description_en": "Škocjan Caves are listed as a UNESCO World Heritage Site, famous for their impressive underground river system."
+  },
+  {
+    "country_tr": "Slovenya",
+    "country_en": "Slovenia",
+    "city_tr": "Celje",
+    "city_en": "Celje",
+    "name_tr": "Celje Kalesi",
+    "name_en": "Celje Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Celje Kalesi, Ortaçağ'dan kalma etkileyici bir kale olup, şehrin panoramik manzarasını sunar.",
+    "description_en": "Celje Castle is an impressive medieval castle offering panoramic views of the city."
+  }
+] 

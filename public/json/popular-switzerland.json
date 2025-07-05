@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "İsviçre",
+    "country_en": "Switzerland",
+    "city_tr": "Zürih",
+    "city_en": "Zurich",
+    "name_tr": "Zürih Gölü",
+    "name_en": "Lake Zurich",
+    "category_tr": "Göl",
+    "category_en": "Lake",
+    "description_tr": "Zürih Gölü, şehrin merkezinde yer alan ve doğal güzelliğiyle ünlü bir göldür. Yürüyüş ve tekne turları için idealdir.",
+    "description_en": "Lake Zurich is a lake located in the center of the city, famous for its natural beauty. It is ideal for walking and boat tours."
+  },
+  {
+    "country_tr": "İsviçre",
+    "country_en": "Switzerland",
+    "city_tr": "Cenevre",
+    "city_en": "Geneva",
+    "name_tr": "Cenevre Çeşmesi (Jet d'Eau)",
+    "name_en": "Jet d'Eau",
+    "category_tr": "Çeşme",
+    "category_en": "Fountain",
+    "description_tr": "Jet d'Eau, Cenevre'nin simgesi olan devasa bir su fıskiyesidir ve göl kenarında yer alır.",
+    "description_en": "Jet d'Eau is a giant water fountain and the symbol of Geneva, located on the lakeshore."
+  },
+  {
+    "country_tr": "İsviçre",
+    "country_en": "Switzerland",
+    "city_tr": "Interlaken",
+    "city_en": "Interlaken",
+    "name_tr": "Harder Kulm",
+    "name_en": "Harder Kulm",
+    "category_tr": "Manzara Noktası",
+    "category_en": "Viewpoint",
+    "description_tr": "Harder Kulm, Interlaken'in en güzel manzaralarını sunan bir tepe ve seyir terasıdır.",
+    "description_en": "Harder Kulm is a hill and viewing platform offering the best views of Interlaken."
+  },
+  {
+    "country_tr": "İsviçre",
+    "country_en": "Switzerland",
+    "city_tr": "Bern",
+    "city_en": "Bern",
+    "name_tr": "Bern Eski Şehir",
+    "name_en": "Bern Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Bern Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Ortaçağ'dan kalma sokakları ve tarihi yapılarıyla ünlüdür.",
+    "description_en": "Bern Old Town is a UNESCO World Heritage Site, famous for its medieval streets and historic buildings."
+  },
+  {
+    "country_tr": "İsviçre",
+    "country_en": "Switzerland",
+    "city_tr": "Luzern",
+    "city_en": "Lucerne",
+    "name_tr": "Kapell Köprüsü",
+    "name_en": "Chapel Bridge",
+    "category_tr": "Köprü",
+    "category_en": "Bridge",
+    "description_tr": "Kapell Köprüsü, Luzern'in en ünlü simgelerinden biri olan tarihi bir ahşap köprüdür.",
+    "description_en": "Chapel Bridge is a historic wooden bridge and one of the most famous landmarks of Lucerne."
+  },
+  {
+    "country_tr": "İsviçre",
+    "country_en": "Switzerland",
+    "city_tr": "Zermatt",
+    "city_en": "Zermatt",
+    "name_tr": "Matterhorn",
+    "name_en": "Matterhorn",
+    "category_tr": "Dağ",
+    "category_en": "Mountain",
+    "description_tr": "Matterhorn, İsviçre Alpleri'nin en ikonik zirvesidir ve dağcılar ile fotoğrafçılar için popüler bir noktadır.",
+    "description_en": "The Matterhorn is the most iconic peak of the Swiss Alps and a popular spot for climbers and photographers."
+  },
+  {
+    "country_tr": "İsviçre",
+    "country_en": "Switzerland",
+    "city_tr": "Lugano",
+    "city_en": "Lugano",
+    "name_tr": "Lugano Gölü",
+    "name_en": "Lake Lugano",
+    "category_tr": "Göl",
+    "category_en": "Lake",
+    "description_tr": "Lugano Gölü, İsviçre'nin güneyinde yer alan ve doğal güzelliğiyle ünlü bir göldür.",
+    "description_en": "Lake Lugano is a lake in southern Switzerland, famous for its natural beauty."
+  },
+  {
+    "country_tr": "İsviçre",
+    "country_en": "Switzerland",
+    "city_tr": "Cenevre",
+    "city_en": "Geneva",
+    "name_tr": "Birleşmiş Milletler Binası",
+    "name_en": "United Nations Office",
+    "category_tr": "Uluslararası Kurum",
+    "category_en": "International Organization",
+    "description_tr": "Birleşmiş Milletler Binası, Cenevre'de uluslararası toplantıların yapıldığı önemli bir merkezdir.",
+    "description_en": "The United Nations Office is an important center for international meetings in Geneva."
+  },
+  {
+    "country_tr": "İsviçre",
+    "country_en": "Switzerland",
+    "city_tr": "Basel",
+    "city_en": "Basel",
+    "name_tr": "Basel Sanat Müzesi",
+    "name_en": "Kunstmuseum Basel",
+    "category_tr": "Müze",
+    "category_en": "Museum",
+    "description_tr": "Basel Sanat Müzesi, İsviçre'nin en önemli sanat koleksiyonlarından birine sahiptir.",
+    "description_en": "Kunstmuseum Basel houses one of Switzerland's most important art collections."
+  },
+  {
+    "country_tr": "İsviçre",
+    "country_en": "Switzerland",
+    "city_tr": "St. Moritz",
+    "city_en": "St. Moritz",
+    "name_tr": "St. Moritz Kayak Merkezi",
+    "name_en": "St. Moritz Ski Resort",
+    "category_tr": "Kayak Merkezi",
+    "category_en": "Ski Resort",
+    "description_tr": "St. Moritz, lüks kayak merkezleri ve kış sporlarıyla ünlüdür.",
+    "description_en": "St. Moritz is famous for its luxury ski resorts and winter sports."
+  }
+] 

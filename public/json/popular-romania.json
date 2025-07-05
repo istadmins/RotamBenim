@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Romanya",
+    "country_en": "Romania",
+    "city_tr": "Bükreş",
+    "city_en": "Bucharest",
+    "name_tr": "Parlamento Sarayı",
+    "name_en": "Palace of Parliament",
+    "category_tr": "Saray",
+    "category_en": "Palace",
+    "description_tr": "Parlamento Sarayı, dünyanın en büyük sivil idari binası olup, Nicolae Ceaușescu döneminde inşa edilmiştir.",
+    "description_en": "The Palace of Parliament is the world's largest civilian administrative building, built during the Nicolae Ceaușescu era."
+  },
+  {
+    "country_tr": "Romanya",
+    "country_en": "Romania",
+    "city_tr": "Bükreş",
+    "city_en": "Bucharest",
+    "name_tr": "Eski Şehir",
+    "name_en": "Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Bükreş Eski Şehir, tarihi sokakları, restoranları ve gece hayatıyla ünlü bir bölgedir.",
+    "description_en": "Bucharest Old Town is an area famous for its historic streets, restaurants, and nightlife."
+  },
+  {
+    "country_tr": "Romanya",
+    "country_en": "Romania",
+    "city_tr": "Bran",
+    "city_en": "Bran",
+    "name_tr": "Bran Kalesi",
+    "name_en": "Bran Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Bran Kalesi, 'Drakula Kalesi' olarak bilinen, Transilvanya'nın en ünlü kalesidir.",
+    "description_en": "Bran Castle, known as 'Dracula's Castle', is the most famous castle in Transylvania."
+  },
+  {
+    "country_tr": "Romanya",
+    "country_en": "Romania",
+    "city_tr": "Sinaia",
+    "city_en": "Sinaia",
+    "name_tr": "Peleş Sarayı",
+    "name_en": "Peleș Castle",
+    "category_tr": "Saray",
+    "category_en": "Castle",
+    "description_tr": "Peleş Sarayı, Karpat Dağları'nda yer alan, neo-Rönesans mimarisiyle ünlü bir saraydır.",
+    "description_en": "Peleș Castle is a palace located in the Carpathian Mountains, famous for its neo-Renaissance architecture."
+  },
+  {
+    "country_tr": "Romanya",
+    "country_en": "Romania",
+    "city_tr": "Sibiu",
+    "city_en": "Sibiu",
+    "name_tr": "Sibiu Eski Şehir",
+    "name_en": "Sibiu Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Sibiu Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Ortaçağ'dan kalma sokaklarıyla ünlüdür.",
+    "description_en": "Sibiu Old Town is listed as a UNESCO World Heritage Site, famous for its medieval streets."
+  },
+  {
+    "country_tr": "Romanya",
+    "country_en": "Romania",
+    "city_tr": "Cluj-Napoca",
+    "city_en": "Cluj-Napoca",
+    "name_tr": "Cluj Eski Şehir",
+    "name_en": "Cluj Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Cluj Eski Şehir, Transilvanya'nın en büyük şehri olup, tarihi meydanı ve kiliseleriyle ünlüdür.",
+    "description_en": "Cluj Old Town is the largest city in Transylvania, famous for its historic square and churches."
+  },
+  {
+    "country_tr": "Romanya",
+    "country_en": "Romania",
+    "city_tr": "Timișoara",
+    "city_en": "Timișoara",
+    "name_tr": "Timișoara Eski Şehir",
+    "name_en": "Timișoara Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Timișoara Eski Şehir, 'Küçük Viyana' olarak bilinen, Art Nouveau mimarisiyle ünlü bir şehirdir.",
+    "description_en": "Timișoara Old Town is known as 'Little Vienna', famous for its Art Nouveau architecture."
+  },
+  {
+    "country_tr": "Romanya",
+    "country_en": "Romania",
+    "city_tr": "Brașov",
+    "city_en": "Brașov",
+    "name_tr": "Brașov Eski Şehir",
+    "name_en": "Brașov Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Brașov Eski Şehir, Karpat Dağları'nın eteklerinde yer alan, gotik mimarisiyle ünlü bir şehirdir.",
+    "description_en": "Brașov Old Town is located at the foothills of the Carpathian Mountains, famous for its Gothic architecture."
+  },
+  {
+    "country_tr": "Romanya",
+    "country_en": "Romania",
+    "city_tr": "Sighișoara",
+    "city_en": "Sighișoara",
+    "name_tr": "Sighișoara Eski Şehir",
+    "name_en": "Sighișoara Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Sighișoara Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Ortaçağ'dan kalma surlarıyla ünlüdür.",
+    "description_en": "Sighișoara Old Town is listed as a UNESCO World Heritage Site, famous for its medieval walls."
+  },
+  {
+    "country_tr": "Romanya",
+    "country_en": "Romania",
+    "city_tr": "Constanța",
+    "city_en": "Constanța",
+    "name_tr": "Constanța Limanı",
+    "name_en": "Constanța Port",
+    "category_tr": "Liman",
+    "category_en": "Port",
+    "description_tr": "Constanța Limanı, Karadeniz'in en büyük limanlarından biri olup, tarihi yapılarıyla ünlüdür.",
+    "description_en": "Constanța Port is one of the largest ports on the Black Sea, famous for its historic buildings."
+  }
+] 

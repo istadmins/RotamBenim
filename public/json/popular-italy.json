@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "İtalya",
+    "country_en": "Italy",
+    "city_tr": "Roma",
+    "city_en": "Rome",
+    "name_tr": "Kolezyum",
+    "name_en": "Colosseum",
+    "category_tr": "Antik Amfitiyatro",
+    "category_en": "Ancient Amphitheatre",
+    "description_tr": "Kolezyum, Roma İmparatorluğu'nun en büyük amfitiyatrosu olup gladyatör dövüşleriyle ünlüdür. UNESCO Dünya Mirası Listesi'nde yer alır ve Roma'nın en çok ziyaret edilen simgelerindendir.",
+    "description_en": "The Colosseum is the largest amphitheater of the Roman Empire, famous for its gladiator fights. It is a UNESCO World Heritage Site and one of Rome's most visited landmarks."
+  },
+  {
+    "country_tr": "İtalya",
+    "country_en": "Italy",
+    "city_tr": "Venedik",
+    "city_en": "Venice",
+    "name_tr": "Büyük Kanal",
+    "name_en": "Grand Canal",
+    "category_tr": "Kanal",
+    "category_en": "Canal",
+    "description_tr": "Büyük Kanal, Venedik'in ana su yolu olup gondol turlarıyla ünlüdür. Kanal boyunca tarihi saraylar ve köprüler sıralanır.",
+    "description_en": "The Grand Canal is the main waterway of Venice, famous for its gondola tours. Historic palaces and bridges line the canal."
+  },
+  {
+    "country_tr": "İtalya",
+    "country_en": "Italy",
+    "city_tr": "Floransa",
+    "city_en": "Florence",
+    "name_tr": "Duomo di Firenze",
+    "name_en": "Florence Cathedral",
+    "category_tr": "Katedral",
+    "category_en": "Cathedral",
+    "description_tr": "Floransa Katedrali, Rönesans mimarisinin başyapıtlarından biridir. Kırmızı kubbesiyle ünlüdür ve şehrin siluetine hakimdir.",
+    "description_en": "Florence Cathedral is one of the masterpieces of Renaissance architecture. It is famous for its red dome and dominates the city's skyline."
+  },
+  {
+    "country_tr": "İtalya",
+    "country_en": "Italy",
+    "city_tr": "Pisa",
+    "city_en": "Pisa",
+    "name_tr": "Pisa Kulesi",
+    "name_en": "Leaning Tower of Pisa",
+    "category_tr": "Kule",
+    "category_en": "Tower",
+    "description_tr": "Pisa Kulesi, eğik yapısıyla dünyaca ünlü bir anıttır. Piazza dei Miracoli meydanında yer alır ve her yıl milyonlarca turist çeker.",
+    "description_en": "The Leaning Tower of Pisa is a world-famous monument known for its tilt. Located in Piazza dei Miracoli, it attracts millions of tourists every year."
+  },
+  {
+    "country_tr": "İtalya",
+    "country_en": "Italy",
+    "city_tr": "Milano",
+    "city_en": "Milan",
+    "name_tr": "Duomo di Milano",
+    "name_en": "Milan Cathedral",
+    "category_tr": "Katedral",
+    "category_en": "Cathedral",
+    "description_tr": "Milano Katedrali, gotik mimarinin en güzel örneklerinden biridir. Şehrin merkezinde yer alır ve etkileyici bir cepheye sahiptir.",
+    "description_en": "Milan Cathedral is one of the finest examples of Gothic architecture. It is located in the city center and has an impressive facade."
+  },
+  {
+    "country_tr": "İtalya",
+    "country_en": "Italy",
+    "city_tr": "Napoli",
+    "city_en": "Naples",
+    "name_tr": "Pompeii",
+    "name_en": "Pompeii",
+    "category_tr": "Antik Kent",
+    "category_en": "Ancient City",
+    "description_tr": "Pompeii, Vezüv Yanardağı'nın patlamasıyla yok olan antik bir Roma kentidir. Kazılar sayesinde şehir gün yüzüne çıkarılmıştır.",
+    "description_en": "Pompeii is an ancient Roman city destroyed by the eruption of Mount Vesuvius. The city has been unearthed through excavations."
+  },
+  {
+    "country_tr": "İtalya",
+    "country_en": "Italy",
+    "city_tr": "Roma",
+    "city_en": "Rome",
+    "name_tr": "Vatikan",
+    "name_en": "Vatican City",
+    "category_tr": "Bağımsız Şehir Devleti",
+    "category_en": "Independent City-State",
+    "description_tr": "Vatikan, Katolik dünyasının merkezi olup, San Pietro Bazilikası ve Vatikan Müzeleri'ne ev sahipliği yapar.",
+    "description_en": "Vatican City is the center of the Catholic world, home to St. Peter's Basilica and the Vatican Museums."
+  },
+  {
+    "country_tr": "İtalya",
+    "country_en": "Italy",
+    "city_tr": "Venedik",
+    "city_en": "Venice",
+    "name_tr": "San Marco Meydanı",
+    "name_en": "St. Mark's Square",
+    "category_tr": "Meydan",
+    "category_en": "Square",
+    "description_tr": "San Marco Meydanı, Venedik'in en ünlü meydanıdır. San Marco Bazilikası ve Dükler Sarayı burada yer alır.",
+    "description_en": "St. Mark's Square is the most famous square in Venice. St. Mark's Basilica and the Doge's Palace are located here."
+  },
+  {
+    "country_tr": "İtalya",
+    "country_en": "Italy",
+    "city_tr": "Floransa",
+    "city_en": "Florence",
+    "name_tr": "Uffizi Galerisi",
+    "name_en": "Uffizi Gallery",
+    "category_tr": "Sanat Galerisi",
+    "category_en": "Art Gallery",
+    "description_tr": "Uffizi Galerisi, Rönesans sanatının en önemli koleksiyonlarından birine sahiptir. Botticelli, Leonardo da Vinci ve Michelangelo'nun eserleri burada sergilenir.",
+    "description_en": "The Uffizi Gallery houses one of the most important collections of Renaissance art. Works by Botticelli, Leonardo da Vinci, and Michelangelo are exhibited here."
+  },
+  {
+    "country_tr": "İtalya",
+    "country_en": "Italy",
+    "city_tr": "Roma",
+    "city_en": "Rome",
+    "name_tr": "Trevi Çeşmesi",
+    "name_en": "Trevi Fountain",
+    "category_tr": "Çeşme",
+    "category_en": "Fountain",
+    "description_tr": "Trevi Çeşmesi, Roma'nın en ünlü çeşmesidir. Ziyaretçiler, dilek tutup çeşmeye para atarlar.",
+    "description_en": "The Trevi Fountain is the most famous fountain in Rome. Visitors throw coins into the fountain to make a wish."
+  }
+] 

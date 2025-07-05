@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Slovakya",
+    "country_en": "Slovakia",
+    "city_tr": "Bratislava",
+    "city_en": "Bratislava",
+    "name_tr": "Bratislava Kalesi",
+    "name_en": "Bratislava Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Bratislava Kalesi, Slovakya'nın başkentinin simgesi olan, Tuna Nehri üzerinde yer alan tarihi bir kaledir.",
+    "description_en": "Bratislava Castle is a historic castle and symbol of Slovakia's capital, located above the Danube River."
+  },
+  {
+    "country_tr": "Slovakya",
+    "country_en": "Slovakia",
+    "city_tr": "Bratislava",
+    "city_en": "Bratislava",
+    "name_tr": "Bratislava Eski Şehir",
+    "name_en": "Bratislava Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Bratislava Eski Şehir, Ortaçağ'dan kalma sokakları, meydanları ve tarihi yapılarıyla ünlüdür.",
+    "description_en": "Bratislava Old Town is famous for its medieval streets, squares, and historic buildings."
+  },
+  {
+    "country_tr": "Slovakya",
+    "country_en": "Slovakia",
+    "city_tr": "Kosice",
+    "city_en": "Kosice",
+    "name_tr": "Kosice Eski Şehir",
+    "name_en": "Kosice Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Kosice Eski Şehir, Slovakya'nın ikinci büyük şehri olup, gotik katedrali ve tarihi meydanıyla ünlüdür.",
+    "description_en": "Kosice Old Town is Slovakia's second-largest city, famous for its Gothic cathedral and historic square."
+  },
+  {
+    "country_tr": "Slovakya",
+    "country_en": "Slovakia",
+    "city_tr": "Banska Stiavnica",
+    "city_en": "Banska Stiavnica",
+    "name_tr": "Banska Stiavnica Eski Şehir",
+    "name_en": "Banska Stiavnica Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Banska Stiavnica Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, eski maden şehri olarak ünlüdür.",
+    "description_en": "Banska Stiavnica Old Town is listed as a UNESCO World Heritage Site, famous as an old mining town."
+  },
+  {
+    "country_tr": "Slovakya",
+    "country_en": "Slovakia",
+    "city_tr": "Vlkolinec",
+    "city_en": "Vlkolinec",
+    "name_tr": "Vlkolinec Köyü",
+    "name_en": "Vlkolinec Village",
+    "category_tr": "Köy",
+    "category_en": "Village",
+    "description_tr": "Vlkolinec Köyü, UNESCO Dünya Mirası Listesi'nde yer alan, geleneksel ahşap evleriyle ünlü bir köydür.",
+    "description_en": "Vlkolinec Village is listed as a UNESCO World Heritage Site, famous for its traditional wooden houses."
+  },
+  {
+    "country_tr": "Slovakya",
+    "country_en": "Slovakia",
+    "city_tr": "Spis",
+    "city_en": "Spis",
+    "name_tr": "Spis Kalesi",
+    "name_en": "Spis Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Spis Kalesi, UNESCO Dünya Mirası Listesi'nde yer alan, Orta Avrupa'nın en büyük kale komplekslerinden biridir.",
+    "description_en": "Spis Castle is listed as a UNESCO World Heritage Site, one of the largest castle complexes in Central Europe."
+  },
+  {
+    "country_tr": "Slovakya",
+    "country_en": "Slovakia",
+    "city_tr": "Tatras",
+    "city_en": "Tatras",
+    "name_tr": "Yüksek Tatras",
+    "name_en": "High Tatras",
+    "category_tr": "Dağ",
+    "category_en": "Mountain",
+    "description_tr": "Yüksek Tatras, Slovakya'nın en yüksek dağ sırası olup, kayak ve doğa sporları için popüler bir destinasyondur.",
+    "description_en": "High Tatras is Slovakia's highest mountain range and a popular destination for skiing and outdoor sports."
+  },
+  {
+    "country_tr": "Slovakya",
+    "country_en": "Slovakia",
+    "city_tr": "Bardejov",
+    "city_en": "Bardejov",
+    "name_tr": "Bardejov Eski Şehir",
+    "name_en": "Bardejov Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Bardejov Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Ortaçağ'dan kalma yapılarıyla ünlüdür.",
+    "description_en": "Bardejov Old Town is listed as a UNESCO World Heritage Site, famous for its medieval buildings."
+  },
+  {
+    "country_tr": "Slovakya",
+    "country_en": "Slovakia",
+    "city_tr": "Zilina",
+    "city_en": "Zilina",
+    "name_tr": "Zilina Eski Şehir",
+    "name_en": "Zilina Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Zilina Eski Şehir, kuzey Slovakya'nın önemli şehirlerinden biri olup, tarihi meydanıyla ünlüdür.",
+    "description_en": "Zilina Old Town is one of the important cities of northern Slovakia, famous for its historic square."
+  },
+  {
+    "country_tr": "Slovakya",
+    "country_en": "Slovakia",
+    "city_tr": "Nitra",
+    "city_en": "Nitra",
+    "name_tr": "Nitra Kalesi",
+    "name_en": "Nitra Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Nitra Kalesi, Slovakya'nın en eski şehirlerinden birinde yer alan, tarihi bir kale kompleksidir.",
+    "description_en": "Nitra Castle is a historic castle complex located in one of Slovakia's oldest cities."
+  }
+] 

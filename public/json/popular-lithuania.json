@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Litvanya",
+    "country_en": "Lithuania",
+    "city_tr": "Vilnius",
+    "city_en": "Vilnius",
+    "name_tr": "Vilnius Eski Şehir",
+    "name_en": "Vilnius Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Vilnius Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Ortaçağ'dan kalma sokakları ve kiliseleriyle ünlüdür.",
+    "description_en": "Vilnius Old Town is listed as a UNESCO World Heritage Site, famous for its medieval streets and churches."
+  },
+  {
+    "country_tr": "Litvanya",
+    "country_en": "Lithuania",
+    "city_tr": "Vilnius",
+    "city_en": "Vilnius",
+    "name_tr": "Gediminas Kulesi",
+    "name_en": "Gediminas Tower",
+    "category_tr": "Kule",
+    "category_en": "Tower",
+    "description_tr": "Gediminas Kulesi, Vilnius'un simgesi olan, şehrin en yüksek noktasından panoramik manzara sunan bir kuledir.",
+    "description_en": "Gediminas Tower is the symbol of Vilnius, offering panoramic views from the city's highest point."
+  },
+  {
+    "country_tr": "Litvanya",
+    "country_en": "Lithuania",
+    "city_tr": "Vilnius",
+    "city_en": "Vilnius",
+    "name_tr": "Aziz Anne Kilisesi",
+    "name_en": "St. Anne's Church",
+    "category_tr": "Kilise",
+    "category_en": "Church",
+    "description_tr": "Aziz Anne Kilisesi, gotik mimarisinin en güzel örneklerinden biri olup, Vilnius'un en ünlü kiliselerindendir.",
+    "description_en": "St. Anne's Church is one of the finest examples of Gothic architecture and one of Vilnius's most famous churches."
+  },
+  {
+    "country_tr": "Litvanya",
+    "country_en": "Lithuania",
+    "city_tr": "Kaunas",
+    "city_en": "Kaunas",
+    "name_tr": "Kaunas Eski Şehir",
+    "name_en": "Kaunas Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Kaunas Eski Şehir, Litvanya'nın ikinci büyük şehri olup, tarihi meydanı ve kalesiyle ünlüdür.",
+    "description_en": "Kaunas Old Town is Lithuania's second-largest city, famous for its historic square and castle."
+  },
+  {
+    "country_tr": "Litvanya",
+    "country_en": "Lithuania",
+    "city_tr": "Trakai",
+    "city_en": "Trakai",
+    "name_tr": "Trakai Kalesi",
+    "name_en": "Trakai Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Trakai Kalesi, göl üzerinde yer alan, Ortaçağ'dan kalma etkileyici bir ada kalesidir.",
+    "description_en": "Trakai Castle is an impressive medieval island castle located on a lake."
+  },
+  {
+    "country_tr": "Litvanya",
+    "country_en": "Lithuania",
+    "city_tr": "Klaipeda",
+    "city_en": "Klaipeda",
+    "name_tr": "Klaipeda Eski Şehir",
+    "name_en": "Klaipeda Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Klaipeda Eski Şehir, Baltık Denizi kıyısında yer alan, liman şehri ve tarihi yapılarıyla ünlüdür.",
+    "description_en": "Klaipeda Old Town is located on the Baltic Sea coast, famous for its port city and historic buildings."
+  },
+  {
+    "country_tr": "Litvanya",
+    "country_en": "Lithuania",
+    "city_tr": "Siauliai",
+    "city_en": "Siauliai",
+    "name_tr": "Haç Tepesi",
+    "name_en": "Hill of Crosses",
+    "category_tr": "Tarihi Alan",
+    "category_en": "Historic Site",
+    "description_tr": "Haç Tepesi, binlerce haçın bulunduğu, Litvanya'nın en önemli hac yerlerinden biridir.",
+    "description_en": "Hill of Crosses is one of Lithuania's most important pilgrimage sites, with thousands of crosses."
+  },
+  {
+    "country_tr": "Litvanya",
+    "country_en": "Lithuania",
+    "city_tr": "Palanga",
+    "city_en": "Palanga",
+    "name_tr": "Palanga Sahili",
+    "name_en": "Palanga Beach",
+    "category_tr": "Sahil",
+    "category_en": "Beach",
+    "description_tr": "Palanga Sahili, Baltık Denizi kıyısında yer alan, Litvanya'nın en popüler sahil şehirlerinden biridir.",
+    "description_en": "Palanga Beach is located on the Baltic Sea coast and is one of Lithuania's most popular beach cities."
+  },
+  {
+    "country_tr": "Litvanya",
+    "country_en": "Lithuania",
+    "city_tr": "Druskininkai",
+    "city_en": "Druskininkai",
+    "name_tr": "Druskininkai Kaplıcası",
+    "name_en": "Druskininkai Spa",
+    "category_tr": "Kaplıca",
+    "category_en": "Spa",
+    "description_tr": "Druskininkai Kaplıcası, Litvanya'nın en ünlü spa şehri olup, termal suları ve sağlık merkezleriyle ünlüdür.",
+    "description_en": "Druskininkai Spa is Lithuania's most famous spa town, famous for its thermal waters and health centers."
+  },
+  {
+    "country_tr": "Litvanya",
+    "country_en": "Lithuania",
+    "city_tr": "Nida",
+    "city_en": "Nida",
+    "name_tr": "Nida Sahili",
+    "name_en": "Nida Beach",
+    "category_tr": "Sahil",
+    "category_en": "Beach",
+    "description_tr": "Nida Sahili, Kurşiu Nerija Milli Parkı'nda yer alan, kum tepeleri ve doğal güzelliğiyle ünlüdür.",
+    "description_en": "Nida Beach is located in Curonian Spit National Park, famous for its sand dunes and natural beauty."
+  }
+] 

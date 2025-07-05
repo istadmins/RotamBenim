@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Portekiz",
+    "country_en": "Portugal",
+    "city_tr": "Lizbon",
+    "city_en": "Lisbon",
+    "name_tr": "Belem Kulesi",
+    "name_en": "Belem Tower",
+    "category_tr": "Kule",
+    "category_en": "Tower",
+    "description_tr": "Belem Kulesi, UNESCO Dünya Mirası Listesi'nde yer alan, Portekiz'in denizcilik tarihinin simgesi olan bir kuledir.",
+    "description_en": "Belem Tower is a tower listed as a UNESCO World Heritage Site, symbolizing Portugal's maritime history."
+  },
+  {
+    "country_tr": "Portekiz",
+    "country_en": "Portugal",
+    "city_tr": "Lizbon",
+    "city_en": "Lisbon",
+    "name_tr": "Jerónimos Manastırı",
+    "name_en": "Jerónimos Monastery",
+    "category_tr": "Manastır",
+    "category_en": "Monastery",
+    "description_tr": "Jerónimos Manastırı, UNESCO Dünya Mirası Listesi'nde yer alan, Manueline mimarisinin en güzel örneğidir.",
+    "description_en": "Jerónimos Monastery is listed as a UNESCO World Heritage Site and is the finest example of Manueline architecture."
+  },
+  {
+    "country_tr": "Portekiz",
+    "country_en": "Portugal",
+    "city_tr": "Porto",
+    "city_en": "Porto",
+    "name_tr": "Porto Eski Şehir",
+    "name_en": "Porto Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Porto Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Douro Nehri kıyısında yer alan tarihi bir şehirdir.",
+    "description_en": "Porto Old Town is a historic city listed as a UNESCO World Heritage Site, located on the banks of the Douro River."
+  },
+  {
+    "country_tr": "Portekiz",
+    "country_en": "Portugal",
+    "city_tr": "Sintra",
+    "city_en": "Sintra",
+    "name_tr": "Pena Sarayı",
+    "name_en": "Pena Palace",
+    "category_tr": "Saray",
+    "category_en": "Palace",
+    "description_tr": "Pena Sarayı, UNESCO Dünya Mirası Listesi'nde yer alan, romantik mimarisiyle ünlü renkli bir saraydır.",
+    "description_en": "Pena Palace is a colorful palace listed as a UNESCO World Heritage Site, famous for its romantic architecture."
+  },
+  {
+    "country_tr": "Portekiz",
+    "country_en": "Portugal",
+    "city_tr": "Faro",
+    "city_en": "Faro",
+    "name_tr": "Faro Eski Şehir",
+    "name_en": "Faro Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Faro Eski Şehir, Algarve bölgesinin başkenti olup, tarihi surları ve katedraliyle ünlüdür.",
+    "description_en": "Faro Old Town is the capital of the Algarve region, famous for its historic walls and cathedral."
+  },
+  {
+    "country_tr": "Portekiz",
+    "country_en": "Portugal",
+    "city_tr": "Coimbra",
+    "city_en": "Coimbra",
+    "name_tr": "Coimbra Üniversitesi",
+    "name_en": "University of Coimbra",
+    "category_tr": "Üniversite",
+    "category_en": "University",
+    "description_tr": "Coimbra Üniversitesi, UNESCO Dünya Mirası Listesi'nde yer alan, Avrupa'nın en eski üniversitelerinden biridir.",
+    "description_en": "The University of Coimbra is one of Europe's oldest universities, listed as a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Portekiz",
+    "country_en": "Portugal",
+    "city_tr": "Evora",
+    "city_en": "Evora",
+    "name_tr": "Evora Eski Şehir",
+    "name_en": "Evora Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Evora Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Roma döneminden kalma yapılarıyla ünlüdür.",
+    "description_en": "Evora Old Town is listed as a UNESCO World Heritage Site, famous for its Roman-era buildings."
+  },
+  {
+    "country_tr": "Portekiz",
+    "country_en": "Portugal",
+    "city_tr": "Braga",
+    "city_en": "Braga",
+    "name_tr": "Bom Jesus Manastırı",
+    "name_en": "Bom Jesus Monastery",
+    "category_tr": "Manastır",
+    "category_en": "Monastery",
+    "description_tr": "Bom Jesus Manastırı, barok mimarisi ve merdivenleriyle ünlü bir hac yeri ve manastırdır.",
+    "description_en": "Bom Jesus Monastery is a pilgrimage site and monastery famous for its Baroque architecture and stairs."
+  },
+  {
+    "country_tr": "Portekiz",
+    "country_en": "Portugal",
+    "city_tr": "Guimaraes",
+    "city_en": "Guimaraes",
+    "name_tr": "Guimaraes Kalesi",
+    "name_en": "Guimaraes Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Guimaraes Kalesi, Portekiz'in doğum yeri olarak bilinen, UNESCO Dünya Mirası Listesi'nde yer alan bir kaledir.",
+    "description_en": "Guimaraes Castle is a castle listed as a UNESCO World Heritage Site, known as the birthplace of Portugal."
+  },
+  {
+    "country_tr": "Portekiz",
+    "country_en": "Portugal",
+    "city_tr": "Madeira",
+    "city_en": "Madeira",
+    "name_tr": "Funchal Eski Şehir",
+    "name_en": "Funchal Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Funchal Eski Şehir, Madeira Adası'nın başkenti olup, renkli evleri ve botanik bahçeleriyle ünlüdür.",
+    "description_en": "Funchal Old Town is the capital of Madeira Island, famous for its colorful houses and botanical gardens."
+  }
+] 

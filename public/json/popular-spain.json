@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "İspanya",
+    "country_en": "Spain",
+    "city_tr": "Barselona",
+    "city_en": "Barcelona",
+    "name_tr": "Sagrada Familia",
+    "name_en": "Sagrada Familia",
+    "category_tr": "Bazilika",
+    "category_en": "Basilica",
+    "description_tr": "Sagrada Familia, Antoni Gaudí'nin başyapıtı olan ve Barselona'nın en ünlü simgelerinden biri olan devasa bir bazilikadır. İnşası halen devam etmektedir ve mimarisiyle büyüleyicidir.",
+    "description_en": "Sagrada Familia is a massive basilica and the masterpiece of Antoni Gaudí, one of Barcelona's most famous landmarks. Its construction is still ongoing and its architecture is fascinating."
+  },
+  {
+    "country_tr": "İspanya",
+    "country_en": "Spain",
+    "city_tr": "Madrid",
+    "city_en": "Madrid",
+    "name_tr": "Prado Müzesi",
+    "name_en": "Prado Museum",
+    "category_tr": "Müze",
+    "category_en": "Museum",
+    "description_tr": "Prado Müzesi, dünyanın en önemli sanat koleksiyonlarından birine sahip olup, Velázquez, Goya ve El Greco'nun eserlerini barındırır.",
+    "description_en": "The Prado Museum houses one of the world's most important art collections, including works by Velázquez, Goya, and El Greco."
+  },
+  {
+    "country_tr": "İspanya",
+    "country_en": "Spain",
+    "city_tr": "Granada",
+    "city_en": "Granada",
+    "name_tr": "Elhamra Sarayı",
+    "name_en": "Alhambra Palace",
+    "category_tr": "Saray",
+    "category_en": "Palace",
+    "description_tr": "Elhamra Sarayı, Endülüs İslam mimarisinin en güzel örneklerinden biridir. Bahçeleri, avluları ve detaylı süslemeleriyle ünlüdür.",
+    "description_en": "The Alhambra Palace is one of the finest examples of Andalusian Islamic architecture. It is famous for its gardens, courtyards, and intricate decorations."
+  },
+  {
+    "country_tr": "İspanya",
+    "country_en": "Spain",
+    "city_tr": "Sevilla",
+    "city_en": "Seville",
+    "name_tr": "Sevilla Katedrali",
+    "name_en": "Seville Cathedral",
+    "category_tr": "Katedral",
+    "category_en": "Cathedral",
+    "description_tr": "Sevilla Katedrali, dünyanın en büyük gotik katedrallerinden biridir ve Kristof Kolomb'un mezarına ev sahipliği yapar.",
+    "description_en": "Seville Cathedral is one of the largest Gothic cathedrals in the world and houses the tomb of Christopher Columbus."
+  },
+  {
+    "country_tr": "İspanya",
+    "country_en": "Spain",
+    "city_tr": "Valensiya",
+    "city_en": "Valencia",
+    "name_tr": "Bilim ve Sanat Şehri",
+    "name_en": "City of Arts and Sciences",
+    "category_tr": "Kültür Kompleksi",
+    "category_en": "Cultural Complex",
+    "description_tr": "Bilim ve Sanat Şehri, Valensiya'nın modern simgelerinden biri olup, müzeler, akvaryum ve sanat merkezlerinden oluşur.",
+    "description_en": "The City of Arts and Sciences is one of Valencia's modern landmarks, consisting of museums, an aquarium, and art centers."
+  },
+  {
+    "country_tr": "İspanya",
+    "country_en": "Spain",
+    "city_tr": "Madrid",
+    "city_en": "Madrid",
+    "name_tr": "Retiro Parkı",
+    "name_en": "Retiro Park",
+    "category_tr": "Park",
+    "category_en": "Park",
+    "description_tr": "Retiro Parkı, Madrid'in en büyük ve en popüler parkıdır. Gölü, heykelleri ve yürüyüş yollarıyla ünlüdür.",
+    "description_en": "Retiro Park is Madrid's largest and most popular park, famous for its lake, sculptures, and walking paths."
+  },
+  {
+    "country_tr": "İspanya",
+    "country_en": "Spain",
+    "city_tr": "Barselona",
+    "city_en": "Barcelona",
+    "name_tr": "Park Güell",
+    "name_en": "Park Güell",
+    "category_tr": "Park",
+    "category_en": "Park",
+    "description_tr": "Park Güell, Antoni Gaudí'nin tasarladığı renkli mozaikleri ve organik formlarıyla ünlü bir parktır. Barselona'nın en çok ziyaret edilen noktalarındandır.",
+    "description_en": "Park Güell is a park designed by Antoni Gaudí, famous for its colorful mosaics and organic forms. It is one of Barcelona's most visited spots."
+  },
+  {
+    "country_tr": "İspanya",
+    "country_en": "Spain",
+    "city_tr": "Santiago de Compostela",
+    "city_en": "Santiago de Compostela",
+    "name_tr": "Santiago de Compostela Katedrali",
+    "name_en": "Santiago de Compostela Cathedral",
+    "category_tr": "Katedral",
+    "category_en": "Cathedral",
+    "description_tr": "Santiago de Compostela Katedrali, Hristiyan hac yolunun son noktasıdır ve UNESCO Dünya Mirası Listesi'ndedir.",
+    "description_en": "Santiago de Compostela Cathedral is the final destination of the Christian pilgrimage route and is a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "İspanya",
+    "country_en": "Spain",
+    "city_tr": "Toledo",
+    "city_en": "Toledo",
+    "name_tr": "Toledo Eski Şehir",
+    "name_en": "Toledo Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Toledo Eski Şehir, Ortaçağ'dan kalma dar sokakları, katedrali ve tarihi yapılarıyla ünlüdür. UNESCO Dünya Mirası Listesi'ndedir.",
+    "description_en": "Toledo Old Town is famous for its medieval narrow streets, cathedral, and historic buildings. It is a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "İspanya",
+    "country_en": "Spain",
+    "city_tr": "Bilbao",
+    "city_en": "Bilbao",
+    "name_tr": "Guggenheim Müzesi",
+    "name_en": "Guggenheim Museum",
+    "category_tr": "Müze",
+    "category_en": "Museum",
+    "description_tr": "Guggenheim Müzesi, çağdaş sanat koleksiyonları ve çarpıcı modern mimarisiyle ünlüdür.",
+    "description_en": "The Guggenheim Museum is famous for its contemporary art collections and striking modern architecture."
+  }
+] 

@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Bulgaristan",
+    "country_en": "Bulgaria",
+    "city_tr": "Sofya",
+    "city_en": "Sofia",
+    "name_tr": "Aziz Alexander Nevsky Katedrali",
+    "name_en": "St. Alexander Nevsky Cathedral",
+    "category_tr": "Katedral",
+    "category_en": "Cathedral",
+    "description_tr": "Aziz Alexander Nevsky Katedrali, Balkanlar'ın en büyük Ortodoks katedrali olup, Sofya'nın simgesidir.",
+    "description_en": "St. Alexander Nevsky Cathedral is the largest Orthodox cathedral in the Balkans and the symbol of Sofia."
+  },
+  {
+    "country_tr": "Bulgaristan",
+    "country_en": "Bulgaria",
+    "city_tr": "Sofya",
+    "city_en": "Sofia",
+    "name_tr": "Sofya Eski Şehir",
+    "name_en": "Sofia Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Sofya Eski Şehir, Roma, Bizans ve Osmanlı dönemlerinden kalma tarihi yapılarıyla ünlüdür.",
+    "description_en": "Sofia Old Town is famous for its historic buildings from Roman, Byzantine, and Ottoman periods."
+  },
+  {
+    "country_tr": "Bulgaristan",
+    "country_en": "Bulgaria",
+    "city_tr": "Plovdiv",
+    "city_en": "Plovdiv",
+    "name_tr": "Plovdiv Eski Şehir",
+    "name_en": "Plovdiv Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Plovdiv Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Roma amfitiyatrosu ve Ortaçağ yapılarıyla ünlüdür.",
+    "description_en": "Plovdiv Old Town is listed as a UNESCO World Heritage Site, famous for its Roman amphitheater and medieval buildings."
+  },
+  {
+    "country_tr": "Bulgaristan",
+    "country_en": "Bulgaria",
+    "city_tr": "Veliko Tarnovo",
+    "city_en": "Veliko Tarnovo",
+    "name_tr": "Tsarevets Kalesi",
+    "name_en": "Tsarevets Fortress",
+    "category_tr": "Kale",
+    "category_en": "Fortress",
+    "description_tr": "Tsarevets Kalesi, Ortaçağ Bulgar İmparatorluğu'nun başkenti olan etkileyici bir kaledir.",
+    "description_en": "Tsarevets Fortress is an impressive fortress that was the capital of the medieval Bulgarian Empire."
+  },
+  {
+    "country_tr": "Bulgaristan",
+    "country_en": "Bulgaria",
+    "city_tr": "Nesebar",
+    "city_en": "Nesebar",
+    "name_tr": "Nesebar Eski Şehir",
+    "name_en": "Nesebar Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Nesebar Eski Şehir, UNESCO Dünya Mirası Listesi'nde yer alan, Karadeniz kıyısında yer alan tarihi bir ada şehridir.",
+    "description_en": "Nesebar Old Town is a historic island city on the Black Sea coast, listed as a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Bulgaristan",
+    "country_en": "Bulgaria",
+    "city_tr": "Rila",
+    "city_en": "Rila",
+    "name_tr": "Rila Manastırı",
+    "name_en": "Rila Monastery",
+    "category_tr": "Manastır",
+    "category_en": "Monastery",
+    "description_tr": "Rila Manastırı, UNESCO Dünya Mirası Listesi'nde yer alan, Bulgaristan'ın en büyük ve en önemli manastırıdır.",
+    "description_en": "Rila Monastery is Bulgaria's largest and most important monastery, listed as a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Bulgaristan",
+    "country_en": "Bulgaria",
+    "city_tr": "Varna",
+    "city_en": "Varna",
+    "name_tr": "Varna Eski Şehir",
+    "name_en": "Varna Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Varna Eski Şehir, Karadeniz'in en büyük şehri olup, tarihi yapıları ve sahiliyle ünlüdür.",
+    "description_en": "Varna Old Town is the largest city on the Black Sea, famous for its historic buildings and beach."
+  },
+  {
+    "country_tr": "Bulgaristan",
+    "country_en": "Bulgaria",
+    "city_tr": "Burgas",
+    "city_en": "Burgas",
+    "name_tr": "Burgas Sahili",
+    "name_en": "Burgas Beach",
+    "category_tr": "Sahil",
+    "category_en": "Beach",
+    "description_tr": "Burgas Sahili, Karadeniz kıyısında yer alan, uzun kumsalları ve turistik tesisleriyle ünlüdür.",
+    "description_en": "Burgas Beach is located on the Black Sea coast, famous for its long beaches and tourist facilities."
+  },
+  {
+    "country_tr": "Bulgaristan",
+    "country_en": "Bulgaria",
+    "city_tr": "Koprivshtitsa",
+    "city_en": "Koprivshtitsa",
+    "name_tr": "Koprivshtitsa Eski Şehir",
+    "name_en": "Koprivshtitsa Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Koprivshtitsa Eski Şehir, Bulgaristan'ın bağımsızlık mücadelesinin başladığı yer olarak bilinen tarihi bir şehirdir.",
+    "description_en": "Koprivshtitsa Old Town is a historic city known as where Bulgaria's independence struggle began."
+  },
+  {
+    "country_tr": "Bulgaristan",
+    "country_en": "Bulgaria",
+    "city_tr": "Bansko",
+    "city_en": "Bansko",
+    "name_tr": "Bansko Kayak Merkezi",
+    "name_en": "Bansko Ski Resort",
+    "category_tr": "Kayak Merkezi",
+    "category_en": "Ski Resort",
+    "description_tr": "Bansko Kayak Merkezi, Pirin Dağları'nda yer alan, Bulgaristan'ın en popüler kayak merkezlerinden biridir.",
+    "description_en": "Bansko Ski Resort is located in the Pirin Mountains, one of Bulgaria's most popular ski resorts."
+  }
+] 

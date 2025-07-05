@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Çek Cumhuriyeti",
+    "country_en": "Czech Republic",
+    "city_tr": "Prag",
+    "city_en": "Prague",
+    "name_tr": "Prag Kalesi",
+    "name_en": "Prague Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Prag Kalesi, dünyanın en büyük antik kalesi olup, Çek cumhurbaşkanının resmi ikametgahıdır. UNESCO Dünya Mirası Listesi'ndedir.",
+    "description_en": "Prague Castle is the largest ancient castle in the world and the official residence of the Czech president. It is a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Çek Cumhuriyeti",
+    "country_en": "Czech Republic",
+    "city_tr": "Prag",
+    "city_en": "Prague",
+    "name_tr": "Charles Köprüsü",
+    "name_en": "Charles Bridge",
+    "category_tr": "Köprü",
+    "category_en": "Bridge",
+    "description_tr": "Charles Köprüsü, Vltava Nehri üzerinde yer alan, 30 heykelle süslenmiş tarihi bir köprüdür.",
+    "description_en": "Charles Bridge is a historic bridge over the Vltava River, decorated with 30 statues."
+  },
+  {
+    "country_tr": "Çek Cumhuriyeti",
+    "country_en": "Czech Republic",
+    "city_tr": "Prag",
+    "city_en": "Prague",
+    "name_tr": "Eski Şehir Meydanı",
+    "name_en": "Old Town Square",
+    "category_tr": "Meydan",
+    "category_en": "Square",
+    "description_tr": "Eski Şehir Meydanı, Prag'ın kalbi olan, astronomik saat ve tarihi yapılarla çevrili bir meydandır.",
+    "description_en": "Old Town Square is the heart of Prague, surrounded by the astronomical clock and historic buildings."
+  },
+  {
+    "country_tr": "Çek Cumhuriyeti",
+    "country_en": "Czech Republic",
+    "city_tr": "Prag",
+    "city_en": "Prague",
+    "name_tr": "Astronomik Saat",
+    "name_en": "Astronomical Clock",
+    "category_tr": "Saat",
+    "category_en": "Clock",
+    "description_tr": "Astronomik Saat, 1410'dan beri çalışan, dünyanın en eski astronomik saatlerinden biridir.",
+    "description_en": "The Astronomical Clock is one of the oldest astronomical clocks in the world, working since 1410."
+  },
+  {
+    "country_tr": "Çek Cumhuriyeti",
+    "country_en": "Czech Republic",
+    "city_tr": "Prag",
+    "city_en": "Prague",
+    "name_tr": "St. Vitus Katedrali",
+    "name_en": "St. Vitus Cathedral",
+    "category_tr": "Katedral",
+    "category_en": "Cathedral",
+    "description_tr": "St. Vitus Katedrali, Prag Kalesi içinde yer alan, gotik mimarinin en güzel örneklerinden biridir.",
+    "description_en": "St. Vitus Cathedral is located within Prague Castle and is one of the finest examples of Gothic architecture."
+  },
+  {
+    "country_tr": "Çek Cumhuriyeti",
+    "country_en": "Czech Republic",
+    "city_tr": "Cesky Krumlov",
+    "city_en": "Cesky Krumlov",
+    "name_tr": "Cesky Krumlov Kalesi",
+    "name_en": "Cesky Krumlov Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Cesky Krumlov Kalesi, UNESCO Dünya Mirası Listesi'nde yer alan, Ortaçağ'dan kalma etkileyici bir kaledir.",
+    "description_en": "Cesky Krumlov Castle is an impressive medieval castle listed as a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Çek Cumhuriyeti",
+    "country_en": "Czech Republic",
+    "city_tr": "Karlovy Vary",
+    "city_en": "Karlovy Vary",
+    "name_tr": "Karlovy Vary Kaplıcaları",
+    "name_en": "Karlovy Vary Spas",
+    "category_tr": "Kaplıca",
+    "category_en": "Spa",
+    "description_tr": "Karlovy Vary, termal kaplıcaları ve şifalı sularıyla ünlü bir spa şehridir.",
+    "description_en": "Karlovy Vary is a spa town famous for its thermal springs and healing waters."
+  },
+  {
+    "country_tr": "Çek Cumhuriyeti",
+    "country_en": "Czech Republic",
+    "city_tr": "Brno",
+    "city_en": "Brno",
+    "name_tr": "Spilberk Kalesi",
+    "name_en": "Spilberk Castle",
+    "category_tr": "Kale",
+    "category_en": "Castle",
+    "description_tr": "Spilberk Kalesi, Brno'nun simgesi olan ve şehrin panoramik manzarasını sunan bir kaledir.",
+    "description_en": "Spilberk Castle is the symbol of Brno and offers panoramic views of the city."
+  },
+  {
+    "country_tr": "Çek Cumhuriyeti",
+    "country_en": "Czech Republic",
+    "city_tr": "Olomouc",
+    "city_en": "Olomouc",
+    "name_tr": "Olomouc Eski Şehir",
+    "name_en": "Olomouc Old Town",
+    "category_tr": "Tarihi Şehir",
+    "category_en": "Historic Town",
+    "description_tr": "Olomouc Eski Şehir, barok çeşmeleri ve tarihi yapılarıyla ünlü bir şehirdir.",
+    "description_en": "Olomouc Old Town is a city famous for its Baroque fountains and historic buildings."
+  },
+  {
+    "country_tr": "Çek Cumhuriyeti",
+    "country_en": "Czech Republic",
+    "city_tr": "Pilsen",
+    "city_en": "Pilsen",
+    "name_tr": "Pilsner Urquell Fabrikası",
+    "name_en": "Pilsner Urquell Brewery",
+    "category_tr": "Bira Fabrikası",
+    "category_en": "Brewery",
+    "description_tr": "Pilsner Urquell Fabrikası, dünyaca ünlü Pilsner birasının doğduğu yerdir.",
+    "description_en": "Pilsner Urquell Brewery is where the world-famous Pilsner beer was born."
+  }
+] 

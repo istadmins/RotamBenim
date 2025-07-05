@@ -1,0 +1,122 @@
+[
+  {
+    "country_tr": "Güney Kore",
+    "country_en": "South Korea",
+    "city_tr": "Seul",
+    "city_en": "Seoul",
+    "name_tr": "Gyeongbokgung Sarayı",
+    "name_en": "Gyeongbokgung Palace",
+    "category_tr": "Saray",
+    "category_en": "Palace",
+    "description_tr": "Gyeongbokgung Sarayı, Joseon Hanedanlığı'nın ana sarayı olup, geleneksel Kore mimarisinin en güzel örneklerinden biridir.",
+    "description_en": "Gyeongbokgung Palace was the main palace of the Joseon Dynasty and is one of the finest examples of traditional Korean architecture."
+  },
+  {
+    "country_tr": "Güney Kore",
+    "country_en": "South Korea",
+    "city_tr": "Seul",
+    "city_en": "Seoul",
+    "name_tr": "N Seoul Kulesi",
+    "name_en": "N Seoul Tower",
+    "category_tr": "Kule",
+    "category_en": "Tower",
+    "description_tr": "N Seoul Kulesi, Seul'un simgesi olan ve şehrin panoramik manzarasını sunan bir televizyon kulesidir.",
+    "description_en": "N Seoul Tower is a television tower and symbol of Seoul, offering panoramic views of the city."
+  },
+  {
+    "country_tr": "Güney Kore",
+    "country_en": "South Korea",
+    "city_tr": "Seul",
+    "city_en": "Seoul",
+    "name_tr": "Myeongdong",
+    "name_en": "Myeongdong",
+    "category_tr": "Alışveriş Bölgesi",
+    "category_en": "Shopping District",
+    "description_tr": "Myeongdong, Seul'un en popüler alışveriş bölgesi olup, mağazalar, restoranlar ve eğlence mekanlarıyla doludur.",
+    "description_en": "Myeongdong is Seoul's most popular shopping district, filled with stores, restaurants, and entertainment venues."
+  },
+  {
+    "country_tr": "Güney Kore",
+    "country_en": "South Korea",
+    "city_tr": "Busan",
+    "city_en": "Busan",
+    "name_tr": "Gamcheon Kültür Köyü",
+    "name_en": "Gamcheon Culture Village",
+    "category_tr": "Kültür Köyü",
+    "category_en": "Culture Village",
+    "description_tr": "Gamcheon Kültür Köyü, renkli evleri ve sanat eserleriyle ünlü, Busan'ın en popüler turistik noktalarından biridir.",
+    "description_en": "Gamcheon Culture Village is one of Busan's most popular tourist spots, famous for its colorful houses and art works."
+  },
+  {
+    "country_tr": "Güney Kore",
+    "country_en": "South Korea",
+    "city_tr": "Busan",
+    "city_en": "Busan",
+    "name_tr": "Haedong Yonggungsa Tapınağı",
+    "name_en": "Haedong Yonggungsa Temple",
+    "category_tr": "Tapınak",
+    "category_en": "Temple",
+    "description_tr": "Haedong Yonggungsa Tapınağı, okyanus kıyısında yer alan, Güney Kore'nin en güzel tapınaklarından biridir.",
+    "description_en": "Haedong Yonggungsa Temple is located on the ocean coast and is one of South Korea's most beautiful temples."
+  },
+  {
+    "country_tr": "Güney Kore",
+    "country_en": "South Korea",
+    "city_tr": "Gyeongju",
+    "city_en": "Gyeongju",
+    "name_tr": "Bulguksa Tapınağı",
+    "name_en": "Bulguksa Temple",
+    "category_tr": "Tapınak",
+    "category_en": "Temple",
+    "description_tr": "Bulguksa Tapınağı, UNESCO Dünya Mirası Listesi'nde yer alan, Silla Hanedanlığı'ndan kalma tarihi bir tapınaktır.",
+    "description_en": "Bulguksa Temple is a historic temple from the Silla Dynasty, listed as a UNESCO World Heritage Site."
+  },
+  {
+    "country_tr": "Güney Kore",
+    "country_en": "South Korea",
+    "city_tr": "Jeju",
+    "city_en": "Jeju",
+    "name_tr": "Hallasan Dağı",
+    "name_en": "Hallasan Mountain",
+    "category_tr": "Dağ",
+    "category_en": "Mountain",
+    "description_tr": "Hallasan Dağı, Jeju Adası'nın merkezinde yer alan, Güney Kore'nin en yüksek dağıdır.",
+    "description_en": "Hallasan Mountain is located in the center of Jeju Island and is South Korea's highest mountain."
+  },
+  {
+    "country_tr": "Güney Kore",
+    "country_en": "South Korea",
+    "city_tr": "Jeju",
+    "city_en": "Jeju",
+    "name_tr": "Seongsan Ilchulbong",
+    "name_en": "Seongsan Ilchulbong",
+    "category_tr": "Volkanik Konik",
+    "category_en": "Volcanic Cone",
+    "description_tr": "Seongsan Ilchulbong, UNESCO Dünya Mirası Listesi'nde yer alan, gün doğumu manzarasıyla ünlü volkanik bir koniktir.",
+    "description_en": "Seongsan Ilchulbong is a volcanic cone listed as a UNESCO World Heritage Site, famous for its sunrise views."
+  },
+  {
+    "country_tr": "Güney Kore",
+    "country_en": "South Korea",
+    "city_tr": "Andong",
+    "city_en": "Andong",
+    "name_tr": "Hahoe Köyü",
+    "name_en": "Hahoe Village",
+    "category_tr": "Köy",
+    "category_en": "Village",
+    "description_tr": "Hahoe Köyü, UNESCO Dünya Mirası Listesi'nde yer alan, geleneksel Kore mimarisiyle ünlü bir köydür.",
+    "description_en": "Hahoe Village is listed as a UNESCO World Heritage Site, famous for its traditional Korean architecture."
+  },
+  {
+    "country_tr": "Güney Kore",
+    "country_en": "South Korea",
+    "city_tr": "Suwon",
+    "city_en": "Suwon",
+    "name_tr": "Hwaseong Kalesi",
+    "name_en": "Hwaseong Fortress",
+    "category_tr": "Kale",
+    "category_en": "Fortress",
+    "description_tr": "Hwaseong Kalesi, UNESCO Dünya Mirası Listesi'nde yer alan, Joseon döneminden kalma etkileyici bir kaledir.",
+    "description_en": "Hwaseong Fortress is an impressive fortress from the Joseon period, listed as a UNESCO World Heritage Site."
+  }
+] 
