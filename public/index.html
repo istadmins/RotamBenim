@@ -637,6 +637,17 @@
           }
         }
 
+        // Firestore'a undefined alan göndermeyi engelleyen yardımcı fonksiyon
+        function filterUndefinedFields(obj) {
+          const result = {};
+          for (const key in obj) {
+            if (obj[key] !== undefined) {
+              result[key] = obj[key];
+            }
+          }
+          return result;
+        }
+
         // Mevcut kullanıcı için eksik açıklamaları doldur
         async function fillMissingDescriptions(user) {
           try {
@@ -697,140 +708,83 @@
             const userPlacesRef = collection(db, `users/${user.uid}/places`);
             const snapshot = await getDocs(userPlacesRef);
             const { doc, updateDoc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
-            
-            // Tüm yerleri ülkeye göre grupla
-            const placesByCountry = {};
-            const placesToDelete = [];
-            
-            snapshot.forEach(docSnapshot => {
+
+            // Tüm yerleri ülke+isim kombinasyonuna göre grupla
+            const placeMap = new Map();
+            const toDelete = [];
+            for (const docSnapshot of snapshot.docs) {
               const data = docSnapshot.data();
-              const country = data.country || 'BİLİNMEYEN';
-              
-              if (!placesByCountry[country]) {
-                placesByCountry[country] = [];
-              }
-              placesByCountry[country].push({ ...data, docId: docSnapshot.id });
-            });
-            
-            let mergedCount = 0;
-            let addedCount = 0;
-            let updatedCount = 0;
-            
-            // Her ülke için işlem yap
-            for (const [country, places] of Object.entries(placesByCountry)) {
-              if (places.length > 1) {
-                // Aynı ülke için birden fazla kayıt var - birleştir
-                const mainPlace = places[0]; // İlk kaydı ana kayıt yap
-                const otherPlaces = places.slice(1);
-                
-                // Diğer kayıtları sil
-                for (const place of otherPlaces) {
-                  placesToDelete.push(place.docId);
-                }
-                
-                // Ana kaydı güncelle - eksik bilgileri doldur
-                const popularPlacesForCountry = popularPlaces.filter(p => 
-                  p.country_tr.toUpperCase() === country || p.country_en.toUpperCase() === country
-                );
-                
-                // Eksik açıklamaları doldur
-                if (!mainPlace.description || mainPlace.description.trim() === '') {
-                  const matchingPlace = popularPlacesForCountry.find(p => 
-                    p.name_tr === mainPlace.name || p.name_en === mainPlace.name
-                  );
-                  
-                  if (matchingPlace) {
-                    const docRef = doc(db, `users/${user.uid}/places`, mainPlace.docId);
-                    await updateDoc(docRef, {
-                      description: matchingPlace.description_tr,
-                      name_en: matchingPlace.name_en,
-                      city_en: matchingPlace.city_en,
-                      country_en: matchingPlace.country_en.toUpperCase(),
-                      category_en: matchingPlace.category_en,
-                      description_en: matchingPlace.description_en
-                    });
-                    updatedCount++;
-                  }
-                }
-                
-                mergedCount++;
+              const country = (data.country || '').toUpperCase();
+              const name = (data.name || '').trim();
+              const key = `${country}|||${name}`;
+              if (!placeMap.has(key)) {
+                placeMap.set(key, { ...data, docId: docSnapshot.id });
               } else {
-                // Tek kayıt var - sadece açıklama kontrolü yap
-                const place = places[0];
-                if (!place.description || place.description.trim() === '') {
-                  const popularPlacesForCountry = popularPlaces.filter(p => 
-                    p.country_tr.toUpperCase() === country || p.country_en.toUpperCase() === country
-                  );
-                  
-                  const matchingPlace = popularPlacesForCountry.find(p => 
-                    p.name_tr === place.name || p.name_en === place.name
-                  );
-                  
-                  if (matchingPlace) {
-                    const docRef = doc(db, `users/${user.uid}/places`, place.docId);
-                    await updateDoc(docRef, {
-                      description: matchingPlace.description_tr,
-                      name_en: matchingPlace.name_en,
-                      city_en: matchingPlace.city_en,
-                      country_en: matchingPlace.country_en.toUpperCase(),
-                      category_en: matchingPlace.category_en,
-                      description_en: matchingPlace.description_en
-                    });
-                    updatedCount++;
-                  }
-                }
-              }
-              
-              // Bu ülke için eksik popüler yerleri ekle
-              const popularPlacesForCountry = popularPlaces.filter(p => 
-                p.country_tr.toUpperCase() === country || p.country_en.toUpperCase() === country
-              );
-              
-              const existingPlaceNames = places.map(p => p.name);
-              const existingPlaceNamesEn = places.map(p => p.name_en).filter(Boolean);
-              
-              for (const popularPlace of popularPlacesForCountry) {
-                const isAlreadyExists = existingPlaceNames.includes(popularPlace.name_tr) || 
-                                      existingPlaceNamesEn.includes(popularPlace.name_en);
-                
-                if (!isAlreadyExists) {
-                  await addDoc(userPlacesRef, {
-                    name: popularPlace.name_tr,
-                    city: popularPlace.city_tr,
-                    country: popularPlace.country_tr.toUpperCase(),
-                    category: popularPlace.category_tr,
-                    description: popularPlace.description_tr,
-                    visited: false,
-                    name_en: popularPlace.name_en,
-                    city_en: popularPlace.city_en,
-                    country_en: popularPlace.country_en.toUpperCase(),
-                    category_en: popularPlace.category_en,
-                    description_en: popularPlace.description_en
-                  });
-                  addedCount++;
-                }
+                // Aynı ülke ve isimde birden fazla kayıt varsa, sadece birini bırak
+                toDelete.push(docSnapshot.id);
               }
             }
-            
-            // Silinecek kayıtları sil
-            for (const docId of placesToDelete) {
+
+            // Silinecek tekrar eden kayıtları sil
+            for (const docId of toDelete) {
               const docRef = doc(db, `users/${user.uid}/places`, docId);
               await deleteDoc(docRef);
             }
-            
-            // Sonuç mesajı
-            let message = '';
-            if (mergedCount > 0) message += `${mergedCount} ülke birleştirildi. `;
-            if (addedCount > 0) message += `${addedCount} yeni yer eklendi. `;
-            if (updatedCount > 0) message += `${updatedCount} açıklama güncellendi. `;
-            if (placesToDelete.length > 0) message += `${placesToDelete.length} tekrar eden kayıt silindi. `;
-            
-            if (message) {
-              showStatus(message, 'success');
-            } else {
-              showStatus('Herhangi bir değişiklik yapılmadı.', 'info');
+
+            // Açıklamaları güncelle ve eksik popüler yerleri ekle
+            let updatedCount = 0;
+            let addedCount = 0;
+            const existingKeys = new Set(placeMap.keys());
+            // Açıklamaları güncelle
+            for (const [key, place] of placeMap.entries()) {
+              if (!place.description || place.description.trim() === '') {
+                const [country, name] = key.split('|||');
+                const matching = popularPlaces.find(p =>
+                  (p.country_tr && p.country_tr.toUpperCase() === country && p.name_tr === name) ||
+                  (p.country_en && p.country_en.toUpperCase() === country && p.name_en === name)
+                );
+                if (matching) {
+                  const docRef = doc(db, `users/${user.uid}/places`, place.docId);
+                  await updateDoc(docRef, filterUndefinedFields({
+                    description: matching.description_tr,
+                    name_en: matching.name_en,
+                    city_en: matching.city_en,
+                    country_en: matching.country_en ? matching.country_en.toUpperCase() : undefined,
+                    category_en: matching.category_en,
+                    description_en: matching.description_en
+                  }));
+                  updatedCount++;
+                }
+              }
             }
-            
+            // Eksik popüler yerleri ekle
+            for (const p of popularPlaces) {
+              const country = (p.country_tr || p.country_en || '').toUpperCase();
+              const name = p.name_tr;
+              const key = `${country}|||${name}`;
+              if (!existingKeys.has(key)) {
+                await addDoc(userPlacesRef, filterUndefinedFields({
+                  name: p.name_tr,
+                  city: p.city_tr,
+                  country: p.country_tr ? p.country_tr.toUpperCase() : undefined,
+                  category: p.category_tr,
+                  description: p.description_tr,
+                  visited: false,
+                  name_en: p.name_en,
+                  city_en: p.city_en,
+                  country_en: p.country_en ? p.country_en.toUpperCase() : undefined,
+                  category_en: p.category_en,
+                  description_en: p.description_en
+                }));
+                addedCount++;
+              }
+            }
+            let msg = '';
+            if (toDelete.length > 0) msg += `${toDelete.length} tekrar eden kayıt silindi. `;
+            if (updatedCount > 0) msg += `${updatedCount} açıklama güncellendi. `;
+            if (addedCount > 0) msg += `${addedCount} yeni yer eklendi.`;
+            if (!msg) msg = 'Herhangi bir değişiklik yapılmadı.';
+            showStatus(msg, 'success');
           } catch (error) {
             console.error('Ülke birleştirme hatası:', error);
             showStatus('Ülke birleştirme hatası: ' + error.message, 'error');
@@ -860,7 +814,7 @@
           snapshot.forEach(doc => {
             const data = doc.data();
             places.push({ ...data, _docId: doc.id });
-            if (data.country) countrySet.add(data.country);
+            if (data.country) countrySet.add(data.country.toUpperCase());
           });
           const countries = Array.from(countrySet).sort();
 
