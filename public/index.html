@@ -404,12 +404,8 @@
             const resp = await fetch(url);
             const data = await resp.json();
             if (data.query && data.query.search) {
-              // Sadece gezilecek yer anahtar kelimeleriyle filtrele
-              const keywords = ["city", "town", "village", "park", "mountain", "lake", "museum", "site", "ruins", "castle", "beach", "island", "national park", "tourist attraction"];
-              wikiResults = data.query.search.filter(item => {
-                const text = (item.title + ' ' + item.snippet).toLowerCase();
-                return keywords.some(kw => text.includes(kw));
-              });
+              // Filtreyi kaldırdık, tüm sonuçları gösteriyoruz
+              wikiResults = data.query.search;
             }
           } catch {}
 
@@ -431,6 +427,7 @@
           const allResults = [...wikiResults, ...geoResults].filter((v, i, a) =>
             a.findIndex(t => t.title === v.title) === i
           );
+          console.log('allResults:', allResults); // Debug için eklendi
 
           // 4. Listele
           if (allResults.length > 0) {
