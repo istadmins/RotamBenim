@@ -270,19 +270,25 @@ class EnhancedBackgroundManager {
      */
     applyBackground(country, imageUrl, section = null) {
         if (section) {
-            // Apply to specific section
             const sectionElement = document.querySelector(`[data-anchor="${section}"] .bg-overlay`);
             if (sectionElement) {
-                this.setElementBackground(sectionElement, imageUrl);
+                this.setElementBackground(sectionElement, imageUrl, country);
             }
         } else {
             // Apply to all elements with this country class
             const elements = document.querySelectorAll(`.bg-${country}`);
-            elements.forEach(element => {
-                this.setElementBackground(element, imageUrl);
-            });
+            if (elements.length > 0) {
+                elements.forEach(element => {
+                    this.setElementBackground(element, imageUrl, country);
+                });
+            } else {
+                // Ana overlay için uygula
+                const bgElement = document.querySelector('.bg-overlay');
+                if (bgElement) {
+                    this.setElementBackground(bgElement, imageUrl, country);
+                }
+            }
         }
-
         // Store in backgrounds map
         this.backgrounds.set(country, imageUrl);
     }
@@ -292,21 +298,29 @@ class EnhancedBackgroundManager {
      * @param {HTMLElement} element - Target element
      * @param {string} imageUrl - Image URL
      */
-    setElementBackground(element, imageUrl) {
+    setElementBackground(element, imageUrl, country = null) {
         console.log('[setElementBackground] element:', element, 'imageUrl:', imageUrl);
         if (!element) return;
-
         // Create a new image element to ensure it's loaded
         const img = new Image();
         img.onload = () => {
-            // Add transition class
+            console.log('[setElementBackground] Image loaded successfully:', imageUrl);
             element.style.transition = 'opacity 0.5s ease-in-out';
             element.style.opacity = '0';
-            
             setTimeout(() => {
                 element.style.backgroundImage = `url(${imageUrl})`;
                 element.style.opacity = '1';
             }, 250);
+        };
+        img.onerror = () => {
+            console.error('[setElementBackground] Image failed to load:', imageUrl);
+            // Fallback image if available
+            if (country) {
+                const fallbackUrl = this.fallbackImages[country] || this.fallbackImages.default;
+                console.log('[setElementBackground] Using fallback image due to error:', fallbackUrl);
+                element.style.backgroundImage = `url(${fallbackUrl})`;
+                element.style.opacity = '1';
+            }
         };
         img.src = imageUrl;
     }
