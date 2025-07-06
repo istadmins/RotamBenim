@@ -912,12 +912,6 @@
           if (selectedVisited === 'visited') filtered = filtered.filter(p => p.visited);
           else if (selectedVisited === 'notvisited') filtered = filtered.filter(p => !p.visited);
 
-          // Ülke başlığı satırı ekle
-          const countryRow = document.createElement('tr');
-          countryRow.className = 'country-group-row';
-          countryRow.innerHTML = `<td colspan="6">${selectedCountry || 'Diğer'}</td>`;
-          placesTableBody.appendChild(countryRow);
-
           filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
           filtered.forEach(data => {
             const row = document.createElement('tr');
