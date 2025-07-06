@@ -22,7 +22,7 @@
     
     <style>
         :root {
-            --card-opacity: 0.5;
+            --card-opacity: 1;
         }
         body {
             font-family: 'Inter', sans-serif;
@@ -246,8 +246,7 @@
     <div class="bg-overlay" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;pointer-events:none;opacity:0.35;background-size:cover;background-position:center;transition:opacity 0.5s;"></div>
     <div class="login-container">
         <div class="login-card">
-            <div class="login-logo">🌍 Rotam Benim</div>
-            <div class="login-subtitle">Seyahat rotalarınızı planlayın</div>
+            <div class="login-logo">�� Rotam Benim</div>
             
             <!-- Login Button -->
             <button id="googleSignInBtn" class="google-btn">
@@ -293,7 +292,6 @@
             <!-- Gezilecek Yerler Tablosu -->
             <div id="placesTableWrapper" class="table-responsive">
               <div id="placesTableContainer" style="margin-top: 0; display: none;">
-                <h3>Gezilecek Yerler</h3>
                 <table id="placesTable" class="table table-sm">
                   <thead>
                     <tr>
@@ -1068,11 +1066,12 @@
           return map[norm] || norm;
         }
 
-        // Türkçe büyük harf dönüşümü fonksiyonu
+        // Gelişmiş Türkçe büyük harf dönüşümü fonksiyonu
         function toTurkishUpper(str) {
           return str
             .replace(/i/g, 'İ')
             .replace(/ı/g, 'I')
+            .replace(/I/g, 'İ')
             .replace(/ş/g, 'Ş')
             .replace(/ğ/g, 'Ğ')
             .replace(/ü/g, 'Ü')
@@ -1081,29 +1080,20 @@
             .toUpperCase();
         }
 
-        // --- Ülke combobox'ını doldururken Türkçe büyük harf fonksiyonunu kullan ---
-        async function updateCountryDropdownWithPopularAndUser(user) {
+        // --- Ülke combobox'ını Türkçe isme göre alfabetik sırala ---
+        async function updateCountryDropdownWithPopularOnly() {
           const countryFilter = document.getElementById('countryFilter');
           if (!countryFilter) return;
           // 1. Popüler ülkeleri oku
-          const allPopular = await getAllPopularCountryCodes(); // Bu fonksiyon zaten normalize edilmiş kodlar döndürmeli
-          // 2. Kullanıcının places'ındaki ülkeleri oku ve normalize et
-          let userCountries = [];
-          if (user) {
-            const placesCol = collection(db, `users/${user.uid}/places`);
-            const snapshot = await getDocs(placesCol);
-            const countrySet = new Set();
-            snapshot.forEach(doc => {
-              const data = doc.data();
-              if (data.country) {
-                const englishKey = getEnglishCountryKeySafe(data.country);
-                countrySet.add(englishKey);
-              }
-            });
-            userCountries = Array.from(countrySet);
-          }
-          // 3. Birleştir ve tekrarları engelle
-          const allCountries = Array.from(new Set([...allPopular, ...userCountries])).sort();
+          const allPopular = await getAllPopularCountryCodes(); // normalize edilmiş İngilizce anahtarlar
+          // 2. Tekrarları engelle
+          const allCountries = Array.from(new Set(allPopular));
+          // 3. Türkçe isme göre sırala
+          allCountries.sort((a, b) => {
+            const trA = toTurkishUpper(countryNames[a]?.[currentLang] || a);
+            const trB = toTurkishUpper(countryNames[b]?.[currentLang] || b);
+            return trA.localeCompare(trB, 'tr');
+          });
           // 4. Dropdown'u doldur
           countryFilter.innerHTML = '';
           allCountries.forEach(englishKey => {
@@ -1119,9 +1109,7 @@
 
         // --- Sayfa ilk açıldığında ve kullanıcı değiştiğinde ülke dropdown'unu güncelle ---
         document.addEventListener('DOMContentLoaded', () => {
-          onAuthStateChanged(auth, user => {
-            updateCountryDropdownWithPopularAndUser(user);
-          });
+          updateCountryDropdownWithPopularOnly();
         });
     </script>
     <script src="/js/enhanced-background-manager.js"></script>
