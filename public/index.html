@@ -1067,6 +1067,48 @@
           const norm = country.toLowerCase().replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u');
           return map[norm] || norm;
         }
+
+        // --- Ülke combobox'ını doldururken hem popüler ülkeleri hem de kullanıcının places'ındaki ülkeleri birleştir, normalize et ve tekrarları engelle ---
+        async function updateCountryDropdownWithPopularAndUser(user) {
+          const countryFilter = document.getElementById('countryFilter');
+          if (!countryFilter) return;
+          // 1. Popüler ülkeleri oku
+          const allPopular = await getAllPopularCountryCodes(); // Bu fonksiyon zaten normalize edilmiş kodlar döndürmeli
+          // 2. Kullanıcının places'ındaki ülkeleri oku ve normalize et
+          let userCountries = [];
+          if (user) {
+            const placesCol = collection(db, `users/${user.uid}/places`);
+            const snapshot = await getDocs(placesCol);
+            const countrySet = new Set();
+            snapshot.forEach(doc => {
+              const data = doc.data();
+              if (data.country) {
+                const englishKey = getEnglishCountryKeySafe(data.country);
+                countrySet.add(englishKey);
+              }
+            });
+            userCountries = Array.from(countrySet);
+          }
+          // 3. Birleştir ve tekrarları engelle
+          const allCountries = Array.from(new Set([...allPopular, ...userCountries])).sort();
+          // 4. Dropdown'u doldur
+          countryFilter.innerHTML = '';
+          allCountries.forEach(englishKey => {
+            const opt = document.createElement('option');
+            opt.value = englishKey;
+            opt.textContent = countryNames[englishKey]?.[currentLang] || englishKey.toUpperCase();
+            countryFilter.appendChild(opt);
+          });
+          // Varsayılan ülke: ALMANYA
+          if (!countryFilter.value && allCountries.includes('germany')) countryFilter.value = 'germany';
+        }
+
+        // --- Sayfa ilk açıldığında ve kullanıcı değiştiğinde ülke dropdown'unu güncelle ---
+        document.addEventListener('DOMContentLoaded', () => {
+          onAuthStateChanged(auth, user => {
+            updateCountryDropdownWithPopularAndUser(user);
+          });
+        });
     </script>
     <script src="/js/enhanced-background-manager.js"></script>
 </body>
