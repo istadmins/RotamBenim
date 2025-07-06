@@ -943,6 +943,10 @@
               const user = auth.currentUser;
               if (user) loadPlacesTable(user);
             });
+            // --- Sayfa ilk açıldığında da arka planı güncelle ---
+            if (window.enhancedBackgroundManager && countryFilter.value) {
+              window.enhancedBackgroundManager.updateBackgroundForCountry(countryFilter.value);
+            }
           }
         });
 
