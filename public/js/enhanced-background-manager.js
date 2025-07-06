@@ -190,16 +190,19 @@ class EnhancedBackgroundManager {
      * @param {string} section - Section identifier (optional)
      */
     async fetchBackgroundFromPexels(country, section = null) {
+        console.log('[fetchBackgroundFromPexels] country:', country, 'section:', section);
         // Check cache first
         const cacheKey = `${country}-${section || 'default'}`;
         if (this.cache.has(cacheKey)) {
             const cachedUrl = this.cache.get(cacheKey);
+            console.log('[fetchBackgroundFromPexels] Using cachedUrl:', cachedUrl);
             this.applyBackground(country, cachedUrl, section);
             return cachedUrl;
         }
 
         const queries = this.countryQueries[country] || this.countryQueries.default;
         const randomQuery = queries[Math.floor(Math.random() * queries.length)];
+        console.log('[fetchBackgroundFromPexels] randomQuery:', randomQuery);
         
         try {
             const response = await fetch(
@@ -210,37 +213,36 @@ class EnhancedBackgroundManager {
                     }
                 }
             );
-
+            console.log('[fetchBackgroundFromPexels] response.ok:', response.ok, 'status:', response.status);
             if (!response.ok) {
                 throw new Error(`Pexels API error: ${response.status}`);
             }
 
             const data = await response.json();
+            console.log('[fetchBackgroundFromPexels] data:', data);
             
             if (data.photos && data.photos.length > 0) {
                 // Select a random photo from the results
                 const randomPhoto = data.photos[Math.floor(Math.random() * data.photos.length)];
                 const imageUrl = randomPhoto.src.large2x || randomPhoto.src.large;
-                
+                console.log('[fetchBackgroundFromPexels] Got imageUrl:', imageUrl);
                 // Cache the result
                 this.cache.set(cacheKey, imageUrl);
-                
                 // Preload the image
                 await this.preloadImage(imageUrl);
-                
                 // Apply the background
                 this.applyBackground(country, imageUrl, section);
-                
                 return imageUrl;
             } else {
+                console.warn('[fetchBackgroundFromPexels] No photos found for query:', randomQuery);
                 throw new Error('No photos found');
             }
             
         } catch (error) {
-            console.error(`[EnhancedBackgroundManager] Error fetching from Pexels for ${country}:`, error);
-            
+            console.error(`[fetchBackgroundFromPexels] Error for ${country}:`, error);
             // Use fallback image
             const fallbackUrl = this.fallbackImages[country] || this.fallbackImages.default;
+            console.log('[fetchBackgroundFromPexels] Using fallbackUrl:', fallbackUrl);
             this.applyBackground(country, fallbackUrl, section);
             return fallbackUrl;
         }
