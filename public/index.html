@@ -21,6 +21,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.js"></script>
     
     <style>
+        :root {
+            --card-opacity: 0.5;
+        }
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -52,7 +55,7 @@
         }
         
         .login-card {
-            background: rgba(255,255,255,0.5) !important;
+            background: rgba(255,255,255,var(--card-opacity)) !important;
             border-radius: 16px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             padding: 32px;
@@ -202,7 +205,7 @@
             word-break: break-word;
         }
         .country-group-row {
-            background: rgba(255,255,255,0.5) !important;
+            background: rgba(255,255,255,var(--card-opacity)) !important;
             font-weight: bold;
             font-size: 16px;
             text-align: left;
@@ -350,6 +353,44 @@
         const searchBox = document.getElementById('searchBox');
         let suggestionResults = [];
         const GEONAMES_USERNAME = "b.alacam";
+
+        // Ülke isimleri mapping (tr/en)
+        const countryNames = {
+          'turkey': { tr: 'TÜRKİYE', en: 'TURKEY' },
+          'germany': { tr: 'ALMANYA', en: 'GERMANY' },
+          'france': { tr: 'FRANSA', en: 'FRANCE' },
+          'italy': { tr: 'İTALYA', en: 'ITALY' },
+          'spain': { tr: 'İSPANYA', en: 'SPAIN' },
+          'greece': { tr: 'YUNANİSTAN', en: 'GREECE' },
+          'netherlands': { tr: 'HOLLANDA', en: 'NETHERLANDS' },
+          'belgium': { tr: 'BELÇİKA', en: 'BELGIUM' },
+          'austria': { tr: 'AVUSTURYA', en: 'AUSTRIA' },
+          'switzerland': { tr: 'İSVİÇRE', en: 'SWITZERLAND' },
+          'portugal': { tr: 'PORTEKİZ', en: 'PORTUGAL' },
+          'czech republic': { tr: 'ÇEK CUMHURİYETİ', en: 'CZECH REPUBLIC' },
+          'poland': { tr: 'POLONYA', en: 'POLAND' },
+          'romania': { tr: 'ROMANYA', en: 'ROMANIA' },
+          'bulgaria': { tr: 'BULGARİSTAN', en: 'BULGARIA' },
+          'latvia': { tr: 'LETONYA', en: 'LATVIA' },
+          'lithuania': { tr: 'LİTVANYA', en: 'LITHUANIA' },
+          'estonia': { tr: 'ESTONYA', en: 'ESTONIA' },
+          'hungary': { tr: 'MACARİSTAN', en: 'HUNGARY' },
+          'slovakia': { tr: 'SLOVAKYA', en: 'SLOVAKIA' },
+          'slovenia': { tr: 'SLOVENYA', en: 'SLOVENIA' },
+          'croatia': { tr: 'HIRVATİSTAN', en: 'CROATIA' },
+          'serbia': { tr: 'SIRBİSTAN', en: 'SERBIA' },
+          'ukraine': { tr: 'UKRAYNA', en: 'UKRAINE' },
+          'norway': { tr: 'NORVEÇ', en: 'NORWAY' },
+          'sweden': { tr: 'İSVEÇ', en: 'SWEDEN' },
+          'finland': { tr: 'FİNLANDİYA', en: 'FINLAND' },
+          'south korea': { tr: 'GÜNEY KORE', en: 'SOUTH KOREA' },
+          'japan': { tr: 'JAPONYA', en: 'JAPAN' },
+          'china': { tr: 'ÇİN', en: 'CHINA' },
+          'usa': { tr: 'AMERİKA', en: 'USA' },
+          'uk': { tr: 'BİRLEŞİK KRALLIK', en: 'UK' },
+          // Diğer ülkeler eklenebilir
+        };
+        const currentLang = 'tr'; // İleride 'en' yapılabilir
 
         // Show status message
         function showStatus(message, type = 'info') {
@@ -834,23 +875,27 @@
           const visitedFilter = document.getElementById('visitedFilter');
           // Arama kutusu sadece öneri için, filtreleme yok
 
-          // Tüm ülkeleri topla ve sırala
+          // Tüm ülkeleri topla ve normalize et
           const places = [];
           const countrySet = new Set();
           snapshot.forEach(doc => {
             const data = doc.data();
             places.push({ ...data, _docId: doc.id });
-            if (data.country) countrySet.add(data.country.toUpperCase());
+            if (data.country) {
+              // İngilizce anahtara normalize et
+              const englishKey = window.enhancedBackgroundManager ? window.enhancedBackgroundManager.getEnglishCountryKey(data.country) : data.country;
+              countrySet.add(englishKey);
+            }
           });
           const countries = Array.from(countrySet).sort();
 
           // Ülke combobox'ını doldur (sadece ilk yüklemede veya ülke sayısı değiştiyse)
           if (countryFilter.options.length === 0 || countryFilter.options.length !== countries.length) {
             countryFilter.innerHTML = '';
-            countries.forEach(c => {
+            countries.forEach(englishKey => {
               const opt = document.createElement('option');
-              opt.value = c;
-              opt.textContent = c;
+              opt.value = englishKey;
+              opt.textContent = countryNames[englishKey]?.[currentLang] || englishKey.toUpperCase();
               countryFilter.appendChild(opt);
             });
           }
@@ -934,7 +979,6 @@
             countryFilter.addEventListener('change', () => {
               const user = auth.currentUser;
               if (user) loadPlacesTable(user);
-              // Yeni: Arka planı güncelle
               if (window.enhancedBackgroundManager) {
                 window.enhancedBackgroundManager.updateBackgroundForCountry(countryFilter.value);
               }
