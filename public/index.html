@@ -1068,7 +1068,20 @@
           return map[norm] || norm;
         }
 
-        // --- Ülke combobox'ını doldururken hem popüler ülkeleri hem de kullanıcının places'ındaki ülkeleri birleştir, normalize et ve tekrarları engelle ---
+        // Türkçe büyük harf dönüşümü fonksiyonu
+        function toTurkishUpper(str) {
+          return str
+            .replace(/i/g, 'İ')
+            .replace(/ı/g, 'I')
+            .replace(/ş/g, 'Ş')
+            .replace(/ğ/g, 'Ğ')
+            .replace(/ü/g, 'Ü')
+            .replace(/ö/g, 'Ö')
+            .replace(/ç/g, 'Ç')
+            .toUpperCase();
+        }
+
+        // --- Ülke combobox'ını doldururken Türkçe büyük harf fonksiyonunu kullan ---
         async function updateCountryDropdownWithPopularAndUser(user) {
           const countryFilter = document.getElementById('countryFilter');
           if (!countryFilter) return;
@@ -1096,7 +1109,8 @@
           allCountries.forEach(englishKey => {
             const opt = document.createElement('option');
             opt.value = englishKey;
-            opt.textContent = countryNames[englishKey]?.[currentLang] || englishKey.toUpperCase();
+            const trName = countryNames[englishKey]?.[currentLang] || englishKey;
+            opt.textContent = toTurkishUpper(trName);
             countryFilter.appendChild(opt);
           });
           // Varsayılan ülke: ALMANYA
