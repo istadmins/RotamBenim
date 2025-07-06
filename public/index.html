@@ -908,7 +908,7 @@
           let filtered = [];
           const selectedCountry = countryFilter.value;
           const selectedVisited = visitedFilter.value;
-          filtered = places.filter(p => p.country === selectedCountry);
+          filtered = places.filter(p => getEnglishCountryKeySafe(p.country) === selectedCountry);
           if (selectedVisited === 'visited') filtered = filtered.filter(p => p.visited);
           else if (selectedVisited === 'notvisited') filtered = filtered.filter(p => !p.visited);
 
