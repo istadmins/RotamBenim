@@ -193,7 +193,6 @@ class EnhancedBackgroundManager {
         console.log('[fetchBackgroundFromPexels] country:', country, 'section:', section);
         // Her zaman yeni bir görsel getir, cache kullanma
         const queries = this.countryQueries[country] || this.countryQueries.default;
-        // Sorguya rastgele bir sayı ekle, böylece Pexels API her seferinde farklı sonuç döndürür
         const randomQuery = queries[Math.floor(Math.random() * queries.length)] + ' ' + Math.floor(Math.random() * 10000);
         console.log('[fetchBackgroundFromPexels] randomQuery:', randomQuery);
         try {
@@ -215,16 +214,13 @@ class EnhancedBackgroundManager {
                 // Select a random photo from the results
                 const randomPhoto = data.photos[Math.floor(Math.random() * data.photos.length)];
                 const imageUrl = randomPhoto.src.large2x || randomPhoto.src.large;
-                // Görselin ülke ile alakalı olup olmadığını kontrol et (basit kontrol: ülke adı veya query anahtar kelimesi url'de var mı)
                 if (!imageUrl.toLowerCase().includes(country) && !imageUrl.toLowerCase().includes(randomQuery.split(' ')[0].toLowerCase())) {
                     console.warn('[fetchBackgroundFromPexels] Image seems unrelated, using fallback. imageUrl:', imageUrl);
                     const fallbackUrl = this.fallbackImages[country] || this.fallbackImages.default;
                     this.applyBackground(country, fallbackUrl, section);
                     return fallbackUrl;
                 }
-                // Preload the image
                 await this.preloadImage(imageUrl);
-                // Apply the background
                 this.applyBackground(country, imageUrl, section);
                 return imageUrl;
             } else {
@@ -332,18 +328,13 @@ class EnhancedBackgroundManager {
     async updateBackgroundForCountry(country) {
         const normalizedCountry = this.normalizeCountryName(country);
         console.log('[updateBackgroundForCountry] country:', country, 'normalized:', normalizedCountry);
-        if (this.currentCountry === normalizedCountry) return;
         this.currentCountry = normalizedCountry;
+        // Tüm sayfa için arka planı uygula
         const bgElement = document.querySelector('.bg-overlay');
         console.log('[updateBackgroundForCountry] bgElement:', bgElement);
         if (bgElement) {
-            if (this.backgrounds.has(normalizedCountry)) {
-                console.log('[updateBackgroundForCountry] Using cached background:', this.backgrounds.get(normalizedCountry));
-                this.setElementBackground(bgElement, this.backgrounds.get(normalizedCountry));
-            } else {
-                console.log('[updateBackgroundForCountry] Fetching new background for:', normalizedCountry);
-                await this.fetchBackgroundFromPexels(normalizedCountry);
-            }
+            // Her zaman yeni bir görsel getir
+            await this.fetchBackgroundFromPexels(normalizedCountry);
         }
     }
 
