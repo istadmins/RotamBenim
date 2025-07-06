@@ -193,7 +193,8 @@ class EnhancedBackgroundManager {
         console.log('[fetchBackgroundFromPexels] country:', country, 'section:', section);
         // Her zaman yeni bir görsel getir, cache kullanma
         const queries = this.countryQueries[country] || this.countryQueries.default;
-        const randomQuery = queries[Math.floor(Math.random() * queries.length)] + ' ' + Math.floor(Math.random() * 10000);
+        // Her zaman ülke adını query'ye ekle
+        const randomQuery = `${country} ${queries[Math.floor(Math.random() * queries.length)]} ${Math.floor(Math.random() * 10000)}`;
         console.log('[fetchBackgroundFromPexels] randomQuery:', randomQuery);
         try {
             const response = await fetch(
@@ -214,12 +215,6 @@ class EnhancedBackgroundManager {
                 // Select a random photo from the results
                 const randomPhoto = data.photos[Math.floor(Math.random() * data.photos.length)];
                 const imageUrl = randomPhoto.src.large2x || randomPhoto.src.large;
-                if (!imageUrl.toLowerCase().includes(country) && !imageUrl.toLowerCase().includes(randomQuery.split(' ')[0].toLowerCase())) {
-                    console.warn('[fetchBackgroundFromPexels] Image seems unrelated, using fallback. imageUrl:', imageUrl);
-                    const fallbackUrl = this.fallbackImages[country] || this.fallbackImages.default;
-                    this.applyBackground(country, fallbackUrl, section);
-                    return fallbackUrl;
-                }
                 await this.preloadImage(imageUrl);
                 this.applyBackground(country, imageUrl, section);
                 return imageUrl;
