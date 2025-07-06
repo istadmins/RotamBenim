@@ -883,7 +883,7 @@
             places.push({ ...data, _docId: doc.id });
             if (data.country) {
               // İngilizce anahtara normalize et
-              const englishKey = window.enhancedBackgroundManager ? window.enhancedBackgroundManager.getEnglishCountryKey(data.country) : data.country;
+              const englishKey = getEnglishCountryKeySafe(data.country);
               countrySet.add(englishKey);
             }
           });
@@ -1053,6 +1053,25 @@
           });
           // Kullanıcının mevcut ülkesini koru
           if (!countryFilter.value) countryFilter.value = 'ALMANYA';
+        }
+
+        function getEnglishCountryKeySafe(country) {
+          if (window.enhancedBackgroundManager && typeof window.enhancedBackgroundManager.getEnglishCountryKey === 'function') {
+            return window.enhancedBackgroundManager.getEnglishCountryKey(country);
+          }
+          // Local fallback (kısa versiyon)
+          const map = {
+            'türkiye': 'turkey', 'almanya': 'germany', 'fransa': 'france', 'italya': 'italy', 'ispanya': 'spain',
+            'yunanistan': 'greece', 'hollanda': 'netherlands', 'belçika': 'belgium', 'avusturya': 'austria',
+            'isviçre': 'switzerland', 'portekiz': 'portugal', 'çek cumhuriyeti': 'czech republic', 'polonya': 'poland',
+            'romanya': 'romania', 'bulgaristan': 'bulgaria', 'letonya': 'latvia', 'litvanya': 'lithuania',
+            'estonya': 'estonia', 'macaristan': 'hungary', 'slovakya': 'slovakia', 'slovenya': 'slovenia',
+            'hirvatistan': 'croatia', 'sırbistan': 'serbia', 'ukrayna': 'ukraine', 'norveç': 'norway',
+            'isveç': 'sweden', 'finlandiya': 'finland', 'güney kore': 'south korea', 'japonya': 'japan',
+            'çin': 'china', 'abd': 'usa', 'amerika': 'usa', 'birleşik krallık': 'uk'
+          };
+          const norm = country.toLowerCase().replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u');
+          return map[norm] || norm;
         }
     </script>
     <script src="/js/enhanced-background-manager.js"></script>
