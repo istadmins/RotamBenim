@@ -52,7 +52,7 @@
         }
         
         .login-card {
-            background: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.5) !important;
             border-radius: 16px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             padding: 32px;
@@ -202,7 +202,7 @@
             word-break: break-word;
         }
         .country-group-row {
-            background: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.5) !important;
             font-weight: bold;
             font-size: 16px;
             text-align: left;
@@ -944,9 +944,11 @@
               if (user) loadPlacesTable(user);
             });
             // --- Sayfa ilk açıldığında da arka planı güncelle ---
-            if (window.enhancedBackgroundManager && countryFilter.value) {
-              window.enhancedBackgroundManager.updateBackgroundForCountry(countryFilter.value);
-            }
+            setTimeout(() => {
+              if (window.enhancedBackgroundManager && countryFilter.value) {
+                window.enhancedBackgroundManager.updateBackgroundForCountry(countryFilter.value);
+              }
+            }, 100);
           }
         });
 

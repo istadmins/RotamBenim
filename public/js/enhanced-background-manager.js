@@ -190,11 +190,11 @@ class EnhancedBackgroundManager {
      * @param {string} section - Section identifier (optional)
      */
     async fetchBackgroundFromPexels(country, section = null) {
-        console.log('[fetchBackgroundFromPexels] country:', country, 'section:', section);
-        // Her zaman yeni bir görsel getir, cache kullanma
-        const queries = this.countryQueries[country] || this.countryQueries.default;
-        // Her zaman ülke adını query'ye ekle
-        const randomQuery = `${country} ${queries[Math.floor(Math.random() * queries.length)]} ${Math.floor(Math.random() * 10000)}`;
+        // country artık İngilizce anahtar olmalı
+        const englishKey = this.getEnglishCountryKey(country);
+        console.log('[fetchBackgroundFromPexels] country:', country, 'englishKey:', englishKey, 'section:', section);
+        const queries = this.countryQueries[englishKey] || this.countryQueries.default;
+        const randomQuery = `${englishKey} ${queries[Math.floor(Math.random() * queries.length)]} ${Math.floor(Math.random() * 10000)}`;
         console.log('[fetchBackgroundFromPexels] randomQuery:', randomQuery);
         try {
             const response = await fetch(
@@ -212,11 +212,10 @@ class EnhancedBackgroundManager {
             const data = await response.json();
             console.log('[fetchBackgroundFromPexels] data:', data);
             if (data.photos && data.photos.length > 0) {
-                // Select a random photo from the results
                 const randomPhoto = data.photos[Math.floor(Math.random() * data.photos.length)];
                 const imageUrl = randomPhoto.src.large2x || randomPhoto.src.large;
                 await this.preloadImage(imageUrl);
-                this.applyBackground(country, imageUrl, section);
+                this.applyBackground(englishKey, imageUrl, section);
                 return imageUrl;
             } else {
                 console.warn('[fetchBackgroundFromPexels] No photos found for query:', randomQuery);
@@ -224,10 +223,9 @@ class EnhancedBackgroundManager {
             }
         } catch (error) {
             console.error(`[fetchBackgroundFromPexels] Error for ${country}:`, error);
-            // Use fallback image
-            const fallbackUrl = this.fallbackImages[country] || this.fallbackImages.default;
+            const fallbackUrl = this.fallbackImages[englishKey] || this.fallbackImages.default;
             console.log('[fetchBackgroundFromPexels] Using fallbackUrl:', fallbackUrl);
-            this.applyBackground(country, fallbackUrl, section);
+            this.applyBackground(englishKey, fallbackUrl, section);
             return fallbackUrl;
         }
     }
@@ -260,6 +258,7 @@ class EnhancedBackgroundManager {
      * @param {string} section - Section identifier (optional)
      */
     applyBackground(country, imageUrl, section = null) {
+        // country artık İngilizce anahtar olmalı
         if (section) {
             const sectionElement = document.querySelector(`[data-anchor="${section}"] .bg-overlay`);
             if (sectionElement) {
@@ -290,6 +289,7 @@ class EnhancedBackgroundManager {
      * @param {string} imageUrl - Image URL
      */
     setElementBackground(element, imageUrl, country = null) {
+        // country artık İngilizce anahtar olmalı
         console.log('[setElementBackground] element:', element, 'imageUrl:', imageUrl);
         if (!element) return;
         // Create a new image element to ensure it's loaded
@@ -321,15 +321,13 @@ class EnhancedBackgroundManager {
      * @param {string} country - Country name
      */
     async updateBackgroundForCountry(country) {
-        const normalizedCountry = this.normalizeCountryName(country);
-        console.log('[updateBackgroundForCountry] country:', country, 'normalized:', normalizedCountry);
-        this.currentCountry = normalizedCountry;
-        // Tüm sayfa için arka planı uygula
+        // country: dropdown'dan gelen değer (Türkçe veya İngilizce olabilir)
+        const englishKey = this.getEnglishCountryKey(country);
+        console.log('[updateBackgroundForCountry] country:', country, 'englishKey:', englishKey);
+        this.currentCountry = englishKey;
         const bgElement = document.querySelector('.bg-overlay');
-        console.log('[updateBackgroundForCountry] bgElement:', bgElement);
         if (bgElement) {
-            // Her zaman yeni bir görsel getir
-            await this.fetchBackgroundFromPexels(normalizedCountry);
+            await this.fetchBackgroundFromPexels(englishKey);
         }
     }
 
@@ -520,6 +518,48 @@ class EnhancedBackgroundManager {
         this.backgrounds.clear();
         this.currentCountry = null;
         this.isInitialized = false;
+    }
+
+    // Türkçe veya farklı varyantlardan İngilizce anahtara çeviren fonksiyon
+    getEnglishCountryKey(country) {
+        if (!country) return 'default';
+        const map = {
+            'türkiye': 'turkey', 'turkiye': 'turkey', 'turkey': 'turkey',
+            'almanya': 'germany', 'germany': 'germany',
+            'fransa': 'france', 'france': 'france',
+            'italya': 'italy', 'italy': 'italy',
+            'ispanya': 'spain', 'spain': 'spain',
+            'yunanistan': 'greece', 'greece': 'greece',
+            'hollanda': 'netherlands', 'netherlands': 'netherlands',
+            'belçika': 'belgium', 'belgium': 'belgium',
+            'avusturya': 'austria', 'austria': 'austria',
+            'isviçre': 'switzerland', 'isvicre': 'switzerland', 'switzerland': 'switzerland',
+            'portekiz': 'portugal', 'portugal': 'portugal',
+            'çek cumhuriyeti': 'czech republic', 'czech republic': 'czech republic',
+            'polonya': 'poland', 'poland': 'poland',
+            'romanya': 'romania', 'romania': 'romania',
+            'bulgaristan': 'bulgaria', 'bulgaria': 'bulgaria',
+            'letonya': 'latvia', 'latvia': 'latvia',
+            'litvanya': 'lithuania', 'lithuania': 'lithuania',
+            'estonya': 'estonia', 'estonia': 'estonia',
+            'macaristan': 'hungary', 'hungary': 'hungary',
+            'slovakya': 'slovakia', 'slovakia': 'slovakia',
+            'slovenya': 'slovenia', 'slovenia': 'slovenia',
+            'hirvatistan': 'croatia', 'croatia': 'croatia',
+            'sırbistan': 'serbia', 'sirbistan': 'serbia', 'serbia': 'serbia',
+            'ukrayna': 'ukraine', 'ukraine': 'ukraine',
+            'norveç': 'norway', 'norvec': 'norway', 'norway': 'norway',
+            'isveç': 'sweden', 'isvec': 'sweden', 'sweden': 'sweden',
+            'finlandiya': 'finland', 'finland': 'finland',
+            'güney kore': 'south korea', 'guney kore': 'south korea', 'south korea': 'south korea',
+            'japonya': 'japan', 'japan': 'japan',
+            'çin': 'china', 'cin': 'china', 'china': 'china',
+            'abd': 'usa', 'amerika': 'usa', 'amerika birleşik devletleri': 'usa', 'usa': 'usa',
+            'birleşik krallık': 'uk', 'birlesik krallik': 'uk', 'uk': 'uk',
+            // Diğer ülkeler eklenebilir
+        };
+        const norm = country.toLowerCase().replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u');
+        return map[norm] || norm;
     }
 }
 
