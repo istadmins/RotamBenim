@@ -887,13 +887,20 @@
           });
           const countries = Array.from(countrySet).sort();
 
+          // Türkçe isme göre sırala
+          countries.sort((a, b) => {
+            const trA = toTurkishUpper(countryNames[a]?.[currentLang] || a);
+            const trB = toTurkishUpper(countryNames[b]?.[currentLang] || b);
+            return trA.localeCompare(trB, 'tr');
+          });
           // Ülke combobox'ını doldur (sadece ilk yüklemede veya ülke sayısı değiştiyse)
           if (countryFilter.options.length === 0 || countryFilter.options.length !== countries.length) {
             countryFilter.innerHTML = '';
             countries.forEach(englishKey => {
               const opt = document.createElement('option');
               opt.value = englishKey;
-              opt.textContent = countryNames[englishKey]?.[currentLang] || englishKey.toUpperCase();
+              const trName = countryNames[englishKey]?.[currentLang] || englishKey;
+              opt.textContent = toTurkishUpper(trName);
               countryFilter.appendChild(opt);
             });
           }
@@ -910,7 +917,7 @@
           if (selectedVisited === 'visited') filtered = filtered.filter(p => p.visited);
           else if (selectedVisited === 'notvisited') filtered = filtered.filter(p => !p.visited);
 
-          filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+          filtered.sort((a, b) => (a.city || '').localeCompare(b.city || ''));
           filtered.forEach(data => {
             const row = document.createElement('tr');
             const categoryHtml = (data.category || '').replace(/\s*\/\s*/g, '<br>');
@@ -1062,7 +1069,7 @@
             'isveç': 'sweden', 'finlandiya': 'finland', 'güney kore': 'south korea', 'japonya': 'japan',
             'çin': 'china', 'abd': 'usa', 'amerika': 'usa', 'birleşik krallık': 'uk'
           };
-          const norm = country.toLowerCase().replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u');
+          const norm = country.toLowerCase().replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g, 'u');
           return map[norm] || norm;
         }
 
