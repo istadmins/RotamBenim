@@ -2,7 +2,7 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const cors = require('cors');
-
+const helmet = require('helmet');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -11,6 +11,7 @@ env = process.env;
 const FOURSQUARE_API_KEY = env.FOURSQUARE_API_KEY || '3Q3OWNWCV1AKBHZGFPZVO0HPMFHHXJTWBAHFY2IYBGOWWKB5';
 
 app.use(cors());
+app.use(helmet());
 
 app.get('/api/foursquare', async (req, res) => {
   const query = req.query.query;
