@@ -562,18 +562,32 @@
           }
           // Wikipedia'dan çek
           let wikiResults = [];
-          try {
-            const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
+  try {
+            const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}+tourism+attraction+place&format=json&origin=*`;
             const resp = await fetch(url);
             const data = await resp.json();
             if (data.query && data.query.search) {
               // Sıkı filtre: sadece gezilecek yer anahtar kelimeleriyle filtrele
-              const keywords = [
-                "city", "town", "village", "park", "mountain", "lake", "museum", "site", "ruins", "castle", "beach", "island", "national park", "tourist attraction", "region", "province", "area", "district", "valley", "canyon", "bay", "forest", "desert", "archaeological", "ancient", "historic", "landmark", "monument", "temple", "cathedral", "mosque", "church", "palace", "bazaar", "market", "bridge", "tower", "garden", "zoo", "aquarium", "harbor", "canal", "square", "plaza", "avenue", "boulevard", "road", "street", "avenue", "hill", "peninsula", "cape", "fjord", "waterfall", "thermal", "spa", "resort", "cave", "gorge", "cliff", "archipelago", "reef", "lagoon", "reserve", "parkway", "route", "trail", "sanctuary", "shrine", "abbey", "fortress", "citadel", "basilica", "synagogue", "pagoda", "pagoda", "shrine", "observatory", "planetarium", "amphitheater", "arena", "stadium", "arena", "theater", "opera", "gallery", "exhibition", "museum", "library", "university", "college", "campus", "cemetery", "mausoleum", "tomb", "crypt", "memorial", "obelisk", "column", "statue", "sculpture", "fountain", "spring", "lake", "pond", "reservoir", "dam", "canal", "lock", "aqueduct", "viaduct", "causeway", "embankment", "jetty", "pier", "dock", "marina", "port", "wharf", "quay", "shipyard", "boatyard", "lighthouse", "windmill", "mill", "factory", "brewery", "winery", "distillery", "vineyard", "orchard", "farm", "ranch", "plantation", "garden", "arboretum", "botanical", "zoo", "aquarium", "aviary", "menagerie", "safari", "park", "reserve", "sanctuary", "refuge", "conservancy", "wilderness", "wildlife", "nature", "natural", "scenic", "viewpoint", "overlook", "panorama", "vista", "lookout", "observation", "deck", "platform", "tower", "hill", "mount", "mountain", "peak", "summit", "ridge", "range", "plateau", "mesa", "butte", "knob", "dome", "crag", "pinnacle", "spires", "needle", "spire", "rock", "boulder", "cliff", "bluff", "escarpment", "gorge", "ravine", "gulch", "canyon", "valley", "dale", "dell", "glen", "hollow", "notch", "pass", "gap", "col", "saddle", "divide", "watershed", "basin", "plain", "prairie", "steppe", "savanna", "meadow", "field", "pasture", "heath", "moor", "fen", "bog", "swamp", "marsh", "wetland", "delta", "estuary", "bayou", "inlet", "cove", "bight", "gulf", "bay", "sound", "strait", "channel", "passage", "fjord", "sea", "ocean", "coast", "shore", "beach", "bank", "bar", "reef", "atoll", "island", "isle", "islet", "key", "cay", "archipelago", "peninsula", "cape", "point", "head", "headland", "promontory", "spit", "hook", "tongue", "neck", "land", "landmark"
+              const touristKeywords = [
+                "city", "town", "village", "park", "mountain", "lake", "museum", "site", "ruins", "castle", "beach", "island", "national park", "tourist attraction", "region", "province", "district", "valley", "canyon", "bay", "forest", "archaeological", "ancient", "historic", "landmark", "monument", "temple", "cathedral", "mosque", "church", "palace", "bazaar", "market", "bridge", "tower", "garden", "zoo", "aquarium", "harbor", "square", "plaza", "waterfall", "thermal", "spa", "resort", "cave", "gorge", "cliff", "fortress", "citadel", "basilica", "synagogue", "pagoda", "shrine", "observatory", "amphitheater", "arena", "stadium", "theater", "opera", "gallery", "exhibition", "statue", "sculpture", "fountain", "lighthouse", "botanical", "safari", "viewpoint", "panorama", "vista", "lookout", "observation", "peak", "summit"
               ];
+              
+              // Kişi isimlerini ve yazarları filtrelemek için negatif anahtar kelimeler
+              const negativeKeywords = [
+                "author", "writer", "novelist", "poet", "politician", "actor", "actress", "director", "producer", "singer", "musician", "composer", "artist", "painter", "sculptor", "philosopher", "scientist", "inventor", "entrepreneur", "businessman", "businesswoman", "athlete", "player", "born", "died", "biography"
+              ];
+              
               wikiResults = data.query.search.filter(item => {
                 const text = (item.title + ' ' + item.snippet).toLowerCase();
-                return keywords.some(kw => text.includes(kw));
+                
+                // Turistik yer anahtar kelimelerinden en az birini içermeli
+                const hasTouristKeyword = touristKeywords.some(kw => text.includes(kw));
+                
+                // Negatif anahtar kelimelerden hiçbirini içermemeli
+                const hasNegativeKeyword = negativeKeywords.some(kw => text.includes(kw));
+                
+                // Turistik yer anahtar kelimesi içermeli VE negatif anahtar kelime içermemeli
+                return hasTouristKeyword && !hasNegativeKeyword;
               }).map(item => ({
                 label: item.title,
                 value: item.title,
@@ -585,20 +599,62 @@
           // Geonames'den çek
           let geoResults = [];
           try {
-            const geoUrl = `https://secure.geonames.org/searchJSON?q=${encodeURIComponent(query)}&maxRows=10&username=${GEONAMES_USERNAME}`;
+            // Turistik yerler için feature code filtresi ekle
+            // A (ülke, eyalet, bölge), P (şehir, köy), L (parklar, alanlar), S (spot, bina, çiftlik), T (dağ, tepe, kaya), H (su kütlesi), V (orman, heath)
+            const featureCodes = 'A.ADM1,A.ADM2,A.ADM3,P.PPL,P.PPLA,P.PPLC,L.PRK,L.LCTY,S.BLDG,S.HSE,S.HTL,S.MNMT,S.MSTY,S.OPRA,S.SQR,T.MT,T.HLL,T.VLC,H.LK,H.STM,H.SPNG,H.WTRF,V.FRST';
+            const geoUrl = `https://secure.geonames.org/searchJSON?q=${encodeURIComponent(query)}&featureCode=${featureCodes}&maxRows=10&username=${GEONAMES_USERNAME}`;
             const geoResp = await fetch(geoUrl);
             const geoData = await geoResp.json();
             if (geoData.geonames) {
-              geoResults = geoData.geonames.map(g => ({
-                label: g.name,
-                value: g.name,
-                description: `${g.countryName || ''} ${g.fcodeName || ''}`,
-                source: 'geonames'
-              }));
+              // Kişi isimlerini filtrelemek için negatif anahtar kelimeler
+              const negativeKeywords = [
+                "author", "writer", "novelist", "poet", "politician", "actor", "actress", "director", "producer", "singer", "musician", "composer", "artist", "painter", "sculptor", "philosopher", "scientist", "inventor", "entrepreneur", "businessman", "businesswoman", "athlete", "player"
+              ];
+              
+              geoResults = geoData.geonames
+                .filter(g => {
+                  // Kişi isimlerini filtrele
+                  const text = (g.name + ' ' + (g.fcodeName || '')).toLowerCase();
+                  return !negativeKeywords.some(kw => text.includes(kw));
+                })
+                .map(g => ({
+                  label: g.name,
+                  value: g.name,
+                  description: `${g.countryName || ''} ${g.fcodeName || ''}`,
+                  source: 'geonames'
+                }));
             }
           } catch {}
-          // Sonuçları birleştir, tekrarları ayıkla
-          const allResults = [...wikiResults, ...geoResults].filter((v, i, a) =>
+          // Popüler yerlerden arama yap
+          let popularResults = [];
+          try {
+            const response = await fetch('/popular-places.json');
+            const popularPlaces = await response.json();
+            // Hem Türkçe hem İngilizce isimlerde arama yap
+            popularResults = popularPlaces
+              .filter(p => {
+                const nameTr = (p.name_tr || '').toLowerCase();
+                const nameEn = (p.name_en || '').toLowerCase();
+                const cityTr = (p.city_tr || '').toLowerCase();
+                const cityEn = (p.city_en || '').toLowerCase();
+                const searchQuery = query.toLowerCase();
+                
+                return nameTr.includes(searchQuery) || 
+                       nameEn.includes(searchQuery) || 
+                       cityTr.includes(searchQuery) || 
+                       cityEn.includes(searchQuery);
+              })
+              .map(p => ({
+                label: p.name_tr,
+                value: p.name_tr,
+                description: `${p.city_tr || ''}, ${p.country_tr || ''} - ${p.category_tr || ''}`,
+                source: 'popular',
+                data: p // Tüm veriyi sakla
+              }));
+          } catch {}
+          
+          // Sonuçları birleştir ve sırala (popüler yerler önce gelsin)
+          const allResults = [...popularResults, ...wikiResults, ...geoResults].filter((v, i, a) =>
             a.findIndex(t => t.value === v.value) === i
           );
           awesomplete.list = allResults;
@@ -615,19 +671,9 @@
           const item = lastSuggestions.find(s => s.label === selectedLabel) || { value: selectedLabel, description: '', source: 'manual' };
           addPlaceBtn.disabled = true;
           try {
-            // Popüler yerler JSON'unda arama
-            let placeData = null;
-            try {
-              const response = await fetch('/popular-places.json');
-              const popularPlaces = await response.json();
-              // Hem Türkçe hem İngilizce isme bak
-              placeData = popularPlaces.find(p =>
-                p.name_tr?.toLowerCase() === selectedLabel.toLowerCase() ||
-                p.name_en?.toLowerCase() === selectedLabel.toLowerCase()
-              );
-            } catch {}
-            // Eğer popüler yerler JSON'unda varsa, tüm alanları oradan doldur
-            if (placeData) {
+            // Eğer seçilen öğe popüler yerlerden geldiyse, doğrudan o veriyi kullan
+            if (item.source === 'popular' && item.data) {
+              const placeData = item.data;
               await addDoc(collection(db, `users/${user.uid}/places`), {
                 name: placeData.name_tr || item.value,
                 city: placeData.city_tr || '',
@@ -642,15 +688,44 @@
                 description_en: placeData.description_en || ''
               });
             } else {
-              // Yoksa, mevcut mantıkla ekle ama ülkeyi seçili ülke yap
-              await addDoc(collection(db, `users/${user.uid}/places`), {
-                name: item.value,
-                city: '',
-                country: (countryFilter.value || '').toUpperCase(),
-                category: '',
-                description: item.description || '',
-                visited: false
-              });
+              // Popüler yerler JSON'unda arama
+              let placeData = null;
+              try {
+                const response = await fetch('/popular-places.json');
+                const popularPlaces = await response.json();
+                // Hem Türkçe hem İngilizce isme bak
+                placeData = popularPlaces.find(p =>
+                  p.name_tr?.toLowerCase() === selectedLabel.toLowerCase() ||
+                  p.name_en?.toLowerCase() === selectedLabel.toLowerCase()
+                );
+              } catch {}
+              
+              // Eğer popüler yerler JSON'unda varsa, tüm alanları oradan doldur
+              if (placeData) {
+                await addDoc(collection(db, `users/${user.uid}/places`), {
+                  name: placeData.name_tr || item.value,
+                  city: placeData.city_tr || '',
+                  country: (placeData.country_tr || '').toUpperCase(),
+                  category: placeData.category_tr || '',
+                  description: placeData.description_tr || item.description || '',
+                  visited: false,
+                  name_en: placeData.name_en || '',
+                  city_en: placeData.city_en || '',
+                  country_en: (placeData.country_en || '').toUpperCase(),
+                  category_en: placeData.category_en || '',
+                  description_en: placeData.description_en || ''
+                });
+              } else {
+                // Yoksa, mevcut mantıkla ekle ama ülkeyi seçili ülke yap
+                await addDoc(collection(db, `users/${user.uid}/places`), {
+                  name: item.value,
+                  city: '',
+                  country: (countryFilter.value || '').toUpperCase(),
+                  category: '',
+                  description: item.description || '',
+                  visited: false
+                });
+              }
             }
             showStatus('Yeni yer eklendi!', 'success');
             searchBox.value = '';
