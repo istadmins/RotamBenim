@@ -132,6 +132,16 @@ class EnhancedBackgroundManager {
             // Set up event listeners
             this.setupEventListeners();
             
+            // Sayfa yüklendiğinde varsayılan ülke için arka planı ayarla
+            const countryFilter = document.getElementById('countryFilter');
+            if (countryFilter && countryFilter.value) {
+                console.log('[EnhancedBackgroundManager] Setting initial background for:', countryFilter.value);
+                this.updateBackgroundForCountry(countryFilter.value);
+            } else {
+                console.log('[EnhancedBackgroundManager] No country selected, using default background');
+                this.updateBackgroundForCountry('germany');
+            }
+            
             this.isInitialized = true;
             console.log('[EnhancedBackgroundManager] Initialized successfully');
             

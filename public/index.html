@@ -1015,12 +1015,15 @@
               const user = auth.currentUser;
               if (user) loadPlacesTable(user);
             });
-            // --- Sayfa ilk açıldığında da arka planı güncelle ---
-            setTimeout(() => {
-              if (window.enhancedBackgroundManager && countryFilter.value) {
-                window.enhancedBackgroundManager.updateBackgroundForCountry(countryFilter.value);
-              }
-            }, 100);
+          }
+        });
+        
+        // Sayfa tamamen yüklendikten sonra arka planı güncelle
+        window.addEventListener('load', () => {
+          const countryFilter = document.getElementById('countryFilter');
+          if (countryFilter && window.enhancedBackgroundManager) {
+            console.log('Sayfa yüklendi, arka plan güncelleniyor:', countryFilter.value);
+            window.enhancedBackgroundManager.updateBackgroundForCountry(countryFilter.value);
           }
         });
 
@@ -1140,7 +1143,16 @@
             countryFilter.appendChild(opt);
           });
           // Varsayılan ülke: ALMANYA
-          if (!countryFilter.value && allCountries.includes('germany')) countryFilter.value = 'germany';
+          if (!countryFilter.value && allCountries.includes('germany')) {
+            countryFilter.value = 'germany';
+            // Ülke seçildiğinde arka planı güncelle
+            if (window.enhancedBackgroundManager) {
+              console.log('Varsayılan ülke seçildi, arka plan güncelleniyor:', countryFilter.value);
+              setTimeout(() => {
+                window.enhancedBackgroundManager.updateBackgroundForCountry(countryFilter.value);
+              }, 200);
+            }
+          }
         }
 
         // --- Sayfa ilk açıldığında ve kullanıcı değiştiğinde ülke dropdown'unu güncelle ---
@@ -1151,4 +1163,4 @@
     <script src="/js/enhanced-background-manager.js"></script>
 </body>
 
-</html> 
+</html>
