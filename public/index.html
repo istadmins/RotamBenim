@@ -615,14 +615,43 @@
           const item = lastSuggestions.find(s => s.label === selectedLabel) || { value: selectedLabel, description: '', source: 'manual' };
           addPlaceBtn.disabled = true;
           try {
-            await addDoc(collection(db, `users/${user.uid}/places`), {
-              name: item.value,
-              city: '',
-              country: (countryFilter.value || '').toUpperCase(),
-              category: '',
-              description: item.description || '',
-              visited: false
-            });
+            // Popüler yerler JSON'unda arama
+            let placeData = null;
+            try {
+              const response = await fetch('/popular-places.json');
+              const popularPlaces = await response.json();
+              // Hem Türkçe hem İngilizce isme bak
+              placeData = popularPlaces.find(p =>
+                p.name_tr?.toLowerCase() === selectedLabel.toLowerCase() ||
+                p.name_en?.toLowerCase() === selectedLabel.toLowerCase()
+              );
+            } catch {}
+            // Eğer popüler yerler JSON'unda varsa, tüm alanları oradan doldur
+            if (placeData) {
+              await addDoc(collection(db, `users/${user.uid}/places`), {
+                name: placeData.name_tr || item.value,
+                city: placeData.city_tr || '',
+                country: (placeData.country_tr || '').toUpperCase(),
+                category: placeData.category_tr || '',
+                description: placeData.description_tr || item.description || '',
+                visited: false,
+                name_en: placeData.name_en || '',
+                city_en: placeData.city_en || '',
+                country_en: (placeData.country_en || '').toUpperCase(),
+                category_en: placeData.category_en || '',
+                description_en: placeData.description_en || ''
+              });
+            } else {
+              // Yoksa, mevcut mantıkla ekle ama ülkeyi seçili ülke yap
+              await addDoc(collection(db, `users/${user.uid}/places`), {
+                name: item.value,
+                city: '',
+                country: (countryFilter.value || '').toUpperCase(),
+                category: '',
+                description: item.description || '',
+                visited: false
+              });
+            }
             showStatus('Yeni yer eklendi!', 'success');
             searchBox.value = '';
             addPlaceBtn.disabled = false;
